@@ -125,6 +125,37 @@ public class InterfazGraficaController implements Initializable {
                 break;
             case 7:
                 pintaBlackLight(event);
+                break;
+            case 8:
+                pintaNegativo(event);
+                break;
+            case 9:
+                pintaInverso(event);
+                break;
+            case 10:
+                pintaAltoContraste(event);
+                break;
+            case 11:
+                pintaATT(event);
+                break;
+            case 12:
+                pintaGris3(event);
+                break;
+            case 13:
+                pintaGris4(event,true);
+                break;
+            case 14:
+                pintaGris4(event,false);
+                break;
+            case 15:
+                pintaGris5(event,FiltroGris.ROJO);
+                break;
+            case 16:
+                pintaGris5(event,FiltroGris.VERDE);
+                break;
+            case 17:
+                pintaGris5(event,FiltroGris.AZUL);
+                break;
             default:
                 verOriginal(event);
                 break;
@@ -167,7 +198,55 @@ public class InterfazGraficaController implements Initializable {
                 boton.setText("Aplicar filtro BlackLight");
                 noFiltro = 7;
                 break;
-                
+            case "filtroNegativo":
+                boton.setText("Aplicar filtro Negativo");
+                noFiltro = 8;
+                break;
+            case "filtroInverso":
+                boton.setText("Aplicar Filtro Inverso");
+                noFiltro = 9;
+                break;
+            case "filtroAltoContraste":
+                boton.setText("Aplicar A. contraste");
+                noFiltro = 10;
+                break;
+            case "filtroATT":
+                boton.setText("Aplicar filtro AT&T");
+                noFiltro = 11;
+                break;
+            case "filtroGris3":
+                boton.setText("Aplicar filtro Gris (Desaturación)");
+                noFiltro = 12;
+                break;
+            case "filtroGris41":
+                boton.setText("Aplicar filtro Gris (Max Descomposición)");
+                noFiltro = 13;
+                break;
+            case "filtroGris42":
+                boton.setText("Aplicar filtro Gris (Min Descomposición)");
+                noFiltro = 14;
+                break;
+            case "filtroGris51":
+                boton.setText("Aplicar filtro Gris (Con Rojo)");
+                noFiltro = 15;
+                break;
+            case "filtroGris52":
+                boton.setText("Aplicar filtro Gris (Con Verde)");
+                noFiltro = 16;
+                break;
+            case "filtroGris53":
+                boton.setText("Aplicar filtro Gris (Con Azul)");
+                noFiltro = 17;
+                break;
+                /*case "filtroGris6":
+                boton.setText("Aplicar filtro Gris (Por # Grises)");
+                noFiltro = 18;
+                break;
+                case "filtroGris7":
+                boton.setText("Aplicar filtro Gris ()");
+                noFiltro = 19;
+                break;
+                */
                 
         }
     }
@@ -203,7 +282,7 @@ public class InterfazGraficaController implements Initializable {
         second.show();
         
         cancelar.setOnAction(new EventHandler<ActionEvent>() {
-
+            
             @Override
             public void handle(ActionEvent event) {
                 second.close();
@@ -212,35 +291,142 @@ public class InterfazGraficaController implements Initializable {
         });
         
         aceptar.setOnAction(new EventHandler<ActionEvent>() {
-
+            
             @Override
             public void handle(ActionEvent event) {
-               final int brillo = (int)numero.getValue();
-               Thread hilo = new Thread(new Task() {
-
-                   @Override
-                   protected Object call() throws Exception {
-                       FiltroBrillo fbrillo = new FiltroBrillo(imagen.getImage(), brillo);
-                       actual = fbrillo.filtroBrillo();
-                       imagen.setImage(actual);
-                       stage.getScene().setRoot(principal);
-                       return null;
-                   }
-               });
-               hilo.start();
-               modificadores(true);
-               second.close();
-               principal.setDisable(false);
+                final int brillo = (int)numero.getValue();
+                Thread hilo = new Thread(new Task() {
+                    
+                    @Override
+                    protected Object call() throws Exception {
+                        FiltroBrillo fbrillo = new FiltroBrillo(imagen.getImage(), brillo);
+                        actual = fbrillo.filtroBrillo();
+                        imagen.setImage(actual);
+                        stage.getScene().setRoot(principal);
+                        return null;
+                    }
+                });
+                hilo.start();
+                modificadores(true);
+                second.close();
+                principal.setDisable(false);
             }
         });
-                
         
+        
+    }
+    
+    private void pintaGris3(ActionEvent event){
+        Thread hilo = new Thread(new Task<Object>() {
+            
+            @Override
+            protected Object call() throws Exception {
+                FiltroGris gris = new FiltroGris(imagen.getImage());
+                actual = gris.grisDesaturacion();
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
+    }
+    
+    private void pintaGris4(ActionEvent event,boolean max){
+        Thread hilo = new Thread(new Task<Object>() {
+            
+            @Override
+            protected Object call() throws Exception {
+                FiltroGris gris = new FiltroGris(imagen.getImage());
+                actual = gris.grisDescomposicion(max);
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
+    }
+    
+    private void pintaGris5(ActionEvent event, int colorNum){
+        Thread hilo = new Thread(new Task<Object>() {
+            
+            @Override
+            protected Object call() throws Exception {
+                FiltroGris gris = new FiltroGris(imagen.getImage());
+                actual = gris.grisColor(colorNum);
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
+    }
+    
+    private void pintaATT(ActionEvent event) {
+        Thread hilo = new Thread(new Task() {
+            @Override
+            protected Object call() throws Exception {
+                ATT ATAndT = new ATT(imagen.getImage());
+                actual = ATAndT.filtra();
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
+    }
+    
+    private void pintaAltoContraste(ActionEvent event) {
+        Thread hilo = new Thread(new Task() {
+            @Override
+            protected Object call() throws Exception {
+                AltoContrasteFiltroInverso altoContraste = new AltoContrasteFiltroInverso(imagen.getImage());
+                actual = altoContraste.altoContraste();
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
+    }
+    
+    private void pintaInverso(ActionEvent event) {
+        Thread hilo = new Thread(new Task() {
+            @Override
+            protected Object call() throws Exception {
+                AltoContrasteFiltroInverso inverso = new AltoContrasteFiltroInverso(imagen.getImage());
+                actual = inverso.inverso();
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
+    }
+    private void pintaNegativo(ActionEvent event) {
+        Thread hilo = new Thread(new Task() {
+            @Override
+            protected Object call() throws Exception {
+                FiltroNegativo negativo = new FiltroNegativo(imagen.getImage());
+                actual = negativo.negativo();
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
     }
     
     
     private void pintaBlackLight(ActionEvent event){
         Thread hilo = new Thread(new Task() {
-
+            
             @Override
             protected Object call() throws Exception {
                 BlackLight blacklight = new BlackLight(imagen.getImage());
@@ -531,5 +717,6 @@ public class InterfazGraficaController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
     }
+    
     
 } //Fin de InterfazGraficaController.java

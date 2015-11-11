@@ -1,22 +1,30 @@
 package proceso_de_imagenes;
 
 import java.awt.image.*;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 
 
-public class ATT {
-
+public class ATT extends Filtro{
+    
+    
+    
     /**
      * Altura de cada linea ATT.
      */
     static final int N = 12;
-
+    
+    public ATT(Image imagen) {
+        super(imagen);
+    }
+    
     /**
-     
-     * @param src Imagen original
+     *
      * @return Imagen filtrada
      */
-    static BufferedImage filtra(BufferedImage src) {
-        BufferedImage ac = src;//ContrasteAlto.filtra(src); //Otro filtro
+    public Image filtra() {
+        AltoContrasteFiltroInverso altoContraste = new AltoContrasteFiltroInverso((Image)this.imagen);
+        BufferedImage ac = SwingFXUtils.fromFXImage(altoContraste.altoContraste(),null);
         int w = ac.getWidth();
         int h = ac.getHeight();
         Raster rac = ac.getData();
@@ -46,9 +54,9 @@ public class ATT {
             }
         }
         lineas(nueva);
-        return nueva;
+        return SwingFXUtils.toFXImage(nueva, null);
     }
-
+    
     /**
      * Dibuja lineas horizontales blancas.
      *
@@ -64,7 +72,7 @@ public class ATT {
             }
         }
     }
-
+    
     /**
      * @param tam Tamano del arreglo
      * @param puntos Numero de puntos que deben ser centrados
