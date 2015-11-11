@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" fx:id="principal" prefHeight="709.0" prefWidth="840.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="proceso_de_imagenes.InterfazGraficaController">
+   <children>
+      <AnchorPane prefHeight="800.0" prefWidth="840.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <SplitPane dividerPositions="0.045112781954887216" orientation="VERTICAL" prefHeight="800.0" prefWidth="825.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+              <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                     <children>
+                        <MenuBar prefHeight="40.0" prefWidth="823.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                          <menus>
+                            <Menu mnemonicParsing="false" text="Archivo">
+                              <items>
+                                    <MenuItem fx:id="nuevoitem" mnemonicParsing="false" onAction="#abrirNuevoItem" text="Nuevo" />
+                                    <MenuItem fx:id="abrir" mnemonicParsing="false" onAction="#abrirImagen" text="Abrir" />
+                                    <MenuItem fx:id="guardarComoI" disable="true" mnemonicParsing="false" onAction="#guardarComo" text="Guardar" />
+                                <MenuItem fx:id="salirI" mnemonicParsing="false" onAction="#salir" text="Salir" />
+                              </items>
+                            </Menu>
+                            <Menu mnemonicParsing="false" text="Editar Imagen">
+                              <items>
+                                    <MenuItem fx:id="cargaOriginal" disable="true" mnemonicParsing="false" onAction="#verOriginal" text="Cargar original" />
+                                    <Menu fx:id="aplicarFiltros" disable="true" mnemonicParsing="false" text="Aplicar filtro">
+                                      <items>
+                                        <MenuItem fx:id="filtroRojo" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Rojo" />
+                                          <MenuItem fx:id="filtroAzul" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Azul" />
+                                          <MenuItem fx:id="filtroVerde" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Verde" />
+                                          <MenuItem fx:id="filtroAzar" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Azar" />
+                                          <MenuItem fx:id="filtroBlackLight" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro BlackLight" />
+                                          <Menu fx:id="aplicarFiltros1" mnemonicParsing="false" text="Filtros de Gris">
+                                             <items>
+                                                <MenuItem fx:id="filtroGris" mnemonicParsing="false" onAction="#cambiaFiltro" text="Por promedio" />
+                                                <MenuItem fx:id="filtroGris2" mnemonicParsing="false" onAction="#cambiaFiltro" text="Por valores .11x.3X.59" />
+                                             </items>
+                                          </Menu>
+                                      </items>
+                                    </Menu>
+                                    <MenuItem fx:id="cambiarBrillo" disable="true" mnemonicParsing="false" onAction="#cambiaBrillo" text="Cambiar brillo" />
+                              </items>
+                            </Menu>
+                            <Menu mnemonicParsing="false" text="Ayuda">
+                              <items>
+                                <MenuItem disable="true" mnemonicParsing="false" text="Ayuda" />
+                                    <MenuItem fx:id="acercaDe" mnemonicParsing="false" onAction="#acercaDe" text="Acerca de..." />
+                              </items>
+                            </Menu>
+                          </menus>
+                        </MenuBar>
+                     </children>
+                  </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                     <children>
+                        <VBox alignment="TOP_CENTER" prefHeight="758.0" prefWidth="838.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <HBox alignment="CENTER" prefHeight="42.0" prefWidth="838.0">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Proceso Digital de Imágenes" textAlignment="CENTER" wrappingWidth="494.3170928955078">
+                                       <font>
+                                          <Font name="Apple Chancery" size="34.0" />
+                                       </font>
+                                    </Text>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="772.0" prefWidth="838.0">
+                                 <children>
+                                    <VBox alignment="CENTER" prefHeight="638.0" prefWidth="838.0">
+                                       <children>
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="IMAGEN DIGITAL" textAlignment="CENTER" wrappingWidth="169.3170928955078" />
+                                          <ImageView fx:id="imagen" fitHeight="597.0" fitWidth="831.0" pickOnBounds="true" preserveRatio="true" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" layoutX="10.0" layoutY="92.0" prefHeight="187.0" prefWidth="838.0">
+                                 <children>
+                                    <Button fx:id="boton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#aplicaFiltro" prefHeight="26.0" prefWidth="139.0" text="Aplicar Filtro" textAlignment="CENTER" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+              </items>
+            </SplitPane>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>
