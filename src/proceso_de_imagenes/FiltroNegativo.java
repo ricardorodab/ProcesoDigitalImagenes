@@ -39,48 +39,5 @@ public class FiltroNegativo extends Filtro{
             }
         }
         return imagenD;
-    }
-
-   public Image inverso() {
-        int rojoRGB,verdeRGB,azulRGB;
-        WritableImage imagenD = new WritableImage(this.x, this.y);
-        PixelWriter pixelD = imagenD.getPixelWriter();
-        PixelReader pixelI = this.imagen.getPixelReader();
-        for (int i = 0; i < this.x; i++) {
-            for (int j = 0; j < this.y; j++) {
-                Color colorOriginal = pixelI.getColor(i, j);
-                rojoRGB = (int) (colorOriginal.getRed()*255);
-                verdeRGB = (int) (colorOriginal.getGreen()*255);
-                azulRGB = (int) (colorOriginal.getBlue()*255);    
-                if( ((rojoRGB + verdeRGB + azulRGB)/3) < 127 ){
-                    pixelD.setColor(i, j, Color.rgb(255, 255, 255));
-                }else{
-                    pixelD.setColor(i, j, Color.rgb(0, 0, 0));
-                } 
-            }
-        }
-        return imagenD;
-    }
-
-    Image altoContraste() {
-        int rojoRGB,verdeRGB,azulRGB;
-        WritableImage imagenD = new WritableImage(this.x, this.y);
-        PixelWriter pixelD = imagenD.getPixelWriter();
-        PixelReader pixelI = this.imagen.getPixelReader();
-        for (int i = 0; i < this.x; i++) {
-            for (int j = 0; j < this.y; j++) {
-                Color colorOriginal = pixelI.getColor(i, j);
-                rojoRGB = (int) (colorOriginal.getRed()*255);
-                verdeRGB = (int) (colorOriginal.getGreen()*255);
-                azulRGB = (int) (colorOriginal.getBlue()*255);    
-                if( ((rojoRGB + verdeRGB + azulRGB)/3) > 127 ){
-                    pixelD.setColor(i, j, Color.rgb(255, 255, 255));
-                }else{
-                    pixelD.setColor(i, j, Color.rgb(0, 0, 0));
-                } 
-            }
-        }
-        return imagenD;
-    }
-    
+    }    
 }

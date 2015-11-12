@@ -2,6 +2,8 @@ package proceso_de_imagenes;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import javafx.scene.image.Image;
+import javafx.embed.swing.SwingFXUtils;
 import javax.swing.JOptionPane;
 
 
@@ -25,9 +27,9 @@ class MarcaDeAgua {
      * @param tipo
      * @return
      */
-    static BufferedImage filtra(BufferedImage src, int region, int tipo) {
+    static Image filtra(Image src, int region, int tipo) {
         String s = JOptionPane.showInputDialog("Escribe algo para el Marco de Agua");
-        BufferedImage nueva = src;
+        BufferedImage nueva = SwingFXUtils.fromFXImage(src, null);
         int w = nueva.getWidth();
         int h = nueva.getHeight();
         int size = (w / s.length()) / 2;
@@ -57,6 +59,6 @@ class MarcaDeAgua {
                 break;
         }
         g.dispose();
-        return nueva;
+        return SwingFXUtils.toFXImage(nueva, null);
     }
 }

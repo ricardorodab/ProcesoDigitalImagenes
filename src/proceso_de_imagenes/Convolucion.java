@@ -1,6 +1,8 @@
 package proceso_de_imagenes;
 
 import java.awt.image.*;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 
  class Convolucion {
 
@@ -11,15 +13,16 @@ import java.awt.image.*;
      * @param mat Matriz para aplicar la convolucion.
      * @return Imagen filtrada.
      */
-     static final BufferedImage filtra(BufferedImage imagen, double[][] mat) {
-        int k = mat.length;
+     public static final Image filtra(Image imagenOriginal, double[][] mat) {
+         BufferedImage imagen = SwingFXUtils.fromFXImage(imagenOriginal, null);
+         int k = mat.length;
         BufferedImage enmarcada = enmarca(imagen, k / 2, k / 2);
         WritableRaster img = enmarcada.getRaster();
         int n = enmarcada.getWidth();
         int m = enmarcada.getHeight();
         WritableRaster nue = enmarcada.getRaster();
         if (n < k || m < k) {
-            return imagen;
+            return SwingFXUtils.toFXImage(imagen, null);
         }
         double factor = suma(mat);
         for (int i = 0; i < n - k; i++) {
@@ -57,7 +60,7 @@ import java.awt.image.*;
      * @param ancho Anchura del marco.
      * @return Imagen con el marco.
      */
-    static BufferedImage enmarca(BufferedImage imagen, int alto, int ancho) {
+    public static BufferedImage enmarca(BufferedImage imagen, int alto, int ancho) {
         int w = imagen.getWidth();
         int h = imagen.getHeight();
         BufferedImage nueva = new BufferedImage(w + 2 * alto, h + 2 * ancho, BufferedImage.TYPE_INT_RGB);
@@ -82,17 +85,17 @@ import java.awt.image.*;
      * @param ancho Anchura dle marco.
      * @return Iamgen sin el marco.
      */
-    static BufferedImage desenmarca(BufferedImage imagen, int ancho, int alto) {
+    public static Image desenmarca(BufferedImage imagen, int ancho, int alto) {
         int w = imagen.getWidth();
         int h = imagen.getHeight();
-        return imagen.getSubimage(ancho, alto, w - 2 * ancho, h - 2 * alto);
+        return SwingFXUtils.toFXImage(imagen.getSubimage(ancho, alto, w - 2 * ancho, h - 2 * alto),null);
     }
 
     /**
      * @param mat Matriz.
      * @return Suma de las entradas.
      */
-    static double suma(double[][] mat) {
+    public static double suma(double[][] mat) {
         double suma = 0;
         for (double[] mat1 : mat) {
             for (int j = 0; j < mat[0].length; j++) {

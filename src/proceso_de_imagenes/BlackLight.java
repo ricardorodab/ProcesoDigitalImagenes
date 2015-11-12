@@ -66,6 +66,18 @@ public class BlackLight extends Filtro{
                 red = (Math.abs(rojoRGB-blacklight)*a);
                 green = (Math.abs(verdeRGB-blacklight)*a);
                 blue = (Math.abs(azulRGB-blacklight)+a);
+                if(red > 255)
+                    red = 255;
+                else if(red < 0)
+                    red = 0;
+                if(green > 255)
+                    green = 255;
+                else if(green < 0)
+                    green = 0;
+                if(blue > 255)
+                    blue = 255;
+                else if(blue < 0)
+                    blue = 0;
                 pixelD.setColor(i, j, Color.rgb(red, green, blue));
             }
         }

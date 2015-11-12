@@ -156,6 +156,12 @@ public class InterfazGraficaController implements Initializable {
             case 17:
                 pintaGris5(event,FiltroGris.AZUL);
                 break;
+            case 18:
+                pintaMarcaDeAgua(event);
+                break;
+            case 19:
+                pintaMosaico(event);
+                break;
             default:
                 verOriginal(event);
                 break;
@@ -238,6 +244,14 @@ public class InterfazGraficaController implements Initializable {
                 boton.setText("Aplicar filtro Gris (Con Azul)");
                 noFiltro = 17;
                 break;
+            case "filtroMarcaDeAgua":
+                boton.setText("Aplicar filtro Marca de Agua");
+                noFiltro = 18;
+                break;
+            case "filtroMosaico":
+                boton.setText("Aplicar filtro Mosaico");
+                noFiltro = 19;
+                break;
                 /*case "filtroGris6":
                 boton.setText("Aplicar filtro Gris (Por # Grises)");
                 noFiltro = 18;
@@ -314,6 +328,39 @@ public class InterfazGraficaController implements Initializable {
         });
         
         
+    }
+    
+    private void pintaMosaico(ActionEvent event){
+        Thread hilo = new Thread(new Task<Object>() {
+            
+            @Override
+            protected Object call() throws Exception {
+                FiltroMosaico mosaico = new FiltroMosaico(imagen.getImage());
+                actual = mosaico.sacaMosaico(10, 10);
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
+    }
+    
+    private void pintaMarcaDeAgua(ActionEvent event){
+         Thread hilo = new Thread(new Task<Object>() {
+            
+            @Override
+            protected Object call() throws Exception {
+                Image marca = MarcaDeAgua.filtra(imagen.getImage(),
+                        MarcaDeAgua.INF_IZQ, MarcaDeAgua.BLACK);
+                actual = marca;
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
     }
     
     private void pintaGris3(ActionEvent event){
