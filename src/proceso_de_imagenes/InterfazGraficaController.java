@@ -162,6 +162,9 @@ public class InterfazGraficaController implements Initializable {
             case 19:
                 pintaMosaico(event);
                 break;
+            case 20:
+                pintaIcono(event);
+                break;
             default:
                 verOriginal(event);
                 break;
@@ -252,6 +255,10 @@ public class InterfazGraficaController implements Initializable {
                 boton.setText("Aplicar filtro Mosaico");
                 noFiltro = 19;
                 break;
+            case "filtroIcono":
+                boton.setText("Aplicar filtro Icono");
+                noFiltro = 20;
+                break;
                 /*case "filtroGris6":
                 boton.setText("Aplicar filtro Gris (Por # Grises)");
                 noFiltro = 18;
@@ -330,24 +337,137 @@ public class InterfazGraficaController implements Initializable {
         
     }
     
-    private void pintaMosaico(ActionEvent event){
-        Thread hilo = new Thread(new Task<Object>() {
+    private void pintaIcono(ActionEvent event){
+                   principal.setDisable(true);
+        Stage second = new Stage();
+        
+        BorderPane border = new BorderPane();
+        Text encabezado = new Text("Ingrese el tamaño final del icono \n"
+                + "Los valores pueden ir entre 1 a 9999");
+        
+        final Spinner numero = new Spinner(1, 9999, 50);
+        numero.setEditable(true);
+        
+        Button aceptar = new Button("Aceptar");
+        Button cancelar = new Button("Cancelar");
+        
+        HBox botones = new HBox(aceptar, cancelar);
+        botones.setSpacing(20);
+        
+        border.setTop(encabezado);
+        border.setCenter(numero);
+        border.setBottom(botones);
+        
+        
+        Scene sscene = new Scene(border);
+        second.setScene(sscene);
+        second.setMinHeight(100);
+        second.setMinWidth(200);
+        
+        second.show();
+        
+        cancelar.setOnAction(new EventHandler<ActionEvent>() {
             
             @Override
-            protected Object call() throws Exception {
-                FiltroMosaico mosaico = new FiltroMosaico(imagen.getImage());
-                actual = mosaico.sacaMosaico(10, 10);
+            public void handle(ActionEvent event) {
+                second.close();
+                principal.setDisable(false);
+            }
+        });
+        
+        aceptar.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                final int cuadricula = (int)numero.getValue();
+                Thread hilo = new Thread(new Task() {
+                    
+                    @Override
+                    protected Object call() throws Exception {
+                          FiltroIcono icono = new FiltroIcono(imagen.getImage());
+                actual = icono.filtroIcono(cuadricula, cuadricula);
                 imagen.setImage(actual);
                 stage.getScene().setRoot(principal);
                 return null;
+                    }
+                });
+                hilo.start();
+                modificadores(true);
+                second.close();
+                principal.setDisable(false);
+                     int resp = MessageBox.show(stage, "El icono se verá reflejado en su tamaño final después de guardar. \n"
+                + "¿Desea guardar su icono?", "Guarde su icono", MessageBox.YES | MessageBox.NO);
+        if(resp == MessageBox.YES){
+            guardarComo(event);
+        }
+            }
+        });   
+    }
+    
+    private void pintaMosaico(ActionEvent event){
+                principal.setDisable(true);
+        Stage second = new Stage();
+        
+        BorderPane border = new BorderPane();
+        Text encabezado = new Text("Ingrese el tamaño de los mosaicos \n"
+                + "Los valores pueden ir entre 1 a 9999");
+        
+        final Spinner numero = new Spinner(1, 9999, 10);
+        numero.setEditable(true);
+        
+        Button aceptar = new Button("Aceptar");
+        Button cancelar = new Button("Cancelar");
+        
+        HBox botones = new HBox(aceptar, cancelar);
+        botones.setSpacing(20);
+        
+        border.setTop(encabezado);
+        border.setCenter(numero);
+        border.setBottom(botones);
+        
+        
+        Scene sscene = new Scene(border);
+        second.setScene(sscene);
+        second.setMinHeight(100);
+        second.setMinWidth(200);
+        
+        second.show();
+        
+        cancelar.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                second.close();
+                principal.setDisable(false);
             }
         });
-        hilo.start();
-        modificadores(true);
+        
+        aceptar.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                final int cuadricula = (int)numero.getValue();
+                Thread hilo = new Thread(new Task() {
+                    
+                    @Override
+                    protected Object call() throws Exception {
+                  FiltroMosaico mosaico = new FiltroMosaico(imagen.getImage());
+                actual = mosaico.sacaMosaico(cuadricula, cuadricula);
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+                    }
+                });
+                hilo.start();
+                modificadores(true);
+                second.close();
+                principal.setDisable(false);
+            }
+        });
     }
     
     private void pintaMarcaDeAgua(ActionEvent event){
-         Thread hilo = new Thread(new Task<Object>() {
+        Thread hilo = new Thread(new Task<Object>() {
             
             @Override
             protected Object call() throws Exception {
@@ -683,8 +803,9 @@ public class InterfazGraficaController implements Initializable {
     @FXML
     private void abrirImagen(ActionEvent event){
         FileChooser ventana = new FileChooser();
-        File archivo = ventana.showOpenDialog(stage);
         ventana.setTitle("Abrir");
+        File archivo = ventana.showOpenDialog(stage);
+        
         if (archivo != null) {
             try {
                 final Image imagenEntrada = new Image(new FileInputStream(archivo));

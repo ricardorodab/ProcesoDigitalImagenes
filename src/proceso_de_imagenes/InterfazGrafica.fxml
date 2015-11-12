@@ -44,6 +44,7 @@
                                           <MenuItem fx:id="filtroATT" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro AT&amp;T" />
                                           <MenuItem fx:id="filtroMarcaDeAgua" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Marca de Agua" />
                                           <MenuItem fx:id="filtroMosaico" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Mosaico" />
+                                          <MenuItem fx:id="filtroIcono" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Icono" />
                                           <Menu fx:id="aplicarFiltros1" mnemonicParsing="false" text="Filtros de Gris">
                                              <items>
                                                 <MenuItem fx:id="filtroGris" mnemonicParsing="false" onAction="#cambiaFiltro" text="Por promedio" />

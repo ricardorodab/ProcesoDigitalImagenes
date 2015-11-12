@@ -75,12 +75,6 @@ public class FiltroMosaico extends Filtro{
             }
             
         }
-        
-        
-        
-        
-        
-        
         return imagenD;
     }
     
