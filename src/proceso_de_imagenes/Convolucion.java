@@ -4,63 +4,112 @@ import java.awt.image.*;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 
- class Convolucion {
-
-    /**
-     * Regresa la imagen resultante al aplicarle el Filtro Convolucion.
-     *
-     * @param imagen Imagen original.
-     * @param mat Matriz para aplicar la convolucion.
-     * @return Imagen filtrada.
-     */
-     public static final Image filtra(Image imagenOriginal, double[][] mat) {
-         BufferedImage imagen = SwingFXUtils.fromFXImage(imagenOriginal, null);
-         int k = mat.length;
-        BufferedImage enmarcada = enmarca(imagen, k / 2, k / 2);
-        WritableRaster img = enmarcada.getRaster();
-        int n = enmarcada.getWidth();
-        int m = enmarcada.getHeight();
-        WritableRaster nue = enmarcada.getRaster();
-        if (n < k || m < k) {
+public class Convolucion extends Filtro{
+    
+    
+    public Convolucion(Image imagen){
+        super(imagen);
+    }
+    
+    public Image emboss(){
+        double [][] matriz = new double[][]{
+            {-1, -1, -1, -1,  0},
+            {-1, -1, -1,  0,  1},
+            {-1, -1,  0,  1,  1},
+            {-1,  0,  1,  1,  1},
+            {0,  1,  1,  1,  1}
+        };
+        FiltroGris temp = new FiltroGris(aplicaConvolucion(
+                aplicaConvolucion(this.imagen, matriz, 1, 128), matriz,1,128));
+        return temp.grisPromedio();
+    }
+    
+    public Image sharpen(){
+        double [][] matriz = new double[][]{
+            {-1, -1, -1},
+            {-1,  9, -1},
+            {-1, -1, -1}
+        };
+        return aplicaConvolucion(this.imagen,matriz,1,0);
+    }
+    
+    
+    public Image bordes(){
+        double [][] matriz = new double[][]{
+            {-1,  0,  0,  0,  0},
+            {0, -2,  0,  0,  0},
+            {0,  0,  6,  0,  0},
+            {0,  0,  0, -2,  0},
+            {0,  0,  0,  0, -1}
+        };
+        return aplicaConvolucion(aplicaConvolucion(this.imagen, matriz, 1, 0),matriz,1,0);
+    }
+    
+    public Image blur(){
+        double [][] matriz = new double[][]{
+            {0, 0, 1, 0, 0},
+            {0, 1, 1, 1, 0},
+            {1, 1, 1, 1, 1},
+            {0, 1, 1, 1, 0},
+            {0, 0, 1, 0, 0}
+        };
+        return aplicaConvolucion(this.imagen,matriz,(1.0/13.0),0);
+    }
+    
+    public Image motionBlur(){
+        double [][] matriz = new double[][]{
+            {1, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 1, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 1, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 1, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 1, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 1, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 1, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 1, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 1}
+        };
+        return aplicaConvolucion(this.imagen,matriz,(1.0/9.0),0);
+    }
+    
+    private Image aplicaConvolucion(Image imagenOriginal, double[][] matriz,double factor,double bias) {
+        BufferedImage imagen = SwingFXUtils.fromFXImage(imagenOriginal, null);
+        BufferedImage nuevoLienzo = enmarca(imagen, matriz.length / 2, matriz.length / 2);
+        WritableRaster imagenD = nuevoLienzo.getRaster();
+        int n = nuevoLienzo.getWidth();
+        int m = nuevoLienzo.getHeight();
+        WritableRaster nue = nuevoLienzo.getRaster();
+        if (n < matriz.length || m < matriz.length) {
             return SwingFXUtils.toFXImage(imagen, null);
         }
-        double factor = suma(mat);
-        for (int i = 0; i < n - k; i++) {
-            for (int j = 0; j < m - k; j++) {
-                int r = 0;
-                int g = 0;
-                int b = 0;
-                for (int x = i; x < i + k; x++) {
-                    for (int y = j; y < j + k; y++) {
-                        r += img.getSample(x, y, 0) * mat[x - i][y - j];
-                        g += img.getSample(x, y, 1) * mat[x - i][y - j];
-                        b += img.getSample(x, y, 2) * mat[x - i][y - j];
+        for (int i = 0; i < n - matriz.length; i++) {
+            for (int j = 0; j < m - matriz.length; j++) {
+                double r = 0;
+                double g = 0;
+                double b = 0;
+                for (int x = i; x < i + matriz.length; x++) {
+                    for (int y = j; y < j + matriz.length; y++) {
+                        r += imagenD.getSample(x, y, 0) * matriz[x - i][y - j];
+                        g += imagenD.getSample(x, y, 1) * matriz[x - i][y - j];
+                        b += imagenD.getSample(x, y, 2) * matriz[x - i][y - j];
                     }
                 }
-                if (factor != 0) {
-                    r /= Math.abs(factor);
-                    b /= Math.abs(factor);
-                    g /= Math.abs(factor);
-                }
-                //r = Procesador.acota(r);
-                //g = Procesador.acota(g);
-                //b = Procesador.acota(b);
-                nue.setSample(i + k / 2, j + k / 2, 0, r);
-                nue.setSample(i + k / 2, j + k / 2, 1, g);
-                nue.setSample(i + k / 2, j + k / 2, 2, b);
+                r = Math.min(Math.max((factor * r + bias), 0), 255); 
+                g = Math.min(Math.max((factor * g + bias), 0), 255); 
+                b = Math.min(Math.max((factor * b + bias), 0), 255); 
+
+                nue.setSample(i + matriz.length / 2, j + matriz.length / 2, 0, r);
+                nue.setSample(i + matriz.length / 2, j + matriz.length / 2, 1, g);
+                nue.setSample(i + matriz.length / 2, j + matriz.length / 2, 2, b);
             }
         }
         BufferedImage nueva = new BufferedImage(n, m, BufferedImage.TYPE_INT_RGB);
         nueva.setData(nue);
-        return desenmarca(nueva, k / 2, k / 2);
+        int w = nueva.getWidth();
+        int h = nueva.getHeight();
+        return SwingFXUtils.toFXImage(nueva.getSubimage(matriz.length/2, matriz.length / 2, w - 2 * (matriz.length/2), h - 2 * (matriz.length / 2)),null);
     }
-
-    /**
-     * @param imagen Imagen original.
-     * @param ancho Anchura del marco.
-     * @return Imagen con el marco.
-     */
-    public static BufferedImage enmarca(BufferedImage imagen, int alto, int ancho) {
+    
+    private BufferedImage enmarca(BufferedImage imagen, int alto, int ancho) {
         int w = imagen.getWidth();
         int h = imagen.getHeight();
         BufferedImage nueva = new BufferedImage(w + 2 * alto, h + 2 * ancho, BufferedImage.TYPE_INT_RGB);
@@ -78,30 +127,5 @@ import javafx.scene.image.Image;
         }
         nueva.setData(wr);
         return nueva;
-    }
-
-    /**
-     * @param imagen Imagen original.
-     * @param ancho Anchura dle marco.
-     * @return Iamgen sin el marco.
-     */
-    public static Image desenmarca(BufferedImage imagen, int ancho, int alto) {
-        int w = imagen.getWidth();
-        int h = imagen.getHeight();
-        return SwingFXUtils.toFXImage(imagen.getSubimage(ancho, alto, w - 2 * ancho, h - 2 * alto),null);
-    }
-
-    /**
-     * @param mat Matriz.
-     * @return Suma de las entradas.
-     */
-    public static double suma(double[][] mat) {
-        double suma = 0;
-        for (double[] mat1 : mat) {
-            for (int j = 0; j < mat[0].length; j++) {
-                suma += mat1[j];
-            }
-        }
-        return suma;
     }
 }

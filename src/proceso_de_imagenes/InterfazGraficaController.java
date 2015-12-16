@@ -34,6 +34,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -43,6 +44,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -80,13 +82,15 @@ public class InterfazGraficaController implements Initializable {
     
     //Definimos los utencilios de nuestra intefaz grafica:
     @FXML
-    private MenuItem abrir, nuevoItem, guardarComoI, salirI,cargaOriginal,acercaDe, cambiarBrillo;
+    private MenuItem abrir, nuevoItem, guardarComoI, salirI,cargaOriginal,acercaDe, cambiarBrillo, rotarItem;
     @FXML
     private Menu aplicarFiltros;
     @FXML
     private Label label;
     @FXML
     private Parent root;
+    @FXML
+    private ImageView originalPermanente;
     @FXML
     private ImageView imagen;
     @FXML
@@ -164,6 +168,24 @@ public class InterfazGraficaController implements Initializable {
                 break;
             case 20:
                 pintaIcono(event);
+                break;
+            case 21:
+                pintaBlur(event);
+                break;
+            case 22:
+                pintaMotionBlur(event);
+                break;
+            case 23:
+                pintaBordes(event);
+                break;
+            case 24:
+                pintaSharpen(event);
+                break;
+            case 25:
+                pintaEmboss(event);
+                break;
+            case 26:
+                fusiona(event);
                 break;
             default:
                 verOriginal(event);
@@ -259,6 +281,29 @@ public class InterfazGraficaController implements Initializable {
                 boton.setText("Aplicar filtro Icono");
                 noFiltro = 20;
                 break;
+            case "filtroBlur":
+                boton.setText("Aplicar filtro Blur");
+                noFiltro = 21;
+                break;
+            case "filtroMotionBlur":
+                boton.setText("Aplicar filtro Motion Blur");
+                noFiltro = 22;
+                break;
+            case "filtroBordes":
+                boton.setText("Aplicar filtro Bordes");
+                noFiltro = 23;
+                break;
+            case "filtroSharpen":
+                boton.setText("Aplicar filtro Sharpen");
+                noFiltro = 24;
+                break;
+            case "filtroEmboss":
+                boton.setText("Aplicar filtro Emboss");
+                noFiltro = 25;
+                break;
+            case "filtroBlending":
+                boton.setText("Aplicar filtro Blending");
+                noFiltro = 26;
                 /*case "filtroGris6":
                 boton.setText("Aplicar filtro Gris (Por # Grises)");
                 noFiltro = 18;
@@ -270,6 +315,81 @@ public class InterfazGraficaController implements Initializable {
                 */
                 
         }
+    }
+    
+    @FXML
+    private void rotarImagen(ActionEvent e){
+         principal.setDisable(true);
+        Stage second = new Stage();
+        
+        BorderPane border = new BorderPane();
+        Text encabezado = new Text("Seleccione cuantos grados desea girar la imagen \n");
+        
+        final ChoiceBox grados = new ChoiceBox(FXCollections.observableArrayList("0º","90º","180º","270º"));
+        grados.getSelectionModel().selectFirst();
+        
+        
+        Button aceptar = new Button("Aceptar");
+        Button cancelar = new Button("Cancelar");
+        
+        HBox botones = new HBox(aceptar, cancelar);
+        botones.setSpacing(20);
+        
+        border.setTop(encabezado);
+        border.setCenter(grados);
+        border.setBottom(botones);
+        
+        
+        Scene sscene = new Scene(border);
+        second.setScene(sscene);
+        second.setMinHeight(100);
+        second.setMinWidth(200);
+        
+        second.show();
+        
+        cancelar.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                second.close();
+                principal.setDisable(false);
+            }
+        });
+        
+        aceptar.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                final int numGrados;
+                if(grados.getValue().equals("90º")){
+                    numGrados = 90;
+                }else if(grados.getValue().equals("180º")){
+                    numGrados = 180;
+                }else if(grados.getValue().equals("270º")){
+                    numGrados = 270;
+                }else{
+                    numGrados = 0;
+                }               
+                
+                Thread hilo = new Thread(new Task() {
+                    
+                    @Override
+                    protected Object call() throws Exception {
+                        Rotacion rotada = new Rotacion(imagen.getImage());                        
+                        actual = rotada.rotar(numGrados);
+                        imagen.setImage(actual);
+                        stage.getScene().setRoot(principal);
+                        return null;
+                    }
+                });
+                hilo.start();
+                modificadores(true);
+                second.close();
+                principal.setDisable(false);
+            }
+        });
+        
+        
     }
     
     @FXML
@@ -337,8 +457,158 @@ public class InterfazGraficaController implements Initializable {
         
     }
     
+    private void fusiona(ActionEvent event){
+        FileChooser ventana = new FileChooser();
+        ventana.setTitle("Fusionar con");
+        File archivo = ventana.showOpenDialog(stage);
+        
+        if (archivo != null) {
+            try {
+                final Image imagenEntrada = new Image(new FileInputStream(archivo));
+                principal.setDisable(true);
+                Stage second = new Stage();
+                
+                BorderPane border = new BorderPane();
+                Text encabezado = new Text("Ingrese el porcentaje de visibilidad de la nueva imagen. \n"
+                        + "Los valores pueden ir entre 0 a 100");
+                
+                final Spinner numero = new Spinner(0, 100, 50);
+                numero.setEditable(true);
+                
+                Button aceptar = new Button("Aceptar");
+                Button cancelar = new Button("Cancelar");
+                
+                HBox botones = new HBox(aceptar, cancelar);
+                botones.setSpacing(20);
+                
+                border.setTop(encabezado);
+                border.setCenter(numero);
+                border.setBottom(botones);
+                
+                
+                Scene sscene = new Scene(border);
+                second.setScene(sscene);
+                second.setMinHeight(100);
+                second.setMinWidth(200);
+                
+                second.show();
+                
+                cancelar.setOnAction(new EventHandler<ActionEvent>() {
+                    
+                    @Override
+                    public void handle(ActionEvent event) {
+                        second.close();
+                        principal.setDisable(false);
+                    }
+                });
+                
+                aceptar.setOnAction(new EventHandler<ActionEvent>() {
+                    
+                    @Override
+                    public void handle(ActionEvent event) {
+                        final double alpha = (double)((int)numero.getValue())/100;
+                        Thread hilo = new Thread(new Task<Object>() {
+                            
+                            @Override
+                            protected Object call() throws Exception {
+                                Filtro externa = new Filtro(imagenEntrada);
+                                Blending interna = new Blending(imagen.getImage());
+                                actual = interna.licua(externa, 1-alpha);
+                                imagen.setImage(actual);
+                                stage.getScene().setRoot(principal);
+                                return null;
+                            }
+                        });
+                        hilo.start();
+                        modificadores(true);
+                        second.close();
+                        principal.setDisable(false);
+                    }
+                });
+            }catch(IOException e){
+            }
+        }
+    }
+    
+    
+    
+    private void pintaEmboss(ActionEvent event){
+        Thread hilo = new Thread(new Task() {
+            @Override
+            protected Object call() throws Exception {
+                Convolucion convolucion = new Convolucion(imagen.getImage());
+                actual = convolucion.emboss();
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
+    }
+    
+    private void pintaSharpen(ActionEvent event){
+        Thread hilo = new Thread(new Task() {
+            @Override
+            protected Object call() throws Exception {
+                Convolucion convolucion = new Convolucion(imagen.getImage());
+                actual = convolucion.sharpen();
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
+    }
+    
+    private void pintaBordes(ActionEvent event){
+        Thread hilo = new Thread(new Task() {
+            @Override
+            protected Object call() throws Exception {
+                Convolucion convolucion = new Convolucion(imagen.getImage());
+                actual = convolucion.bordes();
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
+    }
+    
+    private void pintaMotionBlur(ActionEvent event){
+        Thread hilo = new Thread(new Task() {
+            @Override
+            protected Object call() throws Exception {
+                Convolucion convolucion = new Convolucion(imagen.getImage());
+                actual = convolucion.motionBlur();
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
+    }
+    
+    private void pintaBlur(ActionEvent event){
+        Thread hilo = new Thread(new Task() {
+            @Override
+            protected Object call() throws Exception {
+                Convolucion convolucion = new Convolucion(imagen.getImage());
+                actual = convolucion.blur();
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
+    }
+    
     private void pintaIcono(ActionEvent event){
-                   principal.setDisable(true);
+        principal.setDisable(true);
         Stage second = new Stage();
         
         BorderPane border = new BorderPane();
@@ -384,28 +654,28 @@ public class InterfazGraficaController implements Initializable {
                     
                     @Override
                     protected Object call() throws Exception {
-                          FiltroIcono icono = new FiltroIcono(imagen.getImage());
-                actual = icono.filtroIcono(cuadricula, cuadricula);
-                imagen.setImage(actual);
-                stage.getScene().setRoot(principal);
-                return null;
+                        FiltroIcono icono = new FiltroIcono(imagen.getImage());
+                        actual = icono.filtroIcono(cuadricula, cuadricula);
+                        imagen.setImage(actual);
+                        stage.getScene().setRoot(principal);
+                        return null;
                     }
                 });
                 hilo.start();
                 modificadores(true);
                 second.close();
                 principal.setDisable(false);
-                     int resp = MessageBox.show(stage, "El icono se verá reflejado en su tamaño final después de guardar. \n"
-                + "¿Desea guardar su icono?", "Guarde su icono", MessageBox.YES | MessageBox.NO);
-        if(resp == MessageBox.YES){
-            guardarComo(event);
-        }
+                int resp = MessageBox.show(stage, "El icono se verá reflejado en su tamaño final después de guardar. \n"
+                        + "¿Desea guardar su icono?", "Guarde su icono", MessageBox.YES | MessageBox.NO);
+                if(resp == MessageBox.YES){
+                    guardarComo(event);
+                }
             }
-        });   
+        });
     }
     
     private void pintaMosaico(ActionEvent event){
-                principal.setDisable(true);
+        principal.setDisable(true);
         Stage second = new Stage();
         
         BorderPane border = new BorderPane();
@@ -451,11 +721,11 @@ public class InterfazGraficaController implements Initializable {
                     
                     @Override
                     protected Object call() throws Exception {
-                  FiltroMosaico mosaico = new FiltroMosaico(imagen.getImage());
-                actual = mosaico.sacaMosaico(cuadricula, cuadricula);
-                imagen.setImage(actual);
-                stage.getScene().setRoot(principal);
-                return null;
+                        FiltroMosaico mosaico = new FiltroMosaico(imagen.getImage());
+                        actual = mosaico.sacaMosaico(cuadricula, cuadricula);
+                        imagen.setImage(actual);
+                        stage.getScene().setRoot(principal);
+                        return null;
                     }
                 });
                 hilo.start();
@@ -786,6 +1056,7 @@ public class InterfazGraficaController implements Initializable {
             @Override
             protected Object call() throws Exception {
                 imagen.setImage(null);
+                originalPermanente.setImage(null);
                 actual = null;
                 stage.getScene().setRoot(principal);
                 return null;
@@ -815,6 +1086,7 @@ public class InterfazGraficaController implements Initializable {
                     @Override
                     protected Object call() throws Exception {
                         imagen.setImage(imagenEntrada);
+                        originalPermanente.setImage(imagenEntrada);
                         actual = imagenEntrada;
                         stage.getScene().setRoot(principal);
                         return null;
@@ -833,7 +1105,9 @@ public class InterfazGraficaController implements Initializable {
             cargaOriginal.setDisable(!valor);
             guardarComoI.setDisable(!valor);
             cambiarBrillo.setDisable(!valor);
+            rotarItem.setDisable(!valor);
         }else{
+            rotarItem.setDisable(!valor);
             cambiarBrillo.setDisable(!valor);
             guardarComoI.setDisable(!valor);
             aplicarFiltros.setDisable(!valor);

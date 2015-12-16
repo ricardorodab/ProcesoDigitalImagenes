@@ -58,5 +58,17 @@ public class Filtro {
         this.y = (int)imagen.getHeight();
     }
     
+    public int getX(){
+        return this.x;
+    }
+    
+    public int getY(){
+        return this.y;
+    }
+    
+    public Image getImage(){
+        return this.imagen;
+    }
+    
     
 } //Fin de Filtro.java

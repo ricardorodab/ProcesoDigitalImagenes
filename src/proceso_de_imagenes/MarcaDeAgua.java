@@ -59,6 +59,8 @@ class MarcaDeAgua {
                 break;
         }
         g.dispose();
-        return SwingFXUtils.toFXImage(nueva, null);
+        Filtro temp = new Filtro(SwingFXUtils.toFXImage(nueva, null));
+        Blending original = new Blending(src);
+        return original.licua(temp, .5);        
     }
 }

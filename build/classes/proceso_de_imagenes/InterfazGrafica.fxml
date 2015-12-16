@@ -106,7 +106,7 @@
                                  <children>
                                     <VBox alignment="CENTER" prefHeight="638.0" prefWidth="838.0">
                                        <children>
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="ANTES                                                  IMAGEN DIGITAL                                                DESPUÉS" textAlignment="CENTER" wrappingWidth="570.3170928955078" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="IMAGEN DIGITAL" textAlignment="CENTER" wrappingWidth="169.3170928955078" />
                                           <AnchorPane prefHeight="627.0" prefWidth="838.0">
                                              <children>
                                                 <SplitPane dividerPositions="0.5" prefHeight="429.0" prefWidth="838.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
