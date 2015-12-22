@@ -179,4 +179,60 @@ public class FiltroGris extends Filtro{
         }
         return imagenD;
     }
+    
+    public Image grisCuantos(int cantidad){
+        if (cantidad > 256 || cantidad < 0) {
+            //ERROR
+        }
+        double conversionFactor = 255 / (cantidad - 1);
+        int r,g,b;
+        WritableImage imagenD = new WritableImage(this.x, this.y);
+        PixelReader pixelI = this.imagen.getPixelReader();
+        PixelWriter pixelD = imagenD.getPixelWriter();
+        Color color;
+        for (int i = 0; i < this.x; i++) {
+            for (int j = 0; j < this.y; j++) {
+                color = pixelI.getColor(i, j);
+                r = (int) (color.getRed()*255);
+                g = (int) (color.getGreen()*255);
+                b = (int) (color.getBlue()*255);
+                double averageValue = (r+g+b)/3;
+                double gris = (int)((averageValue / conversionFactor) + 0.5) * conversionFactor;
+                gris = gris/256;
+                gris = Math.min(Math.max((gris), 0), 255);
+                pixelD.setColor(i, j, Color.color(gris,gris,gris));
+            }
+        }
+        return imagenD;
+    }
+    
+    public Image grisCuantosDithering(int cantidad){
+        if (cantidad > 256 || cantidad < 0) {
+            //ERROR
+        }       
+        double conversionFactor = 255 / (cantidad - 1);
+        int r,g,b;
+        WritableImage imagenD = new WritableImage(this.x, this.y);
+        PixelReader pixelI = this.imagen.getPixelReader();
+        PixelWriter pixelD = imagenD.getPixelWriter();
+        Color color;
+        for (int i = 0; i < this.x; i++) {
+            double error = 0;
+            for (int j = 0; j < this.y; j++) {
+                color = pixelI.getColor(i, j);
+                r = (int) (color.getRed()*255);
+                g = (int) (color.getGreen()*255);
+                b = (int) (color.getBlue()*255);
+                double averageValue = (r+g+b)/3;
+                double grisTemp = averageValue+error;
+                grisTemp = (int)((grisTemp / conversionFactor) + 0.5) * conversionFactor;
+                error = averageValue + error - grisTemp;
+                averageValue = grisTemp;
+                grisTemp = grisTemp/256;
+                grisTemp = Math.min(Math.max((grisTemp), 0), 255);
+                pixelD.setColor(i, j, Color.color(grisTemp,grisTemp,grisTemp));
+            }
+        }
+        return imagenD;
+    }
 } //Fin de FiltroGris.java

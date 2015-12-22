@@ -45,12 +45,19 @@
                                           <MenuItem fx:id="filtroMarcaDeAgua" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Marca de Agua" />
                                           <MenuItem fx:id="filtroMosaico" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Mosaico" />
                                           <MenuItem fx:id="filtroIcono" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Icono" />
-                                          <MenuItem fx:id="filtroBlur" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Blur" />
-                                          <MenuItem fx:id="filtroMotionBlur" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Motion Blur" />
-                                          <MenuItem fx:id="filtroBordes" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Bordes" />
-                                          <MenuItem fx:id="filtroSharpen" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Sharpen" />
-                                          <MenuItem fx:id="filtroEmboss" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Emboss" />
                                           <MenuItem fx:id="filtroBlending" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Blending" />
+                                          <Menu mnemonicParsing="false" text="Convolución y Oleos">
+                                            <items>
+                                                <MenuItem fx:id="filtroPromedio" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Promedio" />
+                                                <MenuItem fx:id="filtroMediana" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Mediana" />
+                                                <MenuItem fx:id="filtroOleo" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Oleo" />
+                                                <MenuItem fx:id="filtroEmboss" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Emboss" />
+                                                <MenuItem fx:id="filtroSharpen" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Sharpen" />
+                                                <MenuItem fx:id="filtroBordes" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Bordes" />
+                                                <MenuItem fx:id="filtroMotionBlur" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Motion Blur" />
+                                                <MenuItem fx:id="filtroBlur" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Blur" />
+                                            </items>
+                                          </Menu>
                                           <Menu fx:id="aplicarFiltros1" mnemonicParsing="false" text="Filtros de Gris">
                                              <items>
                                                 <MenuItem fx:id="filtroGris" mnemonicParsing="false" onAction="#cambiaFiltro" text="Por promedio" />
@@ -77,6 +84,7 @@
                                     </Menu>
                                     <MenuItem fx:id="cambiarBrillo" disable="true" mnemonicParsing="false" onAction="#cambiaBrillo" text="Cambiar brillo" />
                                     <MenuItem fx:id="rotarItem" disable="true" mnemonicParsing="false" onAction="#rotarImagen" text="Rotar Imagen" />
+                                    <MenuItem fx:id="rotarMatrizItem" disable="true" mnemonicParsing="false" onAction="#rotarImagen" text="Rotar Imagen (Matriz Rotación)" />
                               </items>
                             </Menu>
                             <Menu mnemonicParsing="false" text="Ayuda">

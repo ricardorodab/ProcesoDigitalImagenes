@@ -56,6 +56,15 @@ public class Convolucion extends Filtro{
         return aplicaConvolucion(this.imagen,matriz,(1.0/13.0),0);
     }
     
+    public Image promedio(){
+          double [][] matriz = new double[][]{
+            {1, 1, 1},
+            {1, 1, 1},
+            {1, 1, 1}
+        };
+        return aplicaConvolucion(this.imagen,matriz,(1.0/9.0),0);
+    }
+    
     public Image motionBlur(){
         double [][] matriz = new double[][]{
             {1, 0, 0, 0, 0, 0, 0, 0, 0},

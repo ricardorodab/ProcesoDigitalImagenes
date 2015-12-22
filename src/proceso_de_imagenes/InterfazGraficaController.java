@@ -82,7 +82,8 @@ public class InterfazGraficaController implements Initializable {
     
     //Definimos los utencilios de nuestra intefaz grafica:
     @FXML
-    private MenuItem abrir, nuevoItem, guardarComoI, salirI,cargaOriginal,acercaDe, cambiarBrillo, rotarItem;
+    private MenuItem abrir, nuevoItem, guardarComoI, salirI,cargaOriginal,
+            acercaDe, cambiarBrillo, rotarItem, rotarMatrizItem;
     @FXML
     private Menu aplicarFiltros;
     @FXML
@@ -186,6 +187,21 @@ public class InterfazGraficaController implements Initializable {
                 break;
             case 26:
                 fusiona(event);
+                break;
+            case 27:
+                pintaOleo(event);
+                break;
+            case 28:
+                pintaGris6(event);
+                break;
+            case 29:
+                pintaGris7(event);
+                break;
+            case 30:
+                pintaMediana(event);
+                break;
+            case 31:
+                pintaPromedio(event);
                 break;
             default:
                 verOriginal(event);
@@ -304,22 +320,35 @@ public class InterfazGraficaController implements Initializable {
             case "filtroBlending":
                 boton.setText("Aplicar filtro Blending");
                 noFiltro = 26;
-                /*case "filtroGris6":
+                break;
+            case "filtroOleo":
+                boton.setText("Aplicar filtro Oleo");
+                noFiltro = 27;
+                break;
+            case "filtroGris6":
                 boton.setText("Aplicar filtro Gris (Por # Grises)");
-                noFiltro = 18;
+                noFiltro = 28;
                 break;
-                case "filtroGris7":
-                boton.setText("Aplicar filtro Gris ()");
-                noFiltro = 19;
+            case "filtroGris7":
+                boton.setText("Aplicar filtro Gris con dithering");
+                noFiltro = 29;
                 break;
-                */
+            case "filtroMediana":
+                boton.setText("Aplicar filtro Mediana");
+                noFiltro = 30;
+                break;
+            case "filtroPromedio":
+                boton.setText("Aplicar filtro Promedio");
+                noFiltro = 31;
+                break;
+                
                 
         }
     }
     
     @FXML
     private void rotarImagen(ActionEvent e){
-         principal.setDisable(true);
+        principal.setDisable(true);
         Stage second = new Stage();
         
         BorderPane border = new BorderPane();
@@ -369,14 +398,20 @@ public class InterfazGraficaController implements Initializable {
                     numGrados = 270;
                 }else{
                     numGrados = 0;
-                }               
+                }
                 
                 Thread hilo = new Thread(new Task() {
                     
                     @Override
                     protected Object call() throws Exception {
-                        Rotacion rotada = new Rotacion(imagen.getImage());                        
-                        actual = rotada.rotar(numGrados);
+                        Rotacion rotada = new Rotacion(imagen.getImage());
+                        MenuItem fuente = (MenuItem)e.getSource();
+                        if(fuente.getId().equals("rotarItem")){
+                            actual = rotada.rotar(numGrados);                            
+                        }else{
+                            actual = rotada.rotarMatriz(numGrados);
+                            
+                        }                        
                         imagen.setImage(actual);
                         stage.getScene().setRoot(principal);
                         return null;
@@ -530,7 +565,50 @@ public class InterfazGraficaController implements Initializable {
         }
     }
     
+    private void pintaPromedio(ActionEvent event){
+        Thread hilo = new Thread(new Task() {
+            @Override
+            protected Object call() throws Exception {
+                Convolucion promedio = new Convolucion(imagen.getImage());
+                actual = promedio.promedio();
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
+    }
     
+    private void pintaMediana(ActionEvent event){
+        Thread hilo = new Thread(new Task() {
+            @Override
+            protected Object call() throws Exception {
+                FiltroOleo oleo = new FiltroOleo(imagen.getImage());
+                actual = oleo.mediana();
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
+    }
+    
+    private void pintaOleo(ActionEvent event){
+        Thread hilo = new Thread(new Task() {
+            @Override
+            protected Object call() throws Exception {
+                FiltroOleo oleo = new FiltroOleo(imagen.getImage());
+                actual = oleo.oleo();
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
+    }
     
     private void pintaEmboss(ActionEvent event){
         Thread hilo = new Thread(new Task() {
@@ -737,20 +815,200 @@ public class InterfazGraficaController implements Initializable {
     }
     
     private void pintaMarcaDeAgua(ActionEvent event){
-        Thread hilo = new Thread(new Task<Object>() {
+        principal.setDisable(true);
+        Stage second = new Stage();
+        
+        BorderPane border = new BorderPane();
+        Text encabezado = new Text("Seleccione la posición de su marca de agua \n");
+        
+        final ChoiceBox grados = new ChoiceBox(FXCollections.observableArrayList("Superior Izquierda","Superior Derecha",
+                "Inferior Izquierda","Inferior Derecha"));
+        grados.getSelectionModel().selectFirst();
+        
+        
+        Button aceptar = new Button("Aceptar");
+        Button cancelar = new Button("Cancelar");
+        
+        HBox botones = new HBox(aceptar, cancelar);
+        botones.setSpacing(20);
+        
+        border.setTop(encabezado);
+        border.setCenter(grados);
+        border.setBottom(botones);
+        
+        
+        Scene sscene = new Scene(border);
+        second.setScene(sscene);
+        second.setMinHeight(100);
+        second.setMinWidth(200);
+        
+        second.show();
+        
+        cancelar.setOnAction(new EventHandler<ActionEvent>() {
             
             @Override
-            protected Object call() throws Exception {
-                Image marca = MarcaDeAgua.filtra(imagen.getImage(),
-                        MarcaDeAgua.INF_IZQ, MarcaDeAgua.BLACK);
-                actual = marca;
-                imagen.setImage(actual);
-                stage.getScene().setRoot(principal);
-                return null;
+            public void handle(ActionEvent event) {
+                second.close();
+                principal.setDisable(false);
             }
         });
-        hilo.start();
-        modificadores(true);
+        
+        aceptar.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                second.close();
+                final int posicionMarca;
+                if(grados.getValue().equals("Superior Izquierda")){
+                    posicionMarca = MarcaDeAgua.SUP_IZQ;
+                }else if(grados.getValue().equals("Superior Derecha")){
+                    posicionMarca = MarcaDeAgua.SUP_DER;
+                }else if(grados.getValue().equals("Inferior Izquierda")){
+                    posicionMarca = MarcaDeAgua.INF_IZQ;
+                }else{
+                    posicionMarca = MarcaDeAgua.INF_DER;
+                }
+                Thread hilo = new Thread(new Task<Object>() {
+                    
+                    @Override
+                    protected Object call() throws Exception {
+                        Image marca = MarcaDeAgua.filtra(imagen.getImage(),
+                                posicionMarca, MarcaDeAgua.BLACK);
+                        actual = marca;
+                        imagen.setImage(actual);
+                        stage.getScene().setRoot(principal);
+                        return null;
+                    }
+                });
+                principal.setDisable(false);
+                hilo.start();
+                modificadores(true);
+            }
+        });
+    }
+    
+    private void pintaGris7(ActionEvent event){
+        principal.setDisable(true);
+        Stage second = new Stage();
+        
+        BorderPane border = new BorderPane();
+        Text encabezado = new Text("Ingrese la cantidad de grises que desea \n"
+                + "Los valores pueden ir entre 2 a 256");
+        
+        final Spinner numero = new Spinner(2, 256, 100);
+        numero.setEditable(true);
+        
+        Button aceptar = new Button("Aceptar");
+        Button cancelar = new Button("Cancelar");
+        
+        HBox botones = new HBox(aceptar, cancelar);
+        botones.setSpacing(20);
+        
+        border.setTop(encabezado);
+        border.setCenter(numero);
+        border.setBottom(botones);
+        
+        
+        Scene sscene = new Scene(border);
+        second.setScene(sscene);
+        second.setMinHeight(100);
+        second.setMinWidth(200);
+        
+        second.show();
+        
+        cancelar.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                second.close();
+                principal.setDisable(false);
+            }
+        });
+        
+        aceptar.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                final int cuadricula = (int)numero.getValue();
+                Thread hilo = new Thread(new Task<Object>() {
+                    
+                    @Override
+                    protected Object call() throws Exception {
+                        FiltroGris gris = new FiltroGris(imagen.getImage());
+                        actual = gris.grisCuantosDithering(cuadricula);
+                        imagen.setImage(actual);
+                        stage.getScene().setRoot(principal);
+                        return null;
+                    }
+                });
+                hilo.start();
+                modificadores(true);
+                second.close();
+                principal.setDisable(false);
+            }
+        });
+    }
+    
+    private void pintaGris6(ActionEvent event){
+        principal.setDisable(true);
+        Stage second = new Stage();
+        
+        BorderPane border = new BorderPane();
+        Text encabezado = new Text("Ingrese la cantidad de grises que desea \n"
+                + "Los valores pueden ir entre 2 a 256");
+        
+        final Spinner numero = new Spinner(2, 256, 100);
+        numero.setEditable(true);
+        
+        Button aceptar = new Button("Aceptar");
+        Button cancelar = new Button("Cancelar");
+        
+        HBox botones = new HBox(aceptar, cancelar);
+        botones.setSpacing(20);
+        
+        border.setTop(encabezado);
+        border.setCenter(numero);
+        border.setBottom(botones);
+        
+        
+        Scene sscene = new Scene(border);
+        second.setScene(sscene);
+        second.setMinHeight(100);
+        second.setMinWidth(200);
+        
+        second.show();
+        
+        cancelar.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                second.close();
+                principal.setDisable(false);
+            }
+        });
+        
+        aceptar.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                final int cuadricula = (int)numero.getValue();
+                Thread hilo = new Thread(new Task<Object>() {
+                    
+                    @Override
+                    protected Object call() throws Exception {
+                        FiltroGris gris = new FiltroGris(imagen.getImage());
+                        actual = gris.grisCuantos(cuadricula);
+                        imagen.setImage(actual);
+                        stage.getScene().setRoot(principal);
+                        return null;
+                    }
+                });
+                hilo.start();
+                modificadores(true);
+                second.close();
+                principal.setDisable(false);
+            }
+        });
     }
     
     private void pintaGris3(ActionEvent event){
@@ -1106,12 +1364,14 @@ public class InterfazGraficaController implements Initializable {
             guardarComoI.setDisable(!valor);
             cambiarBrillo.setDisable(!valor);
             rotarItem.setDisable(!valor);
+            rotarMatrizItem.setDisable(!valor);
         }else{
             rotarItem.setDisable(!valor);
             cambiarBrillo.setDisable(!valor);
             guardarComoI.setDisable(!valor);
             aplicarFiltros.setDisable(!valor);
             cargaOriginal.setDisable(!valor);
+            rotarMatrizItem.setDisable(!valor);
         }
     }
     
