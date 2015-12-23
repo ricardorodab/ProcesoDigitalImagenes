@@ -36,6 +36,7 @@
                                         <MenuItem fx:id="filtroRojo" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Rojo" />
                                           <MenuItem fx:id="filtroAzul" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Azul" />
                                           <MenuItem fx:id="filtroVerde" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Verde" />
+                                          <MenuItem fx:id="filtroRGB" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro RGB" />
                                           <MenuItem fx:id="filtroAzar" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Azar" />
                                           <MenuItem fx:id="filtroBlackLight" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro BlackLight" />
                                           <MenuItem fx:id="filtroNegativo" mnemonicParsing="false" onAction="#cambiaFiltro" text="Filtro Negativo" />
@@ -85,6 +86,7 @@
                                     <MenuItem fx:id="cambiarBrillo" disable="true" mnemonicParsing="false" onAction="#cambiaBrillo" text="Cambiar brillo" />
                                     <MenuItem fx:id="rotarItem" disable="true" mnemonicParsing="false" onAction="#rotarImagen" text="Rotar Imagen" />
                                     <MenuItem fx:id="rotarMatrizItem" disable="true" mnemonicParsing="false" onAction="#rotarImagen" text="Rotar Imagen (Matriz Rotación)" />
+                                    <MenuItem fx:id="webPalleteItem" disable="true" mnemonicParsing="false" onAction="#webPallete" text="Imagen Recursiva (Web Pallete)" />
                               </items>
                             </Menu>
                             <Menu mnemonicParsing="false" text="Ayuda">

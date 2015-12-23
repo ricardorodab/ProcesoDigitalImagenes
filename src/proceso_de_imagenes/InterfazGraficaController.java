@@ -54,6 +54,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -83,7 +84,7 @@ public class InterfazGraficaController implements Initializable {
     //Definimos los utencilios de nuestra intefaz grafica:
     @FXML
     private MenuItem abrir, nuevoItem, guardarComoI, salirI,cargaOriginal,
-            acercaDe, cambiarBrillo, rotarItem, rotarMatrizItem;
+            acercaDe, cambiarBrillo, rotarItem, rotarMatrizItem, webPalleteItem;
     @FXML
     private Menu aplicarFiltros;
     @FXML
@@ -202,6 +203,9 @@ public class InterfazGraficaController implements Initializable {
                 break;
             case 31:
                 pintaPromedio(event);
+                break;
+            case 32:
+                pintaRGB(event);
                 break;
             default:
                 verOriginal(event);
@@ -341,9 +345,108 @@ public class InterfazGraficaController implements Initializable {
                 boton.setText("Aplicar filtro Promedio");
                 noFiltro = 31;
                 break;
+            case "filtroRGB":
+                boton.setText("Aplicar filtro RGB");
+                noFiltro = 32;
+                break;
                 
                 
         }
+    }
+    
+    @FXML
+    private void webPallete(ActionEvent event) throws IOException{
+           /*Thread hilo = new Thread(new Task() {
+            @Override
+            protected Object call() throws Exception {
+                FiltroOleo oleo = new FiltroOleo(imagen.getImage());
+                actual = oleo.mediana();
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
+        */
+        ImagenesRecursivas recursiva = new ImagenesRecursivas(imagen.getImage());
+        recursiva.escribe(null, 20, 20);
+    }
+    
+    
+    private void pintaRGB(ActionEvent event){
+        principal.setDisable(true);
+        Stage second = new Stage();
+        
+        BorderPane border = new BorderPane();
+        Text encabezado = new Text("Ingrese los nuevos valores RGB \n"
+                + "Los valores pueden ir entre 1 a 9999");
+        
+        final Spinner numeroR = new Spinner(-255, 255, 0);
+        final Spinner numeroG = new Spinner(-255, 255, 0);
+        final Spinner numeroB = new Spinner(-255, 255, 0);
+        numeroR.setEditable(true);
+        numeroG.setEditable(true);
+        numeroB.setEditable(true);
+        
+        Button aceptar = new Button("Aceptar");
+        Button cancelar = new Button("Cancelar");
+        
+        HBox botones = new HBox(aceptar, cancelar);
+        botones.setSpacing(20);
+        
+        VBox red = new VBox(new Label("Rojo:"),numeroR);
+        VBox green = new VBox(new Label("Verde:"),numeroG);
+        VBox blue = new VBox(new Label("Azul:"),numeroB);
+        
+        HBox rgb = new HBox(red,green,blue);
+        
+        
+        border.setTop(encabezado);
+        border.setCenter(rgb);
+        border.setBottom(botones);
+        
+        
+        Scene sscene = new Scene(border);
+        second.setScene(sscene);
+        second.setMinHeight(100);
+        second.setMinWidth(200);
+        
+        second.show();
+        
+        cancelar.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                second.close();
+                principal.setDisable(false);
+            }
+        });
+        
+        aceptar.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                final int rojo = (int)numeroR.getValue();
+                final int verde = (int)numeroG.getValue();
+                final int azul = (int)numeroB.getValue();
+                Thread hilo = new Thread(new Task() {
+                    
+                    @Override
+                    protected Object call() throws Exception {
+                        FiltroRGB rgbFiltro = new FiltroRGB(imagen.getImage());
+                        actual = rgbFiltro.RGB(rojo, verde, azul);
+                        imagen.setImage(actual);
+                        stage.getScene().setRoot(principal);
+                        return null;
+                    }
+                });
+                hilo.start();
+                modificadores(true);
+                second.close();
+                principal.setDisable(false);
+            }
+        });
     }
     
     @FXML
@@ -407,11 +510,11 @@ public class InterfazGraficaController implements Initializable {
                         Rotacion rotada = new Rotacion(imagen.getImage());
                         MenuItem fuente = (MenuItem)e.getSource();
                         if(fuente.getId().equals("rotarItem")){
-                            actual = rotada.rotar(numGrados);                            
+                            actual = rotada.rotar(numGrados);
                         }else{
                             actual = rotada.rotarMatriz(numGrados);
                             
-                        }                        
+                        }
                         imagen.setImage(actual);
                         stage.getScene().setRoot(principal);
                         return null;
@@ -1365,6 +1468,7 @@ public class InterfazGraficaController implements Initializable {
             cambiarBrillo.setDisable(!valor);
             rotarItem.setDisable(!valor);
             rotarMatrizItem.setDisable(!valor);
+            webPalleteItem.setDisable(!valor);
         }else{
             rotarItem.setDisable(!valor);
             cambiarBrillo.setDisable(!valor);
@@ -1372,6 +1476,7 @@ public class InterfazGraficaController implements Initializable {
             aplicarFiltros.setDisable(!valor);
             cargaOriginal.setDisable(!valor);
             rotarMatrizItem.setDisable(!valor);
+            webPalleteItem.setDisable(!valor);
         }
     }
     
