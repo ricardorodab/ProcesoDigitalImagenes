@@ -85,7 +85,8 @@ public class InterfazGraficaController implements Initializable {
     //Definimos los utencilios de nuestra intefaz grafica:
     @FXML
     private MenuItem abrir, nuevoItem, guardarComoI, salirI,cargaOriginal,
-            acercaDe, cambiarBrillo, rotarItem, rotarMatrizItem, colorRealItem;
+            acercaDe, cambiarBrillo, rotarItem, rotarMatrizItem, colorRealItem,
+            webPalleteItem;
     @FXML
     private Menu aplicarFiltros;
     @FXML
@@ -355,9 +356,14 @@ public class InterfazGraficaController implements Initializable {
         }
     }
     
-    @FXML 
+    @FXML
     private void webPallete(ActionEvent event) throws IOException{
-        
+        ImagenesRecursivas recursiva = new ImagenesRecursivas(imagen.getImage());
+        try {
+            recursiva.escribeWebPallete("salida.html", 20, 20);
+        } catch (IOException ex) {
+            //ERROR
+        }
     }
     
     @FXML
@@ -448,7 +454,7 @@ public class InterfazGraficaController implements Initializable {
                         public void handle(ActionEvent event) {
                             second2.close();
                             String input = "";
-                            TextInputDialog dialog = new TextInputDialog("walter");
+                            TextInputDialog dialog = new TextInputDialog("ejemplo.html");
                             dialog.setTitle("Archivo de salida");
                             dialog.setHeaderText("Ingrese el nombre de archivo de salida:");
                             dialog.setContentText("Ingrese aqui el nombre de salida desea que tenga su archivo .html");
@@ -528,7 +534,7 @@ public class InterfazGraficaController implements Initializable {
                         public void handle(ActionEvent event) {
                             second2.close();
                             String input = "";
-                            TextInputDialog dialog = new TextInputDialog("walter");
+                            TextInputDialog dialog = new TextInputDialog("ejemplo.html");
                             dialog.setTitle("Archivo de salida");
                             dialog.setHeaderText("Ingrese el nombre de archivo de salida:");
                             dialog.setContentText("Ingrese aqui el nombre de salida desea que tenga su archivo .html");
@@ -1655,6 +1661,7 @@ public class InterfazGraficaController implements Initializable {
             rotarItem.setDisable(!valor);
             rotarMatrizItem.setDisable(!valor);
             colorRealItem.setDisable(!valor);
+            webPalleteItem.setDisable(!valor);
         }else{
             rotarItem.setDisable(!valor);
             cambiarBrillo.setDisable(!valor);
@@ -1663,6 +1670,7 @@ public class InterfazGraficaController implements Initializable {
             cargaOriginal.setDisable(!valor);
             rotarMatrizItem.setDisable(!valor);
             colorRealItem.setDisable(!valor);
+            webPalleteItem.setDisable(!valor);
         }
     }
     

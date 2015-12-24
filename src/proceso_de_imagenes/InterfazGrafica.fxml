@@ -87,6 +87,7 @@
                                     <MenuItem fx:id="rotarItem" disable="true" mnemonicParsing="false" onAction="#rotarImagen" text="Rotar Imagen" />
                                     <MenuItem fx:id="rotarMatrizItem" disable="true" mnemonicParsing="false" onAction="#rotarImagen" text="Rotar Imagen (Matriz Rotación)" />
                                     <MenuItem fx:id="colorRealItem" disable="true" mnemonicParsing="false" onAction="#colorReal" text="Imagen Recursiva (Color Real)" />
+                                    <MenuItem fx:id="webPalleteItem" disable="true" mnemonicParsing="false" onAction="#webPallete" text="Imagen Recursiva (Web Pallete)" />
                               </items>
                             </Menu>
                             <Menu mnemonicParsing="false" text="Ayuda">
