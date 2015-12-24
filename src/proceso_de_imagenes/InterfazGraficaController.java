@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
@@ -49,7 +50,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Spinner;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -84,7 +85,7 @@ public class InterfazGraficaController implements Initializable {
     //Definimos los utencilios de nuestra intefaz grafica:
     @FXML
     private MenuItem abrir, nuevoItem, guardarComoI, salirI,cargaOriginal,
-            acercaDe, cambiarBrillo, rotarItem, rotarMatrizItem, webPalleteItem;
+            acercaDe, cambiarBrillo, rotarItem, rotarMatrizItem, colorRealItem;
     @FXML
     private Menu aplicarFiltros;
     @FXML
@@ -354,23 +355,208 @@ public class InterfazGraficaController implements Initializable {
         }
     }
     
-    @FXML
+    @FXML 
     private void webPallete(ActionEvent event) throws IOException{
-           /*Thread hilo = new Thread(new Task() {
+        
+    }
+    
+    @FXML
+    private void colorReal(ActionEvent event) throws IOException{
+        principal.setDisable(true);
+        Stage second = new Stage();
+        
+        BorderPane border = new BorderPane();
+        Text encabezado = new Text("Para este filtro implemento dos métodos: "
+                + "\n a) Normal. Usando imágenes de resolución igual a la original lo que la hace más lento."
+                + "\n b) Rápido. Usando íconos, reduciendo el tamaño de la imagen realizando el proceso en segundos."
+                + "\n\n Por favor seleccione el método de su preferencia.");
+        
+        Button normal = new Button("Método normal");
+        Button rapido = new Button("Método rápido");
+        Button cancelar = new Button("Cancelar");
+        
+        HBox botones = new HBox(normal,rapido, cancelar);
+        botones.setSpacing(20);
+        
+        border.setTop(encabezado);
+        border.setBottom(botones);
+        
+        
+        Scene sscene = new Scene(border);
+        second.setScene(sscene);
+        second.setMinHeight(100);
+        second.setMinWidth(200);
+        
+        second.show();
+        
+        cancelar.setOnAction(new EventHandler<ActionEvent>() {
+            
             @Override
-            protected Object call() throws Exception {
-                FiltroOleo oleo = new FiltroOleo(imagen.getImage());
-                actual = oleo.mediana();
-                imagen.setImage(actual);
-                stage.getScene().setRoot(principal);
-                return null;
+            public void handle(ActionEvent event) {
+                second.close();
+                principal.setDisable(false);
             }
         });
-        hilo.start();
-        modificadores(true);
-        */
-        ImagenesRecursivas recursiva = new ImagenesRecursivas(imagen.getImage());
-        recursiva.escribe(null, 20, 20);
+        
+        normal.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                second.close();
+                int resp = MessageBox.show(stage, "Considere que este método puede tardar muchos minutos. \n"
+                        + "¿Desea continuar?", "¿Está seguro?", MessageBox.YES | MessageBox.NO);
+                if(resp == MessageBox.YES){
+                    Stage second2 = new Stage();
+                    
+                    BorderPane border = new BorderPane();
+                    Text encabezado = new Text("Ingrese el tamaño de los mosaicos \n"
+                            + "Los valores pueden ir entre 1 a 9999");
+                    
+                    final Spinner numero = new Spinner(1, 9999, 10);
+                    numero.setEditable(true);
+                    
+                    Button aceptar = new Button("Aceptar");
+                    Button cancelar = new Button("Cancelar");
+                    
+                    HBox botones = new HBox(aceptar, cancelar);
+                    botones.setSpacing(20);
+                    
+                    border.setTop(encabezado);
+                    border.setCenter(numero);
+                    border.setBottom(botones);
+                    
+                    
+                    Scene sscene = new Scene(border);
+                    second2.setScene(sscene);
+                    second2.setMinHeight(100);
+                    second2.setMinWidth(200);
+                    
+                    second2.show();
+                    
+                    cancelar.setOnAction(new EventHandler<ActionEvent>() {
+                        
+                        @Override
+                        public void handle(ActionEvent event) {
+                            second2.close();
+                            principal.setDisable(false);
+                        }
+                    });
+                    
+                    aceptar.setOnAction(new EventHandler<ActionEvent>() {
+                        
+                        @Override
+                        public void handle(ActionEvent event) {
+                            second2.close();
+                            String input = "";
+                            TextInputDialog dialog = new TextInputDialog("walter");
+                            dialog.setTitle("Archivo de salida");
+                            dialog.setHeaderText("Ingrese el nombre de archivo de salida:");
+                            dialog.setContentText("Ingrese aqui el nombre de salida desea que tenga su archivo .html");
+                            Optional<String> result = dialog.showAndWait();
+                            if (result.isPresent()){
+                                input = result.get();
+                            }else{
+                                input = "imagen_recursiva.html";
+                            }
+                            if(!input.endsWith(".html")){
+                                input = input.concat(".html");
+                            }
+                            final int cuadricula = (int)numero.getValue();
+                            ImagenesRecursivas recursiva = new ImagenesRecursivas(imagen.getImage());
+                            try {
+                                recursiva.escribe(input, cuadricula, cuadricula,false);
+                            } catch (IOException ex) {
+                                //ERROR
+                            }
+                            second2.close();
+                            principal.setDisable(false);
+                        }
+                    });
+                }else{
+                    principal.setDisable(false);
+                }
+            }
+        });
+        
+        rapido.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                second.close();
+                int resp = MessageBox.show(stage, "Considere que este método puede hacer que pierda calidad. \n"
+                        + "¿Desea continuar?", "¿Está seguro?", MessageBox.YES | MessageBox.NO);
+                if(resp == MessageBox.YES){
+                    Stage second2 = new Stage();
+                    
+                    BorderPane border = new BorderPane();
+                    Text encabezado = new Text("Ingrese el tamaño de los mosaicos \n"
+                            + "Los valores pueden ir entre 1 a 9999");
+                    
+                    final Spinner numero = new Spinner(1, 9999, 10);
+                    numero.setEditable(true);
+                    
+                    Button aceptar = new Button("Aceptar");
+                    Button cancelar = new Button("Cancelar");
+                    
+                    HBox botones = new HBox(aceptar, cancelar);
+                    botones.setSpacing(20);
+                    
+                    border.setTop(encabezado);
+                    border.setCenter(numero);
+                    border.setBottom(botones);
+                    
+                    
+                    Scene sscene = new Scene(border);
+                    second2.setScene(sscene);
+                    second2.setMinHeight(100);
+                    second2.setMinWidth(200);
+                    
+                    second2.show();
+                    
+                    cancelar.setOnAction(new EventHandler<ActionEvent>() {
+                        
+                        @Override
+                        public void handle(ActionEvent event) {
+                            second2.close();
+                            principal.setDisable(false);
+                        }
+                    });
+                    
+                    aceptar.setOnAction(new EventHandler<ActionEvent>() {
+                        
+                        @Override
+                        public void handle(ActionEvent event) {
+                            second2.close();
+                            String input = "";
+                            TextInputDialog dialog = new TextInputDialog("walter");
+                            dialog.setTitle("Archivo de salida");
+                            dialog.setHeaderText("Ingrese el nombre de archivo de salida:");
+                            dialog.setContentText("Ingrese aqui el nombre de salida desea que tenga su archivo .html");
+                            Optional<String> result = dialog.showAndWait();
+                            if (result.isPresent()){
+                                input = result.get();
+                            }else{
+                                input = "imagen_recursiva.html";
+                            }
+                            if(!input.endsWith(".html")){
+                                input = input.concat(".html");
+                            }
+                            final int cuadricula = (int)numero.getValue();
+                            ImagenesRecursivas recursiva = new ImagenesRecursivas(imagen.getImage());
+                            try {
+                                recursiva.escribe(input, cuadricula, cuadricula,true);
+                            } catch (IOException ex) {
+                                //ERROR
+                            }
+                            
+                            principal.setDisable(false);
+                        }
+                    });
+                }else{
+                    principal.setDisable(false);
+                }
+            }
+        });
     }
     
     
@@ -1468,7 +1654,7 @@ public class InterfazGraficaController implements Initializable {
             cambiarBrillo.setDisable(!valor);
             rotarItem.setDisable(!valor);
             rotarMatrizItem.setDisable(!valor);
-            webPalleteItem.setDisable(!valor);
+            colorRealItem.setDisable(!valor);
         }else{
             rotarItem.setDisable(!valor);
             cambiarBrillo.setDisable(!valor);
@@ -1476,7 +1662,7 @@ public class InterfazGraficaController implements Initializable {
             aplicarFiltros.setDisable(!valor);
             cargaOriginal.setDisable(!valor);
             rotarMatrizItem.setDisable(!valor);
-            webPalleteItem.setDisable(!valor);
+            colorRealItem.setDisable(!valor);
         }
     }
     
