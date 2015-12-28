@@ -86,9 +86,9 @@ public class InterfazGraficaController implements Initializable {
     @FXML
     private MenuItem abrir, nuevoItem, guardarComoI, salirI,cargaOriginal,
             acercaDe, cambiarBrillo, rotarItem, rotarMatrizItem, colorRealItem,
-            webPalleteItem;
+            webPalleteItem, lossy;
     @FXML
-    private Menu aplicarFiltros;
+    private Menu aplicarFiltros,comprimirMenu;
     @FXML
     private Label label;
     @FXML
@@ -357,6 +357,29 @@ public class InterfazGraficaController implements Initializable {
     }
     
     @FXML
+    private void descomprimeLossy(ActionEvent event){
+        FileChooser ventana = new FileChooser();
+        FileChooser.ExtensionFilter extFilter0 = new FileChooser.ExtensionFilter("procIMG files (*.procImg)", "*.procImg");
+        ventana.setTitle("Abrir");
+        ventana.setSelectedExtensionFilter(extFilter0);
+        File archivo = ventana.showOpenDialog(stage);
+        Thread hilo = new Thread(new Task<Object>() {
+            
+            @Override
+            protected Object call() throws Exception {
+                original = Compresion.descomprimeLossy(archivo);            
+                imagen.setImage(original);
+                originalPermanente.setImage(original);
+                actual = original;
+                stage.getScene().setRoot(principal);
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
+    }
+    
+    @FXML
     private void webPallete(ActionEvent event) throws IOException{
         ImagenesRecursivas recursiva = new ImagenesRecursivas(imagen.getImage());
         try {
@@ -364,6 +387,11 @@ public class InterfazGraficaController implements Initializable {
         } catch (IOException ex) {
             //ERROR
         }
+    }
+    
+    @FXML
+    private void comprimirLossy(ActionEvent event) throws IOException{
+        Compresion.comprimeLossy(new Filtro(imagen.getImage()));
     }
     
     @FXML
@@ -1662,6 +1690,8 @@ public class InterfazGraficaController implements Initializable {
             rotarMatrizItem.setDisable(!valor);
             colorRealItem.setDisable(!valor);
             webPalleteItem.setDisable(!valor);
+            lossy.setDisable(!valor);
+            comprimirMenu.setDisable(!valor);
         }else{
             rotarItem.setDisable(!valor);
             cambiarBrillo.setDisable(!valor);
@@ -1671,6 +1701,8 @@ public class InterfazGraficaController implements Initializable {
             rotarMatrizItem.setDisable(!valor);
             colorRealItem.setDisable(!valor);
             webPalleteItem.setDisable(!valor);
+            lossy.setDisable(!valor);
+            comprimirMenu.setDisable(!valor);
         }
     }
     

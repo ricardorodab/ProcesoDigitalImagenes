@@ -20,7 +20,7 @@ public class Convolucion extends Filtro{
             {0,  1,  1,  1,  1}
         };
         FiltroGris temp = new FiltroGris(aplicaConvolucion(
-                aplicaConvolucion(this.imagen, matriz, 1, 128), matriz,1,128));
+                aplicaConvolucion(this.getImage(), matriz, 1, 128), matriz,1,128));
         return temp.grisPromedio();
     }
     
@@ -30,7 +30,7 @@ public class Convolucion extends Filtro{
             {-1,  9, -1},
             {-1, -1, -1}
         };
-        return aplicaConvolucion(this.imagen,matriz,1,0);
+        return aplicaConvolucion(this.getImage(),matriz,1,0);
     }
     
     
@@ -42,7 +42,7 @@ public class Convolucion extends Filtro{
             {0,  0,  0, -2,  0},
             {0,  0,  0,  0, -1}
         };
-        return aplicaConvolucion(aplicaConvolucion(this.imagen, matriz, 1, 0),matriz,1,0);
+        return aplicaConvolucion(aplicaConvolucion(this.getImage(), matriz, 1, 0),matriz,1,0);
     }
     
     public Image blur(){
@@ -53,7 +53,7 @@ public class Convolucion extends Filtro{
             {0, 1, 1, 1, 0},
             {0, 0, 1, 0, 0}
         };
-        return aplicaConvolucion(this.imagen,matriz,(1.0/13.0),0);
+        return aplicaConvolucion(this.getImage(),matriz,(1.0/13.0),0);
     }
     
     public Image promedio(){
@@ -62,7 +62,7 @@ public class Convolucion extends Filtro{
             {1, 1, 1},
             {1, 1, 1}
         };
-        return aplicaConvolucion(this.imagen,matriz,(1.0/9.0),0);
+        return aplicaConvolucion(this.getImage(),matriz,(1.0/9.0),0);
     }
     
     public Image motionBlur(){
@@ -77,7 +77,7 @@ public class Convolucion extends Filtro{
             {0, 0, 0, 0, 0, 0, 0, 1, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 1}
         };
-        return aplicaConvolucion(this.imagen,matriz,(1.0/9.0),0);
+        return aplicaConvolucion(this.getImage(),matriz,(1.0/9.0),0);
     }
     
     private Image aplicaConvolucion(Image imagenOriginal, double[][] matriz,double factor,double bias) {

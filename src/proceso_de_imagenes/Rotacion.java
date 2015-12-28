@@ -31,11 +31,11 @@ public class Rotacion extends Filtro{
         int red,green,blue;
         WritableImage imagenD = null;
         if(grados == NOVENTA || grados == DOSCIENTOS_SETENTA){
-            imagenD = new WritableImage(this.y, this.x);
+            imagenD = new WritableImage(this.getY(), this.getX());
         }else if(grados == CIENTO_OCHENTA){
-            imagenD = new WritableImage(this.x, this.y);
+            imagenD = new WritableImage(this.getX(), this.getY());
         }else if (grados == CERO){
-            return this.imagen;
+            return this.getImage();
         }else{
             //ERROR
         }
@@ -49,12 +49,12 @@ public class Rotacion extends Filtro{
         }
         //cos = Math.cos(Math.toRadians(grados));
         //sin = Math.sin(Math.toRadians(grados));
-        int mitadX = (this.x/2)-1;
-        int mitadY = (this.y/2)-1;
+        int mitadX = (this.getX()/2)-1;
+        int mitadY = (this.getY()/2)-1;
         PixelWriter pixelD = imagenD.getPixelWriter();
-        PixelReader pixelI = this.imagen.getPixelReader();
-        for (int i = 0; i < this.x; i++) {
-            for (int j = 0; j < this.y; j++) {
+        PixelReader pixelI = this.getImage().getPixelReader();
+        for (int i = 0; i < this.getX(); i++) {
+            for (int j = 0; j < this.getY(); j++) {
                 Color colorOriginal = pixelI.getColor(i, j);
                 red = (int) (colorOriginal.getRed()*255);
                 green = (int) (colorOriginal.getGreen()*255);
@@ -86,28 +86,28 @@ public class Rotacion extends Filtro{
         int red,green,blue;
         WritableImage imagenD = null;
         if(grados == NOVENTA || grados == DOSCIENTOS_SETENTA){
-            imagenD = new WritableImage(this.y, this.x);
+            imagenD = new WritableImage(this.getY(), this.getX());
         }else if(grados == CIENTO_OCHENTA){
-            imagenD = new WritableImage(this.x, this.y);
+            imagenD = new WritableImage(this.getX(), this.getY());
         }else if (grados == CERO){
-            return this.imagen;
+            return this.getImage();
         }else{
             //ERROR
         }
         PixelWriter pixelD = imagenD.getPixelWriter();
-        PixelReader pixelI = this.imagen.getPixelReader();
-        for (int i = 0; i < this.x; i++) {
-            for (int j = 0; j < this.y; j++) {
+        PixelReader pixelI = this.getImage().getPixelReader();
+        for (int i = 0; i < this.getX(); i++) {
+            for (int j = 0; j < this.getY(); j++) {
                 Color colorOriginal = pixelI.getColor(i, j);
                 red = (int) (colorOriginal.getRed()*255);
                 green = (int) (colorOriginal.getGreen()*255);
                 blue = (int) (colorOriginal.getBlue()*255);
                 if(grados == NOVENTA){
-                    pixelD.setColor(j, this.x-i-1, Color.rgb(red, green, blue));
+                    pixelD.setColor(j, this.getX()-i-1, Color.rgb(red, green, blue));
                 }else if(grados == CIENTO_OCHENTA){
-                    pixelD.setColor(this.x-i-1, this.y-j-1, Color.rgb(red, green, blue));
+                    pixelD.setColor(this.getX()-i-1, this.getY()-j-1, Color.rgb(red, green, blue));
                 }else{
-                    pixelD.setColor(this.y-j-1, i, Color.rgb(red, green, blue));
+                    pixelD.setColor(this.getY()-j-1, i, Color.rgb(red, green, blue));
                 }
             }
         }

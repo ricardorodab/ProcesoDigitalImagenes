@@ -20,9 +20,9 @@ class FiltroIcono extends Filtro{
      * @return La imagen redimensionada.
      */
     public Image filtroIcono(int ancho, int alto) {
-        int newX = this.x / ancho;
-        int newY = this.y / alto;
-        FiltroMosaico mos = new FiltroMosaico(this.imagen);
+        int newX = this.getX() / ancho;
+        int newY = this.getY() / alto;
+        FiltroMosaico mos = new FiltroMosaico(this.getImage());
         Image icono = mos.sacaMosaico(newX, newY);
         BufferedImage mosaico = SwingFXUtils.fromFXImage(icono, null);
         java.awt.Image imagen2 = mosaico.getScaledInstance(ancho, alto, java.awt.Image.SCALE_SMOOTH);       

@@ -24,11 +24,11 @@ public class Blending extends Filtro{
     public Image licua(Filtro segunda, double porcentaje){
         int red,green,blue;
         int w,h;
-        w = Math.min(this.x, segunda.getX());
-        h = Math.min(this.y, segunda.getY());
+        w = Math.min(this.getX(), segunda.getX());
+        h = Math.min(this.getY(), segunda.getY());
         WritableImage imagenD = new WritableImage(w, h);
         PixelWriter pixelD = imagenD.getPixelWriter();
-        PixelReader pixelI = this.imagen.getPixelReader();
+        PixelReader pixelI = this.getImage().getPixelReader();
         PixelReader pixelI2 = segunda.getImage().getPixelReader();
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {

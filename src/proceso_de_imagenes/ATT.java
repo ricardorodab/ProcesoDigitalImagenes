@@ -23,7 +23,7 @@ public class ATT extends Filtro{
      * @return Imagen filtrada
      */
     public Image filtra() {
-        AltoContrasteFiltroInverso altoContraste = new AltoContrasteFiltroInverso((Image)this.imagen);
+        AltoContrasteFiltroInverso altoContraste = new AltoContrasteFiltroInverso((Image)this.getImage());
         BufferedImage ac = SwingFXUtils.fromFXImage(altoContraste.altoContraste(),null);
         int w = ac.getWidth();
         int h = ac.getHeight();

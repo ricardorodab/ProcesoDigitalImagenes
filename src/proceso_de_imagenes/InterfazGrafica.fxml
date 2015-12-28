@@ -25,6 +25,16 @@
                                     <MenuItem fx:id="nuevoitem" mnemonicParsing="false" onAction="#abrirNuevoItem" text="Nuevo" />
                                     <MenuItem fx:id="abrir" mnemonicParsing="false" onAction="#abrirImagen" text="Abrir" />
                                     <MenuItem fx:id="guardarComoI" disable="true" mnemonicParsing="false" onAction="#guardarComo" text="Guardar" />
+                                    <Menu fx:id="comprimirMenu" mnemonicParsing="false" text="Comprimir">
+                                       <items>
+                                          <MenuItem fx:id="lossy" disable="true" mnemonicParsing="false" onAction="#comprimirLossy" text="Comprimir Lossy" />
+                                       </items>
+                                    </Menu>
+                                    <Menu mnemonicParsing="false" text="Descomprimir">
+                                       <items>
+                                          <MenuItem fx:id="lossy1" mnemonicParsing="false" onAction="#descomprimeLossy" text="Descomprimir Lossy" />
+                                       </items>
+                                    </Menu>
                                 <MenuItem fx:id="salirI" mnemonicParsing="false" onAction="#salir" text="Salir" />
                               </items>
                             </Menu>

@@ -42,11 +42,11 @@ import javafx.scene.image.Image;
 public class Filtro {
     
     /** Imagen del filtro. */
-    protected Image imagen;
+    private Image imagen;
     /** La altitud de la imagen. */
-    protected int x;
+    private int x;
     /** La longitud de la imagen. */
-    protected int y;
+    private int y;
     
     /**
      * Metodo construccion de un filtro.

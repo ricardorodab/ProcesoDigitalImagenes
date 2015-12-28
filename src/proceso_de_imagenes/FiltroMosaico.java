@@ -25,25 +25,25 @@ public class FiltroMosaico extends Filtro{
         int terminoX,terminoY;
         double rojoRGB ,verdeRGB,azulRGB,red,green,blue;
         int promedio = 0;
-        WritableImage imagenD = new WritableImage(this.x, this.y);
+        WritableImage imagenD = new WritableImage(this.getX(), this.getY());
         PixelWriter pixelD = imagenD.getPixelWriter();
-        PixelReader pixelI = this.imagen.getPixelReader();
+        PixelReader pixelI = this.getImage().getPixelReader();
         red = green = blue = rojoRGB = verdeRGB = azulRGB = 0;
         terminoX = anchoX;
         terminoY = largoY;
-        for (int i = 0; i < this.x; i += anchoX) {
+        for (int i = 0; i < this.getX(); i += anchoX) {
             terminoY = largoY;
             terminoX = i+anchoX;
-            for (int j = 0; j < this.y; j += largoY) {                
+            for (int j = 0; j < this.getY(); j += largoY) {                
                 terminoY = j+largoY;
                 
                 
                 
                 for (int k = i; k < terminoX; k++) {
-                    if(k >= this.x)
+                    if(k >= this.getX())
                         break;
                     for (int l = j; l < terminoY; l++) {
-                        if(l >= this.y)
+                        if(l >= this.getY())
                             break;
                         Color colorOriginal = pixelI.getColor(k, l);
                         rojoRGB += colorOriginal.getRed();
@@ -63,10 +63,10 @@ public class FiltroMosaico extends Filtro{
                 
                 
                 for (int k = i; k < terminoX; k++) {
-                      if(k >= this.x)
+                      if(k >= this.getX())
                         break;
                     for (int l = j; l < terminoY; l++) {
-                       if(l >= this.y)
+                       if(l >= this.getY())
                             break;
                         pixelD.setColor(k, l, Color.color(red, green, blue));
                     }

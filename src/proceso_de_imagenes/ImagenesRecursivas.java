@@ -39,7 +39,7 @@ public class ImagenesRecursivas extends Filtro{
         int terminoX,terminoY,redInt,greenInt,blueInt;
         double rojoRGB ,verdeRGB,azulRGB,red,green,blue;
         int promedio = 0;
-        PixelReader pixelI = this.imagen.getPixelReader();
+        PixelReader pixelI = this.getImage().getPixelReader();
         red = green = blue = rojoRGB = verdeRGB = azulRGB = 0;
         terminoX = anchoX;
         terminoY = largoY;
@@ -57,24 +57,25 @@ public class ImagenesRecursivas extends Filtro{
         for (int i = 0; i < 256; i += 51) {
             for (int j = 0; j < 256; j += 51) {
                 for (int k = 0; k < 256; k += 51) {
-                    VectorImage3D vector = new VectorImage3D(i, j, k, creaImagen((2*i)-255, (j*2)-255, (k*2)-255,this.imagen));
+                    VectorImage3D vector = new VectorImage3D(i, j, k, creaImagen(
+                            (2*i)-255, (j*2)-255, (k*2)-255,this.getImage()));
                     filtros[numFiltros++] = vector;
                 }
             }
         }
         
-        for (int i = 0; i < this.x; i += anchoX) {
+        for (int i = 0; i < this.getX(); i += anchoX) {
             terminoY = largoY;
             terminoX = i+anchoX;
             LinkedList<String> lTemp = new LinkedList<>();
-            for (int j = 0; j < this.y; j += largoY) {
+            for (int j = 0; j < this.getY(); j += largoY) {
                 terminoY = j+largoY;
                 
                 for (int k = i; k < terminoX; k++) {
-                    if(k >= this.x)
+                    if(k >= this.getX())
                         break;
                     for (int l = j; l < terminoY; l++) {
-                        if(l >= this.y)
+                        if(l >= this.getY())
                             break;
                         Color colorOriginal = pixelI.getColor(k, l);
                         rojoRGB += colorOriginal.getRed();
@@ -167,16 +168,16 @@ public class ImagenesRecursivas extends Filtro{
         int terminoX,terminoY;
         double rojoRGB ,verdeRGB,azulRGB,red,green,blue;
         int promedio = 0;
-        PixelReader pixelI = this.imagen.getPixelReader();
+        PixelReader pixelI = this.getImage().getPixelReader();
         red = green = blue = rojoRGB = verdeRGB = azulRGB = 0;
         terminoX = anchoX;
         terminoY = largoY;
         Image imagenIconoUOriginal;
         if(icono){
-            FiltroIcono reducido = new FiltroIcono(this.imagen);
+            FiltroIcono reducido = new FiltroIcono(this.getImage());
             imagenIconoUOriginal = reducido.filtroIcono(anchoX, largoY);
         }else{
-            imagenIconoUOriginal = this.imagen;
+            imagenIconoUOriginal = this.getImage();
         }
         File archivoSalida = new File(salida);
         archivoSalida.createNewFile();
@@ -188,18 +189,18 @@ public class ImagenesRecursivas extends Filtro{
         escritor.write(texto);
         escritor.flush();
         
-        for (int i = 0; i < this.x; i += anchoX) {
+        for (int i = 0; i < this.getX(); i += anchoX) {
             terminoY = largoY;
             terminoX = i+anchoX;
             LinkedList<String> lTemp = new LinkedList<>();
-            for (int j = 0; j < this.y; j += largoY) {
+            for (int j = 0; j < this.getY(); j += largoY) {
                 terminoY = j+largoY;
                 
                 for (int k = i; k < terminoX; k++) {
-                    if(k >= this.x)
+                    if(k >= this.getX())
                         break;
                     for (int l = j; l < terminoY; l++) {
-                        if(l >= this.y)
+                        if(l >= this.getY())
                             break;
                         Color colorOriginal = pixelI.getColor(k, l);
                         rojoRGB += colorOriginal.getRed();

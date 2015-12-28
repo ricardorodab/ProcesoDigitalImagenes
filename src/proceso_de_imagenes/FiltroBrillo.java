@@ -26,11 +26,11 @@ public class FiltroBrillo extends Filtro{
     
     public Image filtroBrillo(){
         int red,green,blue,rojoRGB,verdeRGB,azulRGB;
-        WritableImage imagenD = new WritableImage(this.x, this.y);
+        WritableImage imagenD = new WritableImage(this.getX(), this.getY());
         PixelWriter pixelD = imagenD.getPixelWriter();
-        PixelReader pixelI = this.imagen.getPixelReader();
-        for (int i = 0; i < this.x; i++) {
-            for (int j = 0; j < this.y; j++) {
+        PixelReader pixelI = this.getImage().getPixelReader();
+        for (int i = 0; i < this.getX(); i++) {
+            for (int j = 0; j < this.getY(); j++) {
                 Color colorOriginal = pixelI.getColor(i, j);
                 rojoRGB = (int) (colorOriginal.getRed()*255);
                 verdeRGB = (int) (colorOriginal.getGreen()*255);

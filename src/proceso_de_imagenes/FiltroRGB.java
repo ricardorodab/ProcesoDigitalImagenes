@@ -56,11 +56,11 @@ public class FiltroRGB extends Filtro{
     
     public Image RGB(int rojo, int verde, int azul){
         int red,green,blue;
-        WritableImage imagenD = new WritableImage(this.x, this.y);
+        WritableImage imagenD = new WritableImage(this.getX(), this.getY());
         PixelWriter pixelD = imagenD.getPixelWriter();
-        PixelReader pixelI = this.imagen.getPixelReader();
-        for (int i = 0; i < this.x; i++) {
-            for (int j = 0; j < this.y; j++) {
+        PixelReader pixelI = this.getImage().getPixelReader();
+        for (int i = 0; i < this.getX(); i++) {
+            for (int j = 0; j < this.getY(); j++) {
                 Color colorOriginal = pixelI.getColor(i, j);
                 red = (int) (colorOriginal.getRed()*255);
                 green = (int) (colorOriginal.getGreen()*255);
@@ -83,12 +83,12 @@ public class FiltroRGB extends Filtro{
  * @return la imagen con el filtro verde.
  */
 public Image verde(){
-WritableImage imagenD = new WritableImage(this.x, this.y);
-PixelReader pixelI = this.imagen.getPixelReader();
+WritableImage imagenD = new WritableImage(this.getX(), this.getY());
+PixelReader pixelI = this.getImage().getPixelReader();
 PixelWriter pixelD = imagenD.getPixelWriter();
 Color color;
-for (int i = 0; i < this.x; i++) {
-for (int j = 0; j < this.y; j++) {
+for (int i = 0; i < this.getX(); i++) {
+for (int j = 0; j < this.getY(); j++) {
 color = pixelI.getColor(i, j);
 Color color2 = new Color(0, color.getGreen(), 0, color.getOpacity());
 pixelD.setColor(i, j, color2);
@@ -102,12 +102,12 @@ return imagenD;
  * @return la imagen con el filtro azul.
  */
 public Image azul(){
-WritableImage imagenD = new WritableImage(this.x, this.y);
-PixelReader pixelI = this.imagen.getPixelReader();
+WritableImage imagenD = new WritableImage(this.getX(), this.getY());
+PixelReader pixelI = this.getImage().getPixelReader();
 PixelWriter pixelD = imagenD.getPixelWriter();
 Color color;
-for (int i = 0; i < this.x; i++) {
-for (int j = 0; j < this.y; j++) {
+for (int i = 0; i < this.getX(); i++) {
+for (int j = 0; j < this.getY(); j++) {
 color = pixelI.getColor(i, j);
 Color color2 = new Color(0, 0, color.getBlue(), color.getOpacity());
 pixelD.setColor(i, j, color2);
@@ -121,12 +121,12 @@ return imagenD;
  * @return la imagen con el filtro rojo.
  */
 public Image rojo(){
-WritableImage imagenD = new WritableImage(this.x, this.y);
-PixelReader pixelI = this.imagen.getPixelReader();
+WritableImage imagenD = new WritableImage(this.getX(), this.getY());
+PixelReader pixelI = this.getImage().getPixelReader();
 PixelWriter pixelD = imagenD.getPixelWriter();
 Color color;
-for (int i = 0; i < this.x; i++) {
-for (int j = 0; j < this.y; j++) {
+for (int i = 0; i < this.getX(); i++) {
+for (int j = 0; j < this.getY(); j++) {
 color = pixelI.getColor(i, j);
 Color color2 = new Color(color.getRed(), 0, 0, color.getOpacity());
 pixelD.setColor(i, j, color2);
@@ -142,10 +142,10 @@ return imagenD;
 public Image azar(){
 Random aleatorio = new Random();
 int r,g,b;
-WritableImage imagenD = new WritableImage(this.x, this.y);
+WritableImage imagenD = new WritableImage(this.getX(), this.getY());
 PixelWriter pixelD = imagenD.getPixelWriter();
-for (int i = 0; i < this.x; i++) {
-for (int j = 0; j < this.y; j++) {
+for (int i = 0; i < this.getX(); i++) {
+for (int j = 0; j < this.getY(); j++) {
 r = aleatorio.nextInt(255);
 g = aleatorio.nextInt(255);
 b = aleatorio.nextInt(255);

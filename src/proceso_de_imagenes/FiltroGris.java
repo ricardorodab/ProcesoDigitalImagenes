@@ -64,12 +64,12 @@ public class FiltroGris extends Filtro{
      * @return Una imagen que es en escala de grises.
      */
     public Image grisPromedio(){
-        WritableImage imagenD = new WritableImage(this.x, this.y);
-        PixelReader pixelI = this.imagen.getPixelReader();
+        WritableImage imagenD = new WritableImage(this.getX(), this.getY());
+        PixelReader pixelI = this.getImage().getPixelReader();
         PixelWriter pixelD = imagenD.getPixelWriter();
         Color color;
-        for (int i = 0; i < this.x; i++) {
-            for (int j = 0; j < this.y; j++) {
+        for (int i = 0; i < this.getX(); i++) {
+            for (int j = 0; j < this.getY(); j++) {
                 color = pixelI.getColor(i, j);
                 double gris = ((color.getBlue()+color.getGreen()+color.getRed())/3);
                 Color color2 = new Color(gris, gris, gris, color.getOpacity());
@@ -84,12 +84,12 @@ public class FiltroGris extends Filtro{
      * @return Una imagen que es en escala de grises.
      */
     public Image grisValores(){
-        WritableImage imagenD = new WritableImage(this.x, this.y);
-        PixelReader pixelI = this.imagen.getPixelReader();
+        WritableImage imagenD = new WritableImage(this.getX(), this.getY());
+        PixelReader pixelI = this.getImage().getPixelReader();
         PixelWriter pixelD = imagenD.getPixelWriter();
         Color color;
-        for (int i = 0; i < this.x; i++) {
-            for (int j = 0; j < this.y; j++) {
+        for (int i = 0; i < this.getX(); i++) {
+            for (int j = 0; j < this.getY(); j++) {
                 color = pixelI.getColor(i, j);
                 double gris = (color.getRed()*.3)+ (color.getGreen()*.59)+ (color.getBlue()*.11);
                 Color color2 = new Color(gris,gris,gris, color.getOpacity());
@@ -104,12 +104,12 @@ public class FiltroGris extends Filtro{
      */
     public Image grisDesaturacion(){
         double r,g,b;
-        WritableImage imagenD = new WritableImage(this.x, this.y);
-        PixelReader pixelI = this.imagen.getPixelReader();
+        WritableImage imagenD = new WritableImage(this.getX(), this.getY());
+        PixelReader pixelI = this.getImage().getPixelReader();
         PixelWriter pixelD = imagenD.getPixelWriter();
         Color color;
-        for (int i = 0; i < this.x; i++) {
-            for (int j = 0; j < this.y; j++) {
+        for (int i = 0; i < this.getX(); i++) {
+            for (int j = 0; j < this.getY(); j++) {
                 color = pixelI.getColor(i, j);
                 r = color.getRed();
                 g = color.getGreen();
@@ -124,12 +124,12 @@ public class FiltroGris extends Filtro{
     
     public Image grisDescomposicion(boolean max){
         double r,g,b;
-        WritableImage imagenD = new WritableImage(this.x, this.y);
-        PixelReader pixelI = this.imagen.getPixelReader();
+        WritableImage imagenD = new WritableImage(this.getX(), this.getY());
+        PixelReader pixelI = this.getImage().getPixelReader();
         PixelWriter pixelD = imagenD.getPixelWriter();
         Color color;
-        for (int i = 0; i < this.x; i++) {
-            for (int j = 0; j < this.y; j++) {
+        for (int i = 0; i < this.getX(); i++) {
+            for (int j = 0; j < this.getY(); j++) {
                 color = pixelI.getColor(i, j);
                 r = color.getRed();
                 g = color.getGreen();
@@ -155,12 +155,12 @@ public class FiltroGris extends Filtro{
                     MessageBox.ICON_ERROR | MessageBox.ABORT);
         }
         double r,g,b;
-        WritableImage imagenD = new WritableImage(this.x, this.y);
-        PixelReader pixelI = this.imagen.getPixelReader();
+        WritableImage imagenD = new WritableImage(this.getX(), this.getY());
+        PixelReader pixelI = this.getImage().getPixelReader();
         PixelWriter pixelD = imagenD.getPixelWriter();
         Color color;
-        for (int i = 0; i < this.x; i++) {
-            for (int j = 0; j < this.y; j++) {
+        for (int i = 0; i < this.getX(); i++) {
+            for (int j = 0; j < this.getY(); j++) {
                 color = pixelI.getColor(i, j);
                 r = color.getRed();
                 g = color.getGreen();
@@ -186,12 +186,12 @@ public class FiltroGris extends Filtro{
         }
         double conversionFactor = 255 / (cantidad - 1);
         int r,g,b;
-        WritableImage imagenD = new WritableImage(this.x, this.y);
-        PixelReader pixelI = this.imagen.getPixelReader();
+        WritableImage imagenD = new WritableImage(this.getX(), this.getY());
+        PixelReader pixelI = this.getImage().getPixelReader();
         PixelWriter pixelD = imagenD.getPixelWriter();
         Color color;
-        for (int i = 0; i < this.x; i++) {
-            for (int j = 0; j < this.y; j++) {
+        for (int i = 0; i < this.getX(); i++) {
+            for (int j = 0; j < this.getY(); j++) {
                 color = pixelI.getColor(i, j);
                 r = (int) (color.getRed()*255);
                 g = (int) (color.getGreen()*255);
@@ -212,13 +212,13 @@ public class FiltroGris extends Filtro{
         }       
         double conversionFactor = 255 / (cantidad - 1);
         int r,g,b;
-        WritableImage imagenD = new WritableImage(this.x, this.y);
-        PixelReader pixelI = this.imagen.getPixelReader();
+        WritableImage imagenD = new WritableImage(this.getX(), this.getY());
+        PixelReader pixelI = this.getImage().getPixelReader();
         PixelWriter pixelD = imagenD.getPixelWriter();
         Color color;
-        for (int i = 0; i < this.x; i++) {
+        for (int i = 0; i < this.getX(); i++) {
             double error = 0;
-            for (int j = 0; j < this.y; j++) {
+            for (int j = 0; j < this.getY(); j++) {
                 color = pixelI.getColor(i, j);
                 r = (int) (color.getRed()*255);
                 g = (int) (color.getGreen()*255);

@@ -36,23 +36,23 @@ public class FiltroOleo extends Filtro{
         LinkedList<Double> medianaB = new LinkedList<Double>();
         int terminoX,terminoY;
         double red,green,blue;
-        WritableImage imagenD = new WritableImage(this.x, this.y);
+        WritableImage imagenD = new WritableImage(this.getX(), this.getY());
         PixelWriter pixelD = imagenD.getPixelWriter();
-        PixelReader pixelI = this.imagen.getPixelReader();
+        PixelReader pixelI = this.getImage().getPixelReader();
         red = green = blue = 0;
         terminoX = anchoX;
         terminoY = largoY;
-        for (int i = 0; i < this.x; i++) {
+        for (int i = 0; i < this.getX(); i++) {
             terminoY = largoY;
             terminoX = i+anchoX;
-            for (int j = 0; j < this.y; j++) {
+            for (int j = 0; j < this.getY(); j++) {
                 terminoY = j+largoY;               
                 
                 for (int k = i; k < terminoX; k++) {
-                    if(k >= this.x)
+                    if(k >= this.getX())
                         break;
                     for (int l = j; l < terminoY; l++) {
-                        if(l >= this.y)
+                        if(l >= this.getY())
                             break;
                         Color colorOriginal = pixelI.getColor(k, l);
                         medianaR.add(colorOriginal.getRed());
@@ -88,16 +88,16 @@ public class FiltroOleo extends Filtro{
         Map<Double,Integer> frecuenciaB = new HashMap<Double,Integer>();
         int terminoX,terminoY;
         double red,green,blue;
-        WritableImage imagenD = new WritableImage(this.x, this.y);
+        WritableImage imagenD = new WritableImage(this.getX(), this.getY());
         PixelWriter pixelD = imagenD.getPixelWriter();
-        PixelReader pixelI = this.imagen.getPixelReader();
+        PixelReader pixelI = this.getImage().getPixelReader();
         red = green = blue = 0;
         terminoX = anchoX;
         terminoY = largoY;
-        for (int i = 0; i < this.x; i++) {
+        for (int i = 0; i < this.getX(); i++) {
             terminoY = largoY;
             terminoX = i+anchoX;
-            for (int j = 0; j < this.y; j++) {
+            for (int j = 0; j < this.getY(); j++) {
                 terminoY = j+largoY;
                 
                 double maxR = Double.NEGATIVE_INFINITY;
@@ -106,10 +106,10 @@ public class FiltroOleo extends Filtro{
                 
                 
                 for (int k = i; k < terminoX; k++) {
-                    if(k >= this.x)
+                    if(k >= this.getX())
                         break;
                     for (int l = j; l < terminoY; l++) {
-                        if(l >= this.y)
+                        if(l >= this.getY())
                             break;
                         Color colorOriginal = pixelI.getColor(k, l);
                         
