@@ -100,6 +100,7 @@
                                     <MenuItem fx:id="webPalleteItem" disable="true" mnemonicParsing="false" onAction="#webPallete" text="Imagen Recursiva (Web Pallete)" />
                                     <MenuItem fx:id="ampliarReducirItem" disable="true" mnemonicParsing="false" onAction="#ampliarReducir" text="Ampliar/Reducir" />
                                     <MenuItem fx:id="semitonosItem" disable="true" mnemonicParsing="false" onAction="#semitonos" text="Semitonos" />
+                                    <MenuItem fx:id="fotomosaicoItem" disable="true" mnemonicParsing="false" onAction="#fotomosaico" text="Fotomosaico" />
                               </items>
                             </Menu>
                             <Menu mnemonicParsing="false" text="Ayuda">

@@ -160,7 +160,7 @@ public class ImagenesRecursivas extends Filtro{
         Desktop.getDesktop().browse(archivoSalida.toURI());
     }
     
-    public void escribe(String salida,int anchoX, int largoY,boolean icono) throws IOException{
+    public void colorReal(String salida,int anchoX, int largoY,boolean icono) throws IOException{
         LinkedList<LinkedList<String>> imagenes = new LinkedList<>();
         int terminoX,terminoY;
         double rojoRGB ,verdeRGB,azulRGB,red,green,blue;

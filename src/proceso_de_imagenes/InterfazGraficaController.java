@@ -32,6 +32,7 @@ import javafx.scene.image.Image;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -46,6 +47,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DialogEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -59,8 +61,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javax.imageio.ImageIO;
 import jfx.messagebox.MessageBox;
 
@@ -88,7 +92,7 @@ public class InterfazGraficaController implements Initializable {
     @FXML
     private MenuItem abrir, nuevoItem, guardarComoI, salirI,cargaOriginal,
             acercaDe, cambiarBrillo, rotarItem, rotarMatrizItem, colorRealItem,
-            webPalleteItem, lossy,ampliarReducirItem,semitonosItem;
+            webPalleteItem, lossy,ampliarReducirItem,semitonosItem, fotomosaicoItem;
     @FXML
     private Menu aplicarFiltros,comprimirMenu;
     @FXML
@@ -359,13 +363,21 @@ public class InterfazGraficaController implements Initializable {
     }
     
     @FXML
+    private void fotomosaico(ActionEvent event) throws IOException{
+        DirectoryChooser ventana = new DirectoryChooser();
+        ventana.setTitle("Abrir");
+        File archivo = ventana.showDialog(stage);
+        Fotomosaico.sacaFotomosaico(archivo, "salida.html");
+    }
+    
+    @FXML
     private void semitonos(ActionEvent event) throws IOException{
-        Semitonos.semitono(imagen.getImage(), 2, "ejemplo.html");
+        Semitonos.semitono(imagen.getImage(), 3, "ejemplo.html");
     }
     
     @FXML
     private void ampliarReducir(ActionEvent event){
-               principal.setDisable(true);
+        principal.setDisable(true);
         Stage second = new Stage();
         
         BorderPane border = new BorderPane();
@@ -432,21 +444,34 @@ public class InterfazGraficaController implements Initializable {
                 second.close();
                 principal.setDisable(false);
             }
-        });       
+        });
+        second.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            
+            @Override
+            public void handle(WindowEvent event) {
+                principal.setDisable(false);
+            }
+        });
     }
     
     @FXML
     private void descomprimeLossy(ActionEvent event){
         FileChooser ventana = new FileChooser();
-        FileChooser.ExtensionFilter extFilter0 = new FileChooser.ExtensionFilter("procIMG files (*.procImg)", "*.procImg");
         ventana.setTitle("Abrir");
-        ventana.setSelectedExtensionFilter(extFilter0);
+        FileChooser.ExtensionFilter png = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
+        FileChooser.ExtensionFilter jpg = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.jpg");
+        FileChooser.ExtensionFilter jpeg = new FileChooser.ExtensionFilter("JPEG files (*.jpeg)", "*.jpeg");
+        ventana.getExtensionFilters().add(png);
+        ventana.getExtensionFilters().add(jpg);
+        ventana.getExtensionFilters().add(jpeg);
         File archivo = ventana.showOpenDialog(stage);
+        if(archivo == null)
+            return;
         Thread hilo = new Thread(new Task<Object>() {
             
             @Override
             protected Object call() throws Exception {
-                original = Compresion.descomprimeLossy(archivo);            
+                original = Compresion.descomprimeLossy(archivo);
                 imagen.setImage(original);
                 originalPermanente.setImage(original);
                 actual = original;
@@ -546,6 +571,14 @@ public class InterfazGraficaController implements Initializable {
                     
                     second2.show();
                     
+                    second2.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                        
+                        @Override
+                        public void handle(WindowEvent event) {
+                            principal.setDisable(false);
+                        }
+                    });
+                    
                     cancelar.setOnAction(new EventHandler<ActionEvent>() {
                         
                         @Override
@@ -562,6 +595,13 @@ public class InterfazGraficaController implements Initializable {
                             second2.close();
                             String input = "";
                             TextInputDialog dialog = new TextInputDialog("ejemplo.html");
+                            
+                            dialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
+                                @Override
+                                public void handle(DialogEvent event) {
+                                    principal.setDisable(false);
+                                }
+                            });
                             dialog.setTitle("Archivo de salida");
                             dialog.setHeaderText("Ingrese el nombre de archivo de salida:");
                             dialog.setContentText("Ingrese aqui el nombre de salida desea que tenga su archivo .html");
@@ -577,7 +617,7 @@ public class InterfazGraficaController implements Initializable {
                             final int cuadricula = (int)numero.getValue();
                             ImagenesRecursivas recursiva = new ImagenesRecursivas(imagen.getImage());
                             try {
-                                recursiva.escribe(input, cuadricula, cuadricula,false);
+                                recursiva.colorReal(input, cuadricula, cuadricula,false);
                             } catch (IOException ex) {
                                 //ERROR
                             }
@@ -657,7 +697,7 @@ public class InterfazGraficaController implements Initializable {
                             final int cuadricula = (int)numero.getValue();
                             ImagenesRecursivas recursiva = new ImagenesRecursivas(imagen.getImage());
                             try {
-                                recursiva.escribe(input, cuadricula, cuadricula,true);
+                                recursiva.colorReal(input, cuadricula, cuadricula,true);
                             } catch (IOException ex) {
                                 //ERROR
                             }
@@ -668,6 +708,13 @@ public class InterfazGraficaController implements Initializable {
                 }else{
                     principal.setDisable(false);
                 }
+            }
+        });
+        second.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            
+            @Override
+            public void handle(WindowEvent event) {
+                principal.setDisable(false);
             }
         });
     }
@@ -743,6 +790,13 @@ public class InterfazGraficaController implements Initializable {
                 hilo.start();
                 modificadores(true);
                 second.close();
+                principal.setDisable(false);
+            }
+        });
+        second.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            
+            @Override
+            public void handle(WindowEvent event) {
                 principal.setDisable(false);
             }
         });
@@ -825,7 +879,13 @@ public class InterfazGraficaController implements Initializable {
                 principal.setDisable(false);
             }
         });
-        
+        second.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            
+            @Override
+            public void handle(WindowEvent event) {
+                principal.setDisable(false);
+            }
+        });
         
     }
     
@@ -890,13 +950,25 @@ public class InterfazGraficaController implements Initializable {
                 principal.setDisable(false);
             }
         });
-        
+        second.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            
+            @Override
+            public void handle(WindowEvent event) {
+                principal.setDisable(false);
+            }
+        });
         
     }
     
     private void fusiona(ActionEvent event){
         FileChooser ventana = new FileChooser();
         ventana.setTitle("Fusionar con");
+        FileChooser.ExtensionFilter png = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
+        FileChooser.ExtensionFilter jpg = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.jpg");
+        FileChooser.ExtensionFilter jpeg = new FileChooser.ExtensionFilter("JPEG files (*.jpeg)", "*.jpeg");
+        ventana.getExtensionFilters().add(png);
+        ventana.getExtensionFilters().add(jpg);
+        ventana.getExtensionFilters().add(jpeg);
         File archivo = ventana.showOpenDialog(stage);
         
         if (archivo != null) {
@@ -1152,6 +1224,13 @@ public class InterfazGraficaController implements Initializable {
                 }
             }
         });
+        second.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            
+            @Override
+            public void handle(WindowEvent event) {
+                principal.setDisable(false);
+            }
+        });
     }
     
     private void pintaMosaico(ActionEvent event){
@@ -1211,6 +1290,13 @@ public class InterfazGraficaController implements Initializable {
                 hilo.start();
                 modificadores(true);
                 second.close();
+                principal.setDisable(false);
+            }
+        });
+        second.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            
+            @Override
+            public void handle(WindowEvent event) {
                 principal.setDisable(false);
             }
         });
@@ -1287,6 +1373,13 @@ public class InterfazGraficaController implements Initializable {
                 modificadores(true);
             }
         });
+        second.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            
+            @Override
+            public void handle(WindowEvent event) {
+                principal.setDisable(false);
+            }
+        });
     }
     
     private void pintaGris7(ActionEvent event){
@@ -1349,6 +1442,13 @@ public class InterfazGraficaController implements Initializable {
                 principal.setDisable(false);
             }
         });
+        second.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            
+            @Override
+            public void handle(WindowEvent event) {
+                principal.setDisable(false);
+            }
+        });
     }
     
     private void pintaGris6(ActionEvent event){
@@ -1408,6 +1508,13 @@ public class InterfazGraficaController implements Initializable {
                 hilo.start();
                 modificadores(true);
                 second.close();
+                principal.setDisable(false);
+            }
+        });
+        second.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            
+            @Override
+            public void handle(WindowEvent event) {
                 principal.setDisable(false);
             }
         });
@@ -1696,7 +1803,7 @@ public class InterfazGraficaController implements Initializable {
             ImageIO.write(SwingFXUtils.fromFXImage(actual, null),
                     "png", file);
         } catch (IOException ex) {
-            
+            System.out.println("Metodo guardarComo");
             
         }
         
@@ -1735,6 +1842,12 @@ public class InterfazGraficaController implements Initializable {
     private void abrirImagen(ActionEvent event){
         FileChooser ventana = new FileChooser();
         ventana.setTitle("Abrir");
+        FileChooser.ExtensionFilter png = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
+        FileChooser.ExtensionFilter jpg = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.jpg");
+        FileChooser.ExtensionFilter jpeg = new FileChooser.ExtensionFilter("JPEG files (*.jpeg)", "*.jpeg");
+        ventana.getExtensionFilters().add(png);
+        ventana.getExtensionFilters().add(jpg);
+        ventana.getExtensionFilters().add(jpeg);
         File archivo = ventana.showOpenDialog(stage);
         
         if (archivo != null) {
@@ -1774,6 +1887,7 @@ public class InterfazGraficaController implements Initializable {
             comprimirMenu.setDisable(!valor);
             ampliarReducirItem.setDisable(!valor);
             semitonosItem.setDisable(!valor);
+            fotomosaicoItem.setDisable(!valor);
         }else{
             rotarItem.setDisable(!valor);
             cambiarBrillo.setDisable(!valor);
@@ -1787,6 +1901,7 @@ public class InterfazGraficaController implements Initializable {
             comprimirMenu.setDisable(!valor);
             ampliarReducirItem.setDisable(!valor);
             semitonosItem.setDisable(!valor);
+             fotomosaicoItem.setDisable(!valor);
         }
     }
     

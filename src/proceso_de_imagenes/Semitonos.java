@@ -12,6 +12,7 @@ import javafx.scene.image.WritableImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.LinkedList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
@@ -26,8 +27,8 @@ import javax.imageio.ImageIO;
 public class Semitonos {
     private static final int NUM_TONO = 10;
     
-    public static void semitono(Image img,int calidad, String salida) throws IOException{
-        creaSemitonos(10);
+    public static void semitono(Image img,int cuadranteFoto, String salida) throws IOException{
+        creaSemitonos(20);
         File archivoSalida = new File(salida);
         archivoSalida.createNewFile();
         FileWriter html = new FileWriter(archivoSalida);
@@ -38,19 +39,20 @@ public class Semitonos {
         escritor.flush();
         String imagenTemp = "";
         
-        
+        LinkedList<LinkedList<String>> imagenes = new LinkedList<>();
         int terminoX,terminoY;
         double rojoRGB ,verdeRGB,azulRGB,red,green,blue;
         int promedio = 0;
         PixelReader pixelI = img.getPixelReader();
         red = green = blue = rojoRGB = verdeRGB = azulRGB = 0;
-        terminoX = calidad;
-        terminoY = calidad;
-        for (int i = 0; i < img.getWidth(); i += calidad) {
-            terminoY = calidad;
-            terminoX = i+calidad;
-            for (int j = 0; j < img.getHeight(); j += calidad) {
-                terminoY = j+calidad;
+        terminoX = cuadranteFoto;
+        terminoY = cuadranteFoto;
+        for (int i = 0; i < img.getWidth(); i += cuadranteFoto) {
+            terminoY = cuadranteFoto;
+            terminoX = i+cuadranteFoto;
+            LinkedList<String> lTemp = new LinkedList<>();
+            for (int j = 0; j < img.getHeight(); j += cuadranteFoto) {
+                terminoY = j+cuadranteFoto;
                 
                 
                 
@@ -100,13 +102,20 @@ public class Semitonos {
                     imagenTemp = "10.png";
                 }
                 texto = "<td><img src=\""+imagenTemp+"\" width=\"4\", height=\"4\"></td> \n";
-                escritor.write(texto);
+                lTemp.add(texto);
+            }
+            imagenes.add(lTemp);
+        }
+        for (int i = 0; i < imagenes.getFirst().size(); i++) {
+            for (LinkedList<String> lTemp : imagenes) {
+                if(i >= lTemp.size())
+                    break;
+                escritor.write(lTemp.get(i));
                 escritor.flush();
             }
             texto = "</tr><tr> \n";
             escritor.write(texto);
             escritor.flush();
-            
         }
         texto = "</tr> \n"
                 +"</table></center>";
@@ -160,8 +169,9 @@ public class Semitonos {
         Desktop.getDesktop().browse(archivoSalida.toURI());
     */}
     
-    private static void creaSemitonos(int x) throws IOException{
-        int y = x;
+    private static void creaSemitonos(int TamanoPuntos) throws IOException{
+        int y,x;
+        y = x = TamanoPuntos;
         WritableImage imagen = null;
         for(int i = 0; i < NUM_TONO; i++){
             imagen = new WritableImage(x,y);
