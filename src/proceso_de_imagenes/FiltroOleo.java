@@ -5,18 +5,14 @@
 */
 package proceso_de_imagenes;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import javax.print.attribute.HashAttributeSet;
 
 /**
  *

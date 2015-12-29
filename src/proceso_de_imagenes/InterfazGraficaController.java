@@ -52,10 +52,12 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -86,7 +88,7 @@ public class InterfazGraficaController implements Initializable {
     @FXML
     private MenuItem abrir, nuevoItem, guardarComoI, salirI,cargaOriginal,
             acercaDe, cambiarBrillo, rotarItem, rotarMatrizItem, colorRealItem,
-            webPalleteItem, lossy;
+            webPalleteItem, lossy,ampliarReducirItem,semitonosItem;
     @FXML
     private Menu aplicarFiltros,comprimirMenu;
     @FXML
@@ -357,6 +359,83 @@ public class InterfazGraficaController implements Initializable {
     }
     
     @FXML
+    private void semitonos(ActionEvent event) throws IOException{
+        Semitonos.semitono(imagen.getImage(), 2, "ejemplo.html");
+    }
+    
+    @FXML
+    private void ampliarReducir(ActionEvent event){
+               principal.setDisable(true);
+        Stage second = new Stage();
+        
+        BorderPane border = new BorderPane();
+        Text encabezado = new Text("Ingrese el nuevo tamaño \n"
+                + "Los valores pueden ir entre 1 a 9999");
+        
+        final Spinner numeroX = new Spinner(0, 99999, (int)imagen.getImage().getWidth());
+        final Spinner numeroY = new Spinner(0, 99999, (int)imagen.getImage().getHeight());
+        numeroX.setEditable(true);
+        numeroY.setEditable(true);
+        
+        Button aceptar = new Button("Aceptar");
+        Button cancelar = new Button("Cancelar");
+        
+        HBox botones = new HBox(aceptar, cancelar);
+        botones.setSpacing(20);
+        
+        VBox red = new VBox(new Label("Ancho:"),numeroX);
+        VBox green = new VBox(new Label("Alto:"),numeroY);
+        
+        HBox rgb = new HBox(red,green);
+        
+        
+        border.setTop(encabezado);
+        border.setCenter(rgb);
+        border.setBottom(botones);
+        
+        
+        Scene sscene = new Scene(border);
+        second.setScene(sscene);
+        second.setMinHeight(100);
+        second.setMinWidth(200);
+        
+        second.show();
+        
+        cancelar.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                second.close();
+                principal.setDisable(false);
+            }
+        });
+        
+        aceptar.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                final int newX = (int)numeroX.getValue();
+                final int newY = (int)numeroY.getValue();
+                Thread hilo = new Thread(new Task() {
+                    
+                    @Override
+                    protected Object call() throws Exception {
+                        AmpliacionReduccion apliaReduc = new AmpliacionReduccion(imagen.getImage());
+                        actual = apliaReduc.apliaReduce(newX, newY);
+                        imagen.setImage(actual);
+                        stage.getScene().setRoot(principal);
+                        return null;
+                    }
+                });
+                hilo.start();
+                modificadores(true);
+                second.close();
+                principal.setDisable(false);
+            }
+        });       
+    }
+    
+    @FXML
     private void descomprimeLossy(ActionEvent event){
         FileChooser ventana = new FileChooser();
         FileChooser.ExtensionFilter extFilter0 = new FileChooser.ExtensionFilter("procIMG files (*.procImg)", "*.procImg");
@@ -600,7 +679,7 @@ public class InterfazGraficaController implements Initializable {
         
         BorderPane border = new BorderPane();
         Text encabezado = new Text("Ingrese los nuevos valores RGB \n"
-                + "Los valores pueden ir entre 1 a 9999");
+                + "Los valores pueden ir entre -255 a 255");
         
         final Spinner numeroR = new Spinner(-255, 255, 0);
         final Spinner numeroG = new Spinner(-255, 255, 0);
@@ -1666,6 +1745,7 @@ public class InterfazGraficaController implements Initializable {
                     
                     @Override
                     protected Object call() throws Exception {
+                        
                         imagen.setImage(imagenEntrada);
                         originalPermanente.setImage(imagenEntrada);
                         actual = imagenEntrada;
@@ -1692,6 +1772,8 @@ public class InterfazGraficaController implements Initializable {
             webPalleteItem.setDisable(!valor);
             lossy.setDisable(!valor);
             comprimirMenu.setDisable(!valor);
+            ampliarReducirItem.setDisable(!valor);
+            semitonosItem.setDisable(!valor);
         }else{
             rotarItem.setDisable(!valor);
             cambiarBrillo.setDisable(!valor);
@@ -1703,6 +1785,8 @@ public class InterfazGraficaController implements Initializable {
             webPalleteItem.setDisable(!valor);
             lossy.setDisable(!valor);
             comprimirMenu.setDisable(!valor);
+            ampliarReducirItem.setDisable(!valor);
+            semitonosItem.setDisable(!valor);
         }
     }
     
