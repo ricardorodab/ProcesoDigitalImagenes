@@ -367,7 +367,8 @@ public class InterfazGraficaController implements Initializable {
         DirectoryChooser ventana = new DirectoryChooser();
         ventana.setTitle("Abrir");
         File archivo = ventana.showDialog(stage);
-        Fotomosaico.sacaFotomosaico(archivo, "salida.html");
+        Filtro filtro = new Filtro(imagen.getImage());
+        Fotomosaico.sacaFotomosaico(filtro,20,archivo, "salida.html");
     }
     
     @FXML
@@ -1845,9 +1846,9 @@ public class InterfazGraficaController implements Initializable {
         FileChooser.ExtensionFilter png = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
         FileChooser.ExtensionFilter jpg = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.jpg");
         FileChooser.ExtensionFilter jpeg = new FileChooser.ExtensionFilter("JPEG files (*.jpeg)", "*.jpeg");
-        ventana.getExtensionFilters().add(png);
         ventana.getExtensionFilters().add(jpg);
         ventana.getExtensionFilters().add(jpeg);
+        ventana.getExtensionFilters().add(png);
         File archivo = ventana.showOpenDialog(stage);
         
         if (archivo != null) {
