@@ -31,11 +31,14 @@ package proceso_de_imagenes;
 import javafx.scene.image.Image;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
@@ -59,6 +62,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
@@ -66,6 +70,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
 import jfx.messagebox.MessageBox;
 
 /**
@@ -92,7 +97,8 @@ public class InterfazGraficaController implements Initializable {
     @FXML
     private MenuItem abrir, nuevoItem, guardarComoI, salirI,cargaOriginal,
             acercaDe, cambiarBrillo, rotarItem, rotarMatrizItem, colorRealItem,
-            webPalleteItem, lossy,ampliarReducirItem,semitonosItem, fotomosaicoItem;
+            webPalleteItem, lossy,ampliarReducirItem,semitonosItem, fotomosaicoItem,
+            ocultarMensajeItem;
     @FXML
     private Menu aplicarFiltros,comprimirMenu;
     @FXML
@@ -368,7 +374,7 @@ public class InterfazGraficaController implements Initializable {
         ventana.setTitle("Abrir");
         File archivo = ventana.showDialog(stage);
         Filtro filtro = new Filtro(imagen.getImage());
-        Fotomosaico.sacaFotomosaico(filtro,20,archivo, "salida.html");
+        Fotomosaico.sacaFotomosaico(filtro,10,archivo, "salida.html",false);
     }
     
     @FXML
@@ -1038,6 +1044,24 @@ public class InterfazGraficaController implements Initializable {
             }catch(IOException e){
             }
         }
+    }
+    
+    @FXML
+    private void pintaEsteganografia(ActionEvent event){
+        Thread hilo = new Thread(new Task() {
+            @Override
+            protected Object call() throws Exception {
+                Esteganografia estegano = new Esteganografia(imagen.getImage());
+                actual = estegano.esconde("MHola Mundo");
+                imagen.setImage(actual);
+                stage.getScene().setRoot(principal);
+                estegano = new Esteganografia(imagen.getImage());
+                System.out.println(estegano.descifra());
+                return null;
+            }
+        });
+        hilo.start();
+        modificadores(true);
     }
     
     private void pintaPromedio(ActionEvent event){
@@ -1889,6 +1913,7 @@ public class InterfazGraficaController implements Initializable {
             ampliarReducirItem.setDisable(!valor);
             semitonosItem.setDisable(!valor);
             fotomosaicoItem.setDisable(!valor);
+            ocultarMensajeItem.setDisable(!valor);
         }else{
             rotarItem.setDisable(!valor);
             cambiarBrillo.setDisable(!valor);
@@ -1902,7 +1927,8 @@ public class InterfazGraficaController implements Initializable {
             comprimirMenu.setDisable(!valor);
             ampliarReducirItem.setDisable(!valor);
             semitonosItem.setDisable(!valor);
-             fotomosaicoItem.setDisable(!valor);
+            fotomosaicoItem.setDisable(!valor);
+            ocultarMensajeItem.setDisable(!valor);
         }
     }
     
@@ -1948,7 +1974,7 @@ public class InterfazGraficaController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        //TODO
     }
     
     

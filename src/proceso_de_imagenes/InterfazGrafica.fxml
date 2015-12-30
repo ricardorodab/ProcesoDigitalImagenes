@@ -25,6 +25,7 @@
                                     <MenuItem fx:id="nuevoitem" mnemonicParsing="false" onAction="#abrirNuevoItem" text="Nuevo" />
                                     <MenuItem fx:id="abrir" mnemonicParsing="false" onAction="#abrirImagen" text="Abrir" />
                                     <MenuItem fx:id="guardarComoI" disable="true" mnemonicParsing="false" onAction="#guardarComo" text="Guardar" />
+                                    <MenuItem fx:id="ocultarMensajeItem" mnemonicParsing="false" onAction="#pintaEsteganografia" text="Ocultar mensaje" />
                                     <Menu fx:id="comprimirMenu" mnemonicParsing="false" text="Comprimir">
                                        <items>
                                           <MenuItem fx:id="lossy" disable="true" mnemonicParsing="false" onAction="#comprimirLossy" text="Comprimir Lossy" />
