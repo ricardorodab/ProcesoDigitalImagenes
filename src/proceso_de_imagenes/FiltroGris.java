@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------------
-* ProyectoProcesoImagenes.java
+* FiltroGris.java
 * versión 1.0
 * Copyright (C) 2015  José Ricardo Rodríguez Abreu.
 * Facultad de Ciencias,
@@ -46,8 +46,17 @@ import jfx.messagebox.MessageBox;
  */
 public class FiltroGris extends Filtro{
     
+    /**
+     * Constante para saber si selecciona el color rojo.
+     */
     public static final int ROJO = 0;
+    /**
+     * Constante para saber si selecciona el color verde.
+     */
     public static final int VERDE = 1;
+    /**
+     * Constante para saber si selecciona el color azul.
+     */
     public static final int AZUL = 2;
     
     
@@ -122,6 +131,12 @@ public class FiltroGris extends Filtro{
         return imagenD;
     }
     
+    /**
+     * /**
+     * Metodo que nos da los filtros en grises por descomposicion.
+     * @param max - True para que tome el más grande de lo 3. False caso contrario.
+     * @return Una imagen que es en escala de grises.
+     */
     public Image grisDescomposicion(boolean max){
         double r,g,b;
         WritableImage imagenD = new WritableImage(this.getX(), this.getY());
@@ -135,6 +150,7 @@ public class FiltroGris extends Filtro{
                 g = color.getGreen();
                 b = color.getBlue();
                 double gris;
+                //Aquí toma el más grande de todos.
                 if(max){
                     gris = Math.max(Math.max(r, g),b);
                 }else{
@@ -147,6 +163,11 @@ public class FiltroGris extends Filtro{
         return imagenD;
     }
     
+    /**
+     * Metodo que nos da los filtros en grises por color.
+     * @param numColor - Es la constante del color que se quiera tomar como base.
+     * @return - Una imagen que es en escala de grises.
+     */
     public Image grisColor(int numColor){
         if (numColor != 0 &&
                 numColor != 1 &&
@@ -180,6 +201,11 @@ public class FiltroGris extends Filtro{
         return imagenD;
     }
     
+    /**
+     * Metodo que nos da los filtros con cierto numero de grises.
+     * @param cantidad - Es la cantidad de gris que se quiera tomar como base.
+     * @return - Una imagen que es en escala de grises.
+     */
     public Image grisCuantos(int cantidad){
         if (cantidad > 256 || cantidad < 0) {
             //ERROR
@@ -206,10 +232,15 @@ public class FiltroGris extends Filtro{
         return imagenD;
     }
     
+    /**
+     * Metodo que nos da los filtros con cierto numero de grises con dithering.
+     * @param cantidad - Es la constante del color que se quiera tomar como base.
+     * @return - Una imagen que es en escala de grises.
+     */
     public Image grisCuantosDithering(int cantidad){
         if (cantidad > 256 || cantidad < 0) {
             //ERROR
-        }       
+        }
         double conversionFactor = 255 / (cantidad - 1);
         int r,g,b;
         WritableImage imagenD = new WritableImage(this.getX(), this.getY());

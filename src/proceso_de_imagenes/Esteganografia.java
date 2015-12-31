@@ -1,30 +1,72 @@
-/*
-* To change this license header, choose License Headers in Project Properties.
-* To change this template file, choose Tools | Templates
-* and open the template in the editor.
-*/
+/* -------------------------------------------------------------------                                      
+ * Esteganofrafia.java                                                                                             
+ * versión 1.0                                                                                              
+ * Copyright (C) 2015  José Ricardo Rodríguez Abreu.                                                        
+ * Facultad de Ciencias,                                                                                    
+ * Universidad Nacional Autónoma de México, Mexico.                                                         
+ *                                                                                                          
+ * Este programa es software libre; se puede redistribuir                                                   
+ * y/o modificar en los términos establecidos por la                                                        
+ * Licencia Pública General de GNU tal como fue publicada                                                   
+ * por la Free Software Foundation en la versión 2 o                                                        
+ * superior.                                                                                                
+ *                                                                                                          
+ * Este programa es distribuido con la esperanza de que                                                     
+ * resulte de utilidad, pero SIN GARANTÍA ALGUNA; de hecho                                                  
+ * sin la garantía implícita de COMERCIALIZACIÓN o                                                          
+ * ADECUACIÓN PARA PROPÓSITOS PARTICULARES. Véase la                                                        
+ * Licencia Pública General de GNU para mayores detalles.                                                   
+ *                                                                                                          
+ * Con este programa se debe haber recibido una copia de la                                                 
+ * Licencia Pública General de GNU, de no ser así, visite el                                                
+ * siguiente URL:                                                                                           
+ * http://www.gnu.org/licenses/gpl.html                                                                     
+ * o escriba a la Free Software Foundation Inc.,                                                            
+ * 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                                                
+ * -------------------------------------------------------------------                                      
+ */
 package proceso_de_imagenes;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
-/**
- *
- * @author ricardo_rodab
+/**                                                                                                         
+ * @author Jose Ricardo Rodriguez Abreu                                                                     
+ * @version 1.0                                                                                             
+ * @since Dic 31 2015.                                                                                      
+ * <p>                                                                                                      
+ * Clase que da el comportamiento de encriptar texto en una imagen.</p>                                                 
+ *                                                                                                          
+ * <p>                                                                                                      
+ * Desde esta clase podemos encriptar y desencriptar texto en una imagen..</p>                              
  */
 public class Esteganografia extends Filtro{
     
+    /**
+     * Constructor la clase Esteganografia.
+     * @param imagen - es la imagen donde se esconderán o descifrarán cosas.
+     */
     public Esteganografia(Image imagen) {
         super(imagen);
     }
     
+    /**
+     * Metodo para esconder un mensaje.
+     * @param mensaje - El mensaje que se esconde dentro de la imagen y lo hace 
+     * invisible ante el ojo humano promedio.
+     * @return Una imagen practicamente identica.
+     */
     public Image esconde(String mensaje){
         int marca = 0;
         int grisImagenR,grisImagenG,grisImagenB,grisImagenR2,grisImagenG2,grisImagenB2,grisImagenR3,grisImagenG3,grisImagenB3,
-                newR,newG,newB,newR2,newG2,newB2,newR3,newG3,restriccion;
-        restriccion = 1;
+                newR,newG,newB,newR2,newG2,newB2,newR3,newG3;
         WritableImage imagenF = new WritableImage(this.getX(), this.getY());
+        /* POR EJEMPLO:
+        (1 1 0 1 1 0 1 1) (0 1 0 0 1 0 0 0) (0 1 0 0 0 0 1 0)
+        (0 0 0 1 1 1 1 1) (0 1 0 1 1 0 1 0) (1 1 0 1 1 1 1 1)
+        (0 0 0 0 1 1 1 1) (0 1 0 0 0 1 1 1) (0 0 0 0 0 1 1 1)
+        */
         for (int i = 0; i < this.getX(); i++) {
             for (int j = 0; j < this.getY()-2; j++) { 
                 grisImagenR = (int)(this.getImage().getPixelReader().getColor(i, j).getRed()*255);
@@ -38,6 +80,8 @@ public class Esteganografia extends Filtro{
                     grisImagenG3 = (int)(this.getImage().getPixelReader().getColor(i, j+2).getGreen()*255);
                     grisImagenB3 = (int)(this.getImage().getPixelReader().getColor(i, j+2).getBlue()*255);
                     int letra = (int)mensaje.charAt(marca++);
+                    // ~ == NOT
+                    // ~1 == 1111 1110
                     newR = (grisImagenR & ~1) | (1 & (letra >> 7));
                     newG = (grisImagenG & ~1) | (1 & (letra >> 6));
                     newB = (grisImagenB & ~1) | (1 & (letra >> 5));
@@ -55,15 +99,17 @@ public class Esteganografia extends Filtro{
                     grisImagenG &= ~1;
                     grisImagenB &= ~1;
                     imagenF.getPixelWriter().setColor(i, j, Color.rgb(grisImagenR, grisImagenG, grisImagenB));
-                    restriccion = 0;
                 }
             }
         }
         return imagenF;
     }
     
+    /**
+     * Metodo para encontrar un mensaje si lo hay en una imagen.
+     * @return La cadena (el mensaje si hay) que estaba dentro de la imagen.
+     */
     public String descifra(){
-        int contador = 0;
         String texto = "";
         int letra = 0;
         for (int i = 0; i < this.getX(); i++) {
@@ -79,16 +125,12 @@ public class Esteganografia extends Filtro{
                 letra = ((letra1 << 7) & 128) + ((letra2 << 6) & 64) + ((letra3 << 5) & 32) +
                         ((letra4 << 4) & 16) + ((letra5 << 3) & 8) + ((letra6 << 2) & 4)+((letra7 << 1) & 2) + (letra8 & 1);
                 texto = texto.concat(""+(char)letra); 
-                contador++;
                 if(j % 3 == 0)
                     texto = texto.trim();
-                //if(texto.length() == 20)
-                 //   return texto;
             }
             texto = texto.trim();
         }
-        System.out.println("".equals(""+(char)0));
-        return texto.replace( ""+(char)0,"").trim();
+        return texto.replace(""+(char)0,"").trim();
     }
     
-}
+} //Fin de Esteganografia.java

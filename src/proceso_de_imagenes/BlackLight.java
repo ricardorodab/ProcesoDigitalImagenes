@@ -36,21 +36,30 @@ import javafx.scene.paint.Color;
 /**
  * @author Jose Ricardo Rodriguez Abreu
  * @version 1.0
- * @since Nov 11 2015.
+ * @since Dic 31 2015.
  * <p>
- * Clase de filtro BlackLight.</p>
+ * Clase que da el comportamiento de la tabla carreras.</p>
  *
  * <p>
- * Desde aqui se modela el filtro blacklught.</p>
+ * Desde esta clase podemos obtener el comportamiento deseado de la tabla.</p>
  */
 public class BlackLight extends Filtro{
     
+    /** Alpha */
     private static final int a = 2;
     
+    /**
+     * Método constructor de la clase BlackLight.
+     * @param img - es la imagen a aplicar el filtro.
+     */
     public BlackLight(Image img){
         super(img);
     }
     
+    /**
+     * Metodo que saca una imagen con efecto blacklight
+     * @return - la imagen con una imagen con efecto de luz negra.
+     */
     public Image filtroBlackLight(){
         int red,green,blue,blacklight, rojoRGB,verdeRGB,azulRGB;
         WritableImage imagenD = new WritableImage(this.getX(), this.getY());
@@ -62,26 +71,19 @@ public class BlackLight extends Filtro{
                 rojoRGB = (int) (colorOriginal.getRed()*255);
                 verdeRGB = (int) (colorOriginal.getGreen()*255);
                 azulRGB = (int) (colorOriginal.getBlue()*255);
+                //Num blacklight = promedio de los colores.
                 blacklight = ((rojoRGB+verdeRGB+azulRGB)/3);
+                //Para cada color es:
+                //Color = |color-blacklight|*alpha
                 red = (Math.abs(rojoRGB-blacklight)*a);
                 green = (Math.abs(verdeRGB-blacklight)*a);
                 blue = (Math.abs(azulRGB-blacklight)+a);
-                if(red > 255)
-                    red = 255;
-                else if(red < 0)
-                    red = 0;
-                if(green > 255)
-                    green = 255;
-                else if(green < 0)
-                    green = 0;
-                if(blue > 255)
-                    blue = 255;
-                else if(blue < 0)
-                    blue = 0;
+                red = Math.min(Math.max(red, 0), 255);
+                green = Math.min(Math.max(green, 0), 255);
+                blue = Math.min(Math.max(blue, 0), 255);                
                 pixelD.setColor(i, j, Color.rgb(red, green, blue));
             }
         }
         return imagenD;
     }
-    
 } //Fin de BlackLight.java

@@ -1,16 +1,60 @@
+/* -------------------------------------------------------------------                                      
+ * Convolucion.java                                                                                             
+ * versión 1.0                                                                                              
+ * Copyright (C) 2015  José Ricardo Rodríguez Abreu.                                                        
+ * Facultad de Ciencias,                                                                                    
+ * Universidad Nacional Autónoma de México, Mexico.                                                         
+ *                                                                                                          
+ * Este programa es software libre; se puede redistribuir                                                   
+ * y/o modificar en los términos establecidos por la                                                        
+ * Licencia Pública General de GNU tal como fue publicada                                                   
+ * por la Free Software Foundation en la versión 2 o                                                        
+ * superior.                                                                                                
+ *                                                                                                          
+ * Este programa es distribuido con la esperanza de que                                                     
+ * resulte de utilidad, pero SIN GARANTÍA ALGUNA; de hecho                                                  
+ * sin la garantía implícita de COMERCIALIZACIÓN o                                                          
+ * ADECUACIÓN PARA PROPÓSITOS PARTICULARES. Véase la                                                        
+ * Licencia Pública General de GNU para mayores detalles.                                                   
+ *                                                                                                          
+ * Con este programa se debe haber recibido una copia de la                                                 
+ * Licencia Pública General de GNU, de no ser así, visite el                                                
+ * siguiente URL:                                                                                           
+ * http://www.gnu.org/licenses/gpl.html                                                                     
+ * o escriba a la Free Software Foundation Inc.,                                                            
+ * 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                                                
+ * -------------------------------------------------------------------                                      
+ */
 package proceso_de_imagenes;
 
 import java.awt.image.*;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 
+/**                                                                                                         
+ * @author Jose Ricardo Rodriguez Abreu                                                                     
+ * @version 1.0                                                                                             
+ * @since Dic 31 2015.                                                                                      
+ * <p>                                                                                                      
+ * Clase que da el comportamiento de los filtros que se sacan por convolucion.</p>                                                 
+ *                                                                                                          
+ * <p>                                                                                                      
+ * Desde esta clase podemos usar la matriz de convolucion junto con algunos filtros..</p>                              
+ */
 public class Convolucion extends Filtro{
     
-    
+    /**
+     * Metodo constructor de la clase Convolucion.
+     * @param imagen - es la imagen que guarda el filtro.
+     */
     public Convolucion(Image imagen){
         super(imagen);
     }
     
+    /**
+     * Metodo que nos da un filtro emboss.
+     * @return - una imagen dada un filtro emboss.
+     */
     public Image emboss(){
         double [][] matriz = new double[][]{
             {-1, -1, -1, -1,  0},
@@ -24,6 +68,10 @@ public class Convolucion extends Filtro{
         return temp.grisPromedio();
     }
     
+    /**
+     * Metodo que nos da un filtro sharpen.
+     * @return - Una imagen dada un filtro sharpen
+     */
     public Image sharpen(){
         double [][] matriz = new double[][]{
             {-1, -1, -1},
@@ -33,7 +81,10 @@ public class Convolucion extends Filtro{
         return aplicaConvolucion(this.getImage(),matriz,1,0);
     }
     
-    
+    /**
+     * Metodo que nos da un filtro bordes.
+     * @return - Una imagen dada un filtro bordes.
+     */
     public Image bordes(){
         double [][] matriz = new double[][]{
             {-1,  0,  0,  0,  0},
@@ -45,6 +96,10 @@ public class Convolucion extends Filtro{
         return aplicaConvolucion(aplicaConvolucion(this.getImage(), matriz, 1, 0),matriz,1,0);
     }
     
+    /**
+     * Metodo que nos da un filtro blur.
+     * @return - Una imagen dada un filtro blur aplicado.
+     */
     public Image blur(){
         double [][] matriz = new double[][]{
             {0, 0, 1, 0, 0},
@@ -56,6 +111,10 @@ public class Convolucion extends Filtro{
         return aplicaConvolucion(this.getImage(),matriz,(1.0/13.0),0);
     }
     
+    /**
+     * Metodo que nos da un filtro promedio.
+     * @return - Una imagen dada un filtro promedio.
+     */
     public Image promedio(){
           double [][] matriz = new double[][]{
             {1, 1, 1},
@@ -65,6 +124,10 @@ public class Convolucion extends Filtro{
         return aplicaConvolucion(this.getImage(),matriz,(1.0/9.0),0);
     }
     
+    /**
+     * Metodo que nos da un filtro motion blur.
+     * @return - Una imagen dada un filtro motion blur.
+     */
     public Image motionBlur(){
         double [][] matriz = new double[][]{
             {1, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -80,6 +143,14 @@ public class Convolucion extends Filtro{
         return aplicaConvolucion(this.getImage(),matriz,(1.0/9.0),0);
     }
     
+    /**
+     * Metodo privado para aplicar la convolucion.
+     * @param imagenOriginal - es la imagen a aplicar.
+     * @param matriz - es la matriz que debemos consultar.
+     * @param factor - es el factor de división.
+     * @param bias - es el factor de producto de cada pixel.
+     * @return - Una imagen con un filtro convolicion aplicado.
+     */
     private Image aplicaConvolucion(Image imagenOriginal, double[][] matriz,double factor,double bias) {
         BufferedImage imagen = SwingFXUtils.fromFXImage(imagenOriginal, null);
         BufferedImage nuevoLienzo = enmarca(imagen, matriz.length / 2, matriz.length / 2);
@@ -137,4 +208,4 @@ public class Convolucion extends Filtro{
         nueva.setData(wr);
         return nueva;
     }
-}
+} //Fin de Convolucion.java

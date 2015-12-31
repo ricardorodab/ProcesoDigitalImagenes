@@ -465,12 +465,8 @@ public class InterfazGraficaController implements Initializable {
     private void descomprimeLossy(ActionEvent event){
         FileChooser ventana = new FileChooser();
         ventana.setTitle("Abrir");
-        FileChooser.ExtensionFilter png = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
-        FileChooser.ExtensionFilter jpg = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.jpg");
-        FileChooser.ExtensionFilter jpeg = new FileChooser.ExtensionFilter("JPEG files (*.jpeg)", "*.jpeg");
-        ventana.getExtensionFilters().add(png);
-        ventana.getExtensionFilters().add(jpg);
-        ventana.getExtensionFilters().add(jpeg);
+        FileChooser.ExtensionFilter procImg = new FileChooser.ExtensionFilter("ProcIMG files (*.procImg)", "*.procImg");
+        ventana.getExtensionFilters().add(procImg);
         File archivo = ventana.showOpenDialog(stage);
         if(archivo == null)
             return;
@@ -944,7 +940,7 @@ public class InterfazGraficaController implements Initializable {
                     
                     @Override
                     protected Object call() throws Exception {
-                        FiltroBrillo fbrillo = new FiltroBrillo(imagen.getImage(), brillo);
+                        Brillo fbrillo = new Brillo(imagen.getImage(), brillo);
                         actual = fbrillo.filtroBrillo();
                         imagen.setImage(actual);
                         stage.getScene().setRoot(principal);
@@ -1597,7 +1593,7 @@ public class InterfazGraficaController implements Initializable {
         Thread hilo = new Thread(new Task() {
             @Override
             protected Object call() throws Exception {
-                ATT ATAndT = new ATT(imagen.getImage());
+                FiltroATT ATAndT = new FiltroATT(imagen.getImage());
                 actual = ATAndT.filtra();
                 imagen.setImage(actual);
                 stage.getScene().setRoot(principal);

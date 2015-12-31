@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------------
- * ProyectoProcesoImagenes.java
+ * Filtro.java
  * versión 1.0
  * Copyright (C) 2015  José Ricardo Rodríguez Abreu.
  * Facultad de Ciencias,
@@ -42,11 +42,11 @@ import javafx.scene.image.Image;
 public class Filtro {
     
     /** Imagen del filtro. */
-    private Image imagen;
+    private final Image imagen;
     /** La altitud de la imagen. */
-    private int x;
+    private final int x;
     /** La longitud de la imagen. */
-    private int y;
+    private final int y;
     
     /**
      * Metodo construccion de un filtro.
@@ -58,14 +58,26 @@ public class Filtro {
         this.y = (int)imagen.getHeight();
     }
     
+    /**
+     * Metodo para que nos de el largo de la imagen.
+     * @return El largo de la imagen.
+     */
     public int getX(){
         return this.x;
     }
     
+    /**
+     * Metodo para que nos de el ancho de la imagen.
+     * @return El ancho de la imagen.
+     */
     public int getY(){
         return this.y;
     }
     
+    /**
+     * Metodo para que nos regrese la imagen.
+     * @return La imagen del filtro.
+     */
     public Image getImage(){
         return this.imagen;
     }

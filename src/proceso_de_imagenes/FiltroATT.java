@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------------                                      
- * .java                                                                                             
+ * FiltroATT.java                                                                                             
  * versión 1.0                                                                                              
  * Copyright (C) 2015  José Ricardo Rodríguez Abreu.                                                        
  * Facultad de Ciencias,                                                                                    
@@ -27,76 +27,101 @@
  */
 package proceso_de_imagenes;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import javafx.scene.image.Image;
+import java.awt.image.*;
 import javafx.embed.swing.SwingFXUtils;
-import javax.swing.JOptionPane;
+import javafx.scene.image.Image;
 
 /**                                                                                                         
  * @author Jose Ricardo Rodriguez Abreu                                                                     
  * @version 1.0                                                                                             
  * @since Dic 31 2015.                                                                                      
  * <p>                                                                                                      
- * Clase que da el comportamiento de la tabla carreras.</p>                                                 
+ * Clase que define al filtro AT&T.</p>                                                 
  *                                                                                                          
  * <p>                                                                                                      
- * Desde esta clase podemos obtener el comportamiento deseado de la tabla.</p>                              
+ * Desde esta clase podemos obtener el filtro de tipo AT&T.</p>                              
  */
-class MarcaDeAgua {
-
+public class FiltroATT extends Filtro{
+    
+    
+    
+    /** Tomamos un numero aleatorio de numeros de lineas */
+    private static final int N = 15;
+    
     /**
-     * Dependiendo si la marca es a colores o en blanco y negro.
+     * Método constructor de la clase ATT 
+     * @param imagen - es la imagen a aplicar el filtro.
      */
-    static final int BLACK = 0, COLOR = 1;
-    /**
-     * Regiones donde se puede colocar la marca de agua.
-     */
-    static final int SUP_IZQ = 1, SUP_DER = 2, INF_IZQ = 3, INF_DER = 4;
-
-    /**
-     * Dibuja una cadena sobre la imagen que le pasan en la region que le
-     * indican y con el color que le indican.
-     *
-     * @param src
-     * @param region
-     * @param tipo
-     * @return
-     */
-    static Image filtra(Image src, int region, int tipo) {
-        String s = JOptionPane.showInputDialog("Escribe algo para el Marco de Agua");
-        BufferedImage nueva = SwingFXUtils.fromFXImage(src, null);
-        int w = nueva.getWidth();
-        int h = nueva.getHeight();
-        int size = (w / s.length()) / 2;
-        Graphics g = nueva.getGraphics();
-        Font f = new Font(Font.MONOSPACED, Font.PLAIN, size);
-        g.setFont(f);
-        if (tipo == COLOR) {
-            g.setColor(Color.GREEN);
-        }else{
-            if (tipo == BLACK) {
-            g.setColor(Color.BLACK);
-        }
-        } 
-        
-        switch (region) {
-            case SUP_IZQ:
-                g.drawString(s, 0, size);
-                break;
-            case SUP_DER:
-                g.drawString(s, w - s.length() * size, size);
-                break;
-            case INF_IZQ:
-                g.drawString(s, 0, h - size);
-                break;
-            case INF_DER:
-                g.drawString(s, w - s.length() * size, h - size);
-                break;
-        }
-        g.dispose();
-        Filtro temp = new Filtro(SwingFXUtils.toFXImage(nueva, null));
-        Blending original = new Blending(src);
-        return original.licua(temp, .5);        
+    public FiltroATT(Image imagen) {
+        super(imagen);
     }
-}
+    
+  /**
+   * Nos da el filtro con un efecto similar al icono de FiltroATT
+   * @return La imagen con el efecto FiltroATT, lineas en blanco y negro.
+   */
+    public Image filtra() {
+        AltoContrasteFiltroInverso altoContraste = new AltoContrasteFiltroInverso((Image)this.getImage());
+        BufferedImage ac = SwingFXUtils.fromFXImage(altoContraste.altoContraste(),null);
+        int w = ac.getWidth();
+        int h = ac.getHeight();
+        Raster rac = ac.getData();
+        BufferedImage nueva = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        WritableRaster wrn = nueva.getRaster();
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h - N; j += N) {
+                int puntos = 0;
+                for (int y = j; y < j + N; y++) {
+                    if (rac.getSample(i, y, 0) == 0) {
+                        puntos++;
+                    }
+                }               
+                boolean[] acomodados = centra(N, puntos);
+                for (int y = j; y < j + N; y++) {
+                    if (acomodados[y - j]) {
+                        wrn.setSample(i, y, 0, 0);
+                        wrn.setSample(i, y, 1, 0);
+                        wrn.setSample(i, y, 2, 0);
+                    } else {
+                        wrn.setSample(i, y, 0, 0xff);
+                        wrn.setSample(i, y, 1, 0xff);
+                        wrn.setSample(i, y, 2, 0xff);
+                    }
+                }
+            }
+        }
+        lineas(nueva);
+        return SwingFXUtils.toFXImage(nueva, null);
+    }
+    
+    /**
+     * Dibuja lineas horizontales blancas.
+     *
+     * @param src Imagen original - es la imagen a la que original se le marcara.
+     */
+    private static void lineas(BufferedImage src) {
+        WritableRaster wr = src.getRaster();
+        for (int i = 0; i < wr.getWidth(); i++) {
+            for (int j = 0; j < wr.getHeight() - N; j += N) {
+                wr.setSample(i, j, 0, 0xff);
+                wr.setSample(i, j, 1, 0xff);
+                wr.setSample(i, j, 2, 0xff);
+            }
+        }
+    }
+    
+    /**
+     * @param tam Tamano del arreglo
+     * @param puntos Numero de puntos que deben ser centrados
+     * @return Arreglo con los puntos centrados
+     */
+    private static boolean[] centra(int tam, int puntos) {
+        boolean[] acomodados = new boolean[tam];
+        int n = puntos / 2;
+        int m = puntos % 2 == 0 ? n - 1 : n;
+        for (int i = (tam / 2) - n; i <= (tam / 2) + m; i++) {
+            acomodados[i] = true;
+        }
+        return acomodados;
+    }
+} //Fin de FiltroATT.java
