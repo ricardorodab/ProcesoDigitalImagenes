@@ -189,6 +189,13 @@ public class Convolucion extends Filtro{
         return SwingFXUtils.toFXImage(nueva.getSubimage(matriz.length/2, matriz.length / 2, w - 2 * (matriz.length/2), h - 2 * (matriz.length / 2)),null);
     }
     
+    /**
+     * Metodo que toma una imagen y crea una nueva para escribir sobre esta.
+     * @param imagen - La imagen original.
+     * @param alto - El alto de la imagen.
+     * @param ancho - El ancho de la imagen.
+     * @return Una imagen para escribir con los pixeles de la anterior.
+     */
     private BufferedImage enmarca(BufferedImage imagen, int alto, int ancho) {
         int w = imagen.getWidth();
         int h = imagen.getHeight();

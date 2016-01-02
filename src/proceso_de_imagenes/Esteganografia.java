@@ -71,7 +71,7 @@ public class Esteganografia extends Filtro{
             for (int j = 0; j < this.getY()-2; j++) { 
                 grisImagenR = (int)(this.getImage().getPixelReader().getColor(i, j).getRed()*255);
                 grisImagenG = (int)(this.getImage().getPixelReader().getColor(i, j).getGreen()*255);
-                grisImagenB = (int)(this.getImage().getPixelReader().getColor(i, j).getBlue()*255);
+                grisImagenB = (int)(this.getImage().getPixelReader().getColor(i, j).getBlue()*255);                
                 if(marca < mensaje.length()){
                     grisImagenR2 = (int)(this.getImage().getPixelReader().getColor(i, j+1).getRed()*255);
                     grisImagenG2 = (int)(this.getImage().getPixelReader().getColor(i, j+1).getGreen()*255);

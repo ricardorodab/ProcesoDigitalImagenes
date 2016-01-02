@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------------                                      
- * .java                                                                                             
+ * Semitonos.java                                                                                             
  * versión 1.0                                                                                              
  * Copyright (C) 2015  José Ricardo Rodríguez Abreu.                                                        
  * Facultad de Ciencias,                                                                                    
@@ -38,7 +38,6 @@ import java.util.LinkedList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
-import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 import javax.imageio.ImageIO;
 
@@ -47,12 +46,16 @@ import javax.imageio.ImageIO;
  * @version 1.0                                                                                             
  * @since Dic 31 2015.                                                                                      
  * <p>                                                                                                      
- * Clase que da el comportamiento de la tabla carreras.</p>                                                 
+ * Clase que da una imagen dada con semitonos.</p>                                                 
  *                                                                                                          
  * <p>                                                                                                      
- * Desde esta clase podemos obtener el comportamiento deseado de la tabla.</p>                              
+ * Desde esta clase podemos obtener una imagen con semitonos.</p>                              
  */
 public class Semitonos {
+    
+    /**
+     * Variable para ver cuantos grados de semitonos hay.
+     */
     private static final int NUM_TONO = 10;
     
     public static void semitono(Image img,int cuadranteFoto, String salida) throws IOException{
@@ -65,8 +68,7 @@ public class Semitonos {
                 +"<tr>";
         escritor.write(texto);
         escritor.flush();
-        String imagenTemp = "";
-        
+        String imagenTemp = "";       
         LinkedList<LinkedList<String>> imagenes = new LinkedList<>();
         int terminoX,terminoY;
         double rojoRGB ,verdeRGB,azulRGB,red,green,blue;
@@ -80,10 +82,7 @@ public class Semitonos {
             terminoX = i+cuadranteFoto;
             LinkedList<String> lTemp = new LinkedList<>();
             for (int j = 0; j < img.getHeight(); j += cuadranteFoto) {
-                terminoY = j+cuadranteFoto;
-                
-                
-                
+                terminoY = j+cuadranteFoto;       
                 for (int k = i; k < terminoX; k++) {
                     if(k >= img.getWidth())
                         break;
@@ -96,10 +95,7 @@ public class Semitonos {
                         azulRGB += colorOriginal.getBlue();
                         promedio++;
                     }
-                }
-                
-                
-                
+                } 
                 red = (rojoRGB/promedio);
                 green = (verdeRGB/promedio);
                 blue = (azulRGB/promedio);
@@ -150,53 +146,13 @@ public class Semitonos {
         escritor.write(texto);
         escritor.flush();
         Desktop.getDesktop().browse(archivoSalida.toURI());
-        
-        
-        
-        /*
-        for (int i = 0; i < img.getWidth(); i++) {
-        for (int j = 0; j < img.getHeight(); j++) {
-        double promedio = img.getPixelReader().getColor(i, j).getRed();
-        promedio += img.getPixelReader().getColor(i, j).getGreen();
-        promedio += img.getPixelReader().getColor(i, j).getBlue();
-        promedio /= 3;
-        if(promedio < 25){
-        imagenTemp = "1.png";
-        }else if(promedio < 50){
-        imagenTemp = "2.png";
-        }else if(promedio < 75){
-        imagenTemp = "3.png";
-        }else if(promedio < 100){
-        imagenTemp = "4.png";
-        }else if(promedio < 125){
-        imagenTemp = "5.png";
-        }else if(promedio < 150){
-        imagenTemp = "6.png";
-        }else if(promedio < 175){
-        imagenTemp = "7.png";
-        }else if(promedio < 200){
-        imagenTemp = "8.png";
-        }else if(promedio < 225){
-        imagenTemp = "9.png";
-        }else{
-        imagenTemp = "10.png";
-        }
-        texto = "<td><img src=\""+imagenTemp+"\" width=\"20\", height=\"20\"></td> \n";
-        escritor.write(texto);
-        escritor.flush();
-        }
-        texto = "</tr><tr> \n";
-        escritor.write(texto);
-        escritor.flush();
-        
-        }
-        texto = "</tr> \n"
-        +"</table></center>";
-        escritor.write(texto);
-        escritor.flush();
-        Desktop.getDesktop().browse(archivoSalida.toURI());
-    */}
+  }
     
+    /**
+     * Metodo para crear los semitonos. Imagenes con círculos.
+     * @param TamanoPuntos - Es el radio de los puntos.
+     * @throws IOException En caso de tener problemas al crear un semitono.
+     */
     private static void creaSemitonos(int TamanoPuntos) throws IOException{
         int y,x;
         y = x = TamanoPuntos;
@@ -218,4 +174,4 @@ public class Semitonos {
             ImageIO.write(SwingFXUtils.fromFXImage(imagen, null),"png", new File((1+i)+".png"));
         }
     }
-}
+}//Fin de semitonos.java

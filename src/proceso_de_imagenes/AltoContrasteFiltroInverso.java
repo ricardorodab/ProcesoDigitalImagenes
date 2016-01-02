@@ -38,7 +38,7 @@ import javafx.scene.paint.Color;
  * @version 1.0
  * @since Dic 31 2015.
  * <p>
- * Clase que da el comportamiento del filtro Alto contraste e inverso..</p>
+ * Clase que da el comportamiento del filtro Alto contraste e inverso.</p>
  *
  * <p>
  * Desde esta clase podemos obtener el comportamiento de 2 filtros:

@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------------                                      
- * .java                                                                                             
+ * ImagenesRecursivas.java                                                                                             
  * versión 1.0                                                                                              
  * Copyright (C) 2015  José Ricardo Rodríguez Abreu.                                                        
  * Facultad de Ciencias,                                                                                    
@@ -45,19 +45,34 @@ import javax.imageio.ImageIO;
  * @version 1.0                                                                                             
  * @since Dic 31 2015.                                                                                      
  * <p>                                                                                                      
- * Clase que da el comportamiento de la tabla carreras.</p>                                                 
+ * Clase que crea imagenes hechas de una misma imagen.</p>                                                 
  *                                                                                                          
  * <p>                                                                                                      
- * Desde esta clase podemos obtener el comportamiento deseado de la tabla.</p>                              
+ * Desde esta clase podemos obtener dos tipos de imagenes:
+ * Hechas con colores reales o hechas desde la Web Pallete.
+ * .</p>                              
  */
 public class ImagenesRecursivas extends Filtro{
     
+    /** Un contador para cuando creen las imagenes no repitan nombre. */
     private static int contador = 0;
     
+    /**
+     * Metodo constructor para optener imagenes recursivas.
+     * @param imagen - Es la imagen original.
+     */
     public ImagenesRecursivas(Image imagen) {
         super(imagen);
     }
     
+    /**
+     * Metodo para crear un archivo con una imagen hecha de ella misma con 
+     * tonalidades Web Pallete.
+     * @param salida - Es el nombre de salida del archivo.
+     * @param anchoX - Es el ancho que desea tener cada imagen en el mosaico.
+     * @param largoY - Es el largo que desea tener cada imagen en el mosaico.
+     * @throws IOException Si llegara a no poder crear el archivo o para escribir.
+     */
     public void escribeWebPallete(String salida, int anchoX, int largoY) throws IOException{
         LinkedList<LinkedList<String>> imagenes = new LinkedList<>();
         VectorImage3D[] filtros = new VectorImage3D[216];
@@ -188,6 +203,15 @@ public class ImagenesRecursivas extends Filtro{
         Desktop.getDesktop().browse(archivoSalida.toURI());
     }
     
+    /**
+     * Metodo para crear un archivo con una imagen hecha de ella misma con 
+     * tonalidades reales.
+     * @param salida - Es el nombre de salida del archivo.
+     * @param anchoX - Es el ancho que desea tener cada imagen en el mosaico.
+     * @param largoY - Es el largo que desea tener cada imagen en el mosaico.
+     * @param icono - Si es True, tomara imagenes hechas iconos y sera rapido.
+     * @throws IOException Si llegara a no poder crear el archivo o para escribir.
+     */
     public void colorReal(String salida,int anchoX, int largoY,boolean icono) throws IOException{
         LinkedList<LinkedList<String>> imagenes = new LinkedList<>();
         int terminoX,terminoY;
@@ -271,6 +295,14 @@ public class ImagenesRecursivas extends Filtro{
         Desktop.getDesktop().browse(archivoSalida.toURI());
     }
     
+    /**
+     * Metodo privado para crear una imagen de tonalidades especificas.
+     * @param rojo - Es el rojo deseado.
+     * @param verde - Es el verde deseado.
+     * @param azul - Es el azul deseado.
+     * @param img - Es la imagen que se desea sacar la tonalidad.
+     * @return Una cadena con el link de la imagen creada.
+     */
     private String creaImagen(int rojo, int verde, int azul,Image img){
         FiltroRGB rgb = new FiltroRGB(img);
         BufferedImage buffe = SwingFXUtils.fromFXImage(rgb.RGB(rojo, verde, azul), null);

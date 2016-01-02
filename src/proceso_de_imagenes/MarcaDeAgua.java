@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------------                                      
- * .java                                                                                             
+ * MarcaDeAgua.java                                                                                             
  * versión 1.0                                                                                              
  * Copyright (C) 2015  José Ricardo Rodríguez Abreu.                                                        
  * Facultad de Ciencias,                                                                                    
@@ -38,32 +38,31 @@ import javax.swing.JOptionPane;
  * @version 1.0                                                                                             
  * @since Dic 31 2015.                                                                                      
  * <p>                                                                                                      
- * Clase que da el comportamiento de la tabla carreras.</p>                                                 
+ * Clase de filtros de Marca de Agua.</p>                                                 
  *                                                                                                          
  * <p>                                                                                                      
- * Desde esta clase podemos obtener el comportamiento deseado de la tabla.</p>                              
+ * Desde esta clase podemos obtener una imagen con un filtro del estilo de marca de agua.</p>                              
  */
 class MarcaDeAgua {
 
     /**
      * Dependiendo si la marca es a colores o en blanco y negro.
      */
-    static final int BLACK = 0, COLOR = 1;
+    public static final int BLACK = 0, COLOR = 1;
     /**
      * Regiones donde se puede colocar la marca de agua.
      */
-    static final int SUP_IZQ = 1, SUP_DER = 2, INF_IZQ = 3, INF_DER = 4;
+    public static final int SUP_IZQ = 1, SUP_DER = 2, INF_IZQ = 3, INF_DER = 4;
 
     /**
      * Dibuja una cadena sobre la imagen que le pasan en la region que le
      * indican y con el color que le indican.
      *
-     * @param src
-     * @param region
-     * @param tipo
-     * @return
+     * @param src - Es la imagen 
+     * @param region - La ubicacion de la marca.
+     * @return Una imagen con la marca de agua.
      */
-    static Image filtra(Image src, int region, int tipo) {
+   public static Image filtra(Image src, int region){ //, int tipo) {
         String s = JOptionPane.showInputDialog("Escribe algo para el Marco de Agua");
         BufferedImage nueva = SwingFXUtils.fromFXImage(src, null);
         int w = nueva.getWidth();
@@ -72,14 +71,13 @@ class MarcaDeAgua {
         Graphics g = nueva.getGraphics();
         Font f = new Font(Font.MONOSPACED, Font.PLAIN, size);
         g.setFont(f);
-        if (tipo == COLOR) {
+        /*if (tipo == COLOR) {
             g.setColor(Color.GREEN);
         }else{
             if (tipo == BLACK) {
             g.setColor(Color.BLACK);
         }
-        } 
-        
+        }*/        
         switch (region) {
             case SUP_IZQ:
                 g.drawString(s, 0, size);
@@ -99,4 +97,4 @@ class MarcaDeAgua {
         Blending original = new Blending(src);
         return original.licua(temp, .5);        
     }
-}
+} //Fin de MarcaDeAgua.java

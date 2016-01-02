@@ -1,30 +1,30 @@
-/* -------------------------------------------------------------------                                      
- * .java                                                                                             
- * versión 1.0                                                                                              
- * Copyright (C) 2015  José Ricardo Rodríguez Abreu.                                                        
- * Facultad de Ciencias,                                                                                    
- * Universidad Nacional Autónoma de México, Mexico.                                                         
- *                                                                                                          
- * Este programa es software libre; se puede redistribuir                                                   
- * y/o modificar en los términos establecidos por la                                                        
- * Licencia Pública General de GNU tal como fue publicada                                                   
- * por la Free Software Foundation en la versión 2 o                                                        
- * superior.                                                                                                
- *                                                                                                          
- * Este programa es distribuido con la esperanza de que                                                     
- * resulte de utilidad, pero SIN GARANTÍA ALGUNA; de hecho                                                  
- * sin la garantía implícita de COMERCIALIZACIÓN o                                                          
- * ADECUACIÓN PARA PROPÓSITOS PARTICULARES. Véase la                                                        
- * Licencia Pública General de GNU para mayores detalles.                                                   
- *                                                                                                          
- * Con este programa se debe haber recibido una copia de la                                                 
- * Licencia Pública General de GNU, de no ser así, visite el                                                
- * siguiente URL:                                                                                           
- * http://www.gnu.org/licenses/gpl.html                                                                     
- * o escriba a la Free Software Foundation Inc.,                                                            
- * 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                                                
- * -------------------------------------------------------------------                                      
- */
+/* -------------------------------------------------------------------
+* FotoMosaico.java
+* versión 1.0
+* Copyright (C) 2015  José Ricardo Rodríguez Abreu.
+* Facultad de Ciencias,
+* Universidad Nacional Autónoma de México, Mexico.
+*
+* Este programa es software libre; se puede redistribuir
+* y/o modificar en los términos establecidos por la
+* Licencia Pública General de GNU tal como fue publicada
+* por la Free Software Foundation en la versión 2 o
+* superior.
+*
+* Este programa es distribuido con la esperanza de que
+* resulte de utilidad, pero SIN GARANTÍA ALGUNA; de hecho
+* sin la garantía implícita de COMERCIALIZACIÓN o
+* ADECUACIÓN PARA PROPÓSITOS PARTICULARES. Véase la
+* Licencia Pública General de GNU para mayores detalles.
+*
+* Con este programa se debe haber recibido una copia de la
+* Licencia Pública General de GNU, de no ser así, visite el
+* siguiente URL:
+* http://www.gnu.org/licenses/gpl.html
+* o escriba a la Free Software Foundation Inc.,
+* 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+* -------------------------------------------------------------------
+*/
 package proceso_de_imagenes;
 
 import java.awt.Desktop;
@@ -43,22 +43,34 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
 import org.apache.commons.io.FileUtils;
 
-/**                                                                                                         
- * @author Jose Ricardo Rodriguez Abreu                                                                     
- * @version 1.0                                                                                             
- * @since Dic 31 2015.                                                                                      
- * <p>                                                                                                      
- * Clase que da el comportamiento de la tabla carreras.</p>                                                 
- *                                                                                                          
- * <p>                                                                                                      
- * Desde esta clase podemos obtener el comportamiento deseado de la tabla.</p>                              
+/**
+ * @author Jose Ricardo Rodriguez Abreu
+ * @version 1.0
+ * @since Dic 31 2015.
+ * <p>
+ * Clase para otener una imagen hecho de fotomosaicos.</p>
+ *
+ * <p>
+ * Desde esta clase creamos un metodo para sacar un archivo donde podamos ver una imagen hecha
+ * con otras. Parecido al filtro mosaico es en escencia una combinacion de filtro mosaico y
+ *  las imagenes recursivas como color real o web pallete. </p>
  */
 public class Fotomosaico {
     
-    private static int lineas = 0;
-    
+    /**
+     * Metodo estatico que genera un archivo html para observar la imagen original
+     * de manera que esté formada de imagenes.
+     * @param filtro - Es el lugar donde se encuentra la imagen a transformar.
+     * @param mosaico - Es el tamano que ocupara cada imagen por mosaico.
+     * @param ruta - Es la ruta del directorio donde se desea sacar las imagenes.
+     * @param salida - Es el nombre del archivo de salida.
+     * @param recursiva - Selecciona si desea buscar dentro de los directorios recursivos.
+     * @throws IOException - En caso de tener problemas de escritura.
+     */
     public static void sacaFotomosaico(Filtro filtro,int mosaico, File ruta, String salida,boolean recursiva) throws IOException{
+        //Crea un archivo con la informacion de las fotos en el archivo.
         File infoLog = sacaArchivos(ruta,recursiva);
+        //Toma un archivo ya creado con la informacion de las fotos.
         //File infoLog = FileUtils.getFile("valoresImagenes.txt");
         int anchoX,largoY;
         anchoX = largoY = mosaico;
@@ -70,7 +82,7 @@ public class Fotomosaico {
         red = green = blue = rojoRGB = verdeRGB = azulRGB = 0;
         terminoX = anchoX;
         terminoY = largoY;
-        //Image imagenIconoUOriginal = filtro.getImage();;
+        
         File archivoSalida = new File(salida);
         archivoSalida.createNewFile();
         FileWriter html = new FileWriter(archivoSalida);
@@ -131,10 +143,15 @@ public class Fotomosaico {
         Desktop.getDesktop().browse(archivoSalida.toURI());
     }
     
+    /**
+     * Metodo privado para optener el archivo que necesitamos para hacer el fotomosaico.
+     * @param dir - Es el directorio donde encontraremos las fotos.
+     * @param recursivo - True si deseamos buscar en los directorios anidados.
+     * @return Un archivo con las especificaciones de cada imagen dentro del directorio.
+     * @throws IOException Lo lanza cuando hay problemas al leer el archivo o crearlo.
+     */
     private static File sacaArchivos(File dir,boolean recursivo) throws IOException{
-        lineas = 0;
         String[] ext = {"png","jpg","jpeg"};
-        //TreeMap<Double,LinkedList<String>> rojiNegro = new TreeMap<>();
         Collection<File> files = FileUtils.listFiles(dir,ext, recursivo);
         File salida = new File("valoresImagenes.txt");
         salida.createNewFile();
@@ -143,74 +160,77 @@ public class Fotomosaico {
         String texto = "";
         for (File img : files) {
             double[] prom = promedio(img);
-            /*double prom2 = Math.sqrt(
-            Math.pow(prom[0], 2)+
-            Math.pow(prom[1], 2)+
-            Math.pow(prom[2], 2));
-            if(rojiNegro.get(prom2) == null)
-            rojiNegro.put(prom2, new LinkedList<>());
-            rojiNegro.get(prom2).add(prom[0]+"#-"+prom[1]+"#-"+prom[2]+"#-"+img.getAbsolutePath());
-            }*/
-            // for (Map.Entry<Double,LinkedList<String>> lst : rojiNegro.entrySet()) {
-            //     for (String str : lst.getValue()) {
-            //         texto = lst.getKey()+"#-"+str+"\n";
             texto = prom[0]+"#-"+prom[1]+"#-"+prom[2]+"#-"+img.getAbsolutePath()+"\n";
-            lineas++;
             escritor.write(texto);
             escritor.flush();
-            //}
-            }
-            escritor.close();
-            return salida;
         }
-        
-        
-        private static String buscaImagen(File archivo, double red, double green, double blue) throws FileNotFoundException, IOException{
-            String ruta = null;
-            String linea = "";
-            FileReader reader = new FileReader(archivo);
-            BufferedReader buf = new BufferedReader(reader);
-            double dif = Double.POSITIVE_INFINITY;
-            String[] parString = null;
-            String mejorOpcion = "";
-            while(ruta == null){
-                linea = buf.readLine();
-                if(linea == null){
-                    ruta = mejorOpcion;
-                    continue;
-                }
-                parString = linea.split("#-");
-                double promR = Double.parseDouble(parString[0]);
-                double promG = Double.parseDouble(parString[1]);
-                double promB = Double.parseDouble(parString[2]);
-                double raiz = Math.sqrt(
-                        Math.pow(red - promR, 2)+
-                                Math.pow(green - promG, 2)+
-                                Math.pow(blue - promB, 2)
-                );
-                if(raiz < dif){
-                    dif = raiz;
-                    mejorOpcion = parString[parString.length-1];
-                }
+        escritor.close();
+        return salida;
+    }
+    
+    /**
+     * Metodo para buscar la imagen que este mas cerca a distancia euclidiana
+     * en referencia a los colores que se les pasa de parametros.
+     * @param archivo - El archivo en donde se encuentran los datos.
+     * @param red - El color rojo que se busca.
+     * @param green - El color verde que se busca.
+     * @param blue - El color azul que se busca.
+     * @return Una cadena con la ruta de la imagen que mas se acerca a los colores.
+     * @throws FileNotFoundException Si el archivo que se le pasa no existe.
+     * @throws IOException Si al leer una linea del archivo el archivo esta corrupto o no existe.
+     */
+    private static String buscaImagen(File archivo, double red, double green, double blue) throws FileNotFoundException, IOException{
+        String ruta = null;
+        String linea = "";
+        FileReader reader = new FileReader(archivo);
+        BufferedReader buf = new BufferedReader(reader);
+        double dif = Double.POSITIVE_INFINITY;
+        String[] parString = null;
+        String mejorOpcion = "";
+        while(ruta == null){
+            linea = buf.readLine();
+            if(linea == null){
+                ruta = mejorOpcion;
+                continue;
             }
-            return ruta;
-        }
-        
-        private static double[] promedio(File img) throws FileNotFoundException{
-            Image imagen = new Image(new FileInputStream(img));
-            double[] promedio = new double[3];
-            double promedioR,promedioG,promedioB;
-            promedioR = promedioG = promedioB = 0;
-            for (int i = 0; i < imagen.getWidth(); i++) {
-                for (int j = 0; j < imagen.getHeight(); j++) {
-                    promedioR += imagen.getPixelReader().getColor(i, j).getRed();
-                    promedioG += imagen.getPixelReader().getColor(i, j).getGreen();
-                    promedioB += imagen.getPixelReader().getColor(i, j).getBlue();
-                }
+            parString = linea.split("#-");
+            double promR = Double.parseDouble(parString[0]);
+            double promG = Double.parseDouble(parString[1]);
+            double promB = Double.parseDouble(parString[2]);
+            double raiz = Math.sqrt(
+                    Math.pow(red - promR, 2)+
+                            Math.pow(green - promG, 2)+
+                            Math.pow(blue - promB, 2)
+            );
+            if(raiz < dif){
+                dif = raiz;
+                mejorOpcion = parString[parString.length-1];
             }
-            promedio[0] = promedioR/(imagen.getWidth()*imagen.getHeight());
-            promedio[1] = promedioG/(imagen.getWidth()*imagen.getHeight());
-            promedio[2] = promedioB/(imagen.getWidth()*imagen.getHeight());
-            return promedio;
         }
-}
+        return ruta;
+    }
+    
+    /**
+     * Metodo privado para sacar el promedio de una imagen.
+     * @param img - Es la imagen que se quiere sacar el promedio.
+     * @return Un arreglo con valores promedios en 0,1 y 2 de RGB respectivamente.
+     * @throws FileNotFoundException Si el archivo que se pasa no existe.
+     */
+    private static double[] promedio(File img) throws FileNotFoundException{
+        Image imagen = new Image(new FileInputStream(img));
+        double[] promedio = new double[3];
+        double promedioR,promedioG,promedioB;
+        promedioR = promedioG = promedioB = 0;
+        for (int i = 0; i < imagen.getWidth(); i++) {
+            for (int j = 0; j < imagen.getHeight(); j++) {
+                promedioR += imagen.getPixelReader().getColor(i, j).getRed();
+                promedioG += imagen.getPixelReader().getColor(i, j).getGreen();
+                promedioB += imagen.getPixelReader().getColor(i, j).getBlue();
+            }
+        }
+        promedio[0] = promedioR/(imagen.getWidth()*imagen.getHeight());
+        promedio[1] = promedioG/(imagen.getWidth()*imagen.getHeight());
+        promedio[2] = promedioB/(imagen.getWidth()*imagen.getHeight());
+        return promedio;
+    }
+}//Fin de Fotomosaico.java

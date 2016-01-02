@@ -30,6 +30,7 @@ package proceso_de_imagenes;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -104,32 +105,28 @@ public class Compresion {
      * @param archivo - es el archivo procImg
      * @return Una imagen en escala de grises de la original.
      */
-    public static Image descomprimeLossy(File archivo){
+    public static Image descomprimeLossy(File archivo) throws FileNotFoundException, IOException{
         WritableImage imagen = null;
         if (archivo != null) {
-            try {
-                BufferedReader buff = new BufferedReader(new FileReader(archivo));
-                String linea = buff.readLine();
-                String[] parseado = linea.trim().split(" ");
-                imagen = new WritableImage(Integer.parseInt(parseado[0]),Integer.parseInt(parseado[1]));
-                int numLinea = 0;
-                while((linea = buff.readLine()) != null){
-                    parseado = linea.trim().split(" ");
-                    int j = 0;
-                    int temp = 0;
-                    for (int i = 0; i < parseado.length; i += 2) {
-                        while(temp < Integer.parseInt(parseado[i+1])){
-                            int color = Integer.parseInt(parseado[i], 16);
-                            imagen.getPixelWriter().setColor(numLinea, j, Color.rgb(color, color, color));
-                            j++;
-                            temp++;
-                        }
-                        temp = 0;
+            BufferedReader buff = new BufferedReader(new FileReader(archivo));
+            String linea = buff.readLine();
+            String[] parseado = linea.trim().split(" ");
+            imagen = new WritableImage(Integer.parseInt(parseado[0]),Integer.parseInt(parseado[1]));
+            int numLinea = 0;
+            while((linea = buff.readLine()) != null){
+                parseado = linea.trim().split(" ");
+                int j = 0;
+                int temp = 0;
+                for (int i = 0; i < parseado.length; i += 2) {
+                    while(temp < Integer.parseInt(parseado[i+1])){
+                        int color = Integer.parseInt(parseado[i], 16);
+                        imagen.getPixelWriter().setColor(numLinea, j, Color.rgb(color, color, color));
+                        j++;
+                        temp++;
                     }
-                    numLinea++;
+                    temp = 0;
                 }
-            }catch(IOException e){
-                System.out.println(e);
+                numLinea++;
             }
         }
         return imagen;
