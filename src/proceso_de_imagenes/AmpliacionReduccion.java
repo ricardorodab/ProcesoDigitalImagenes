@@ -58,12 +58,14 @@ public class AmpliacionReduccion extends Filtro{
      * @return la nueva imagen con tamaño X,Y
      */
     public Image apliaReduce(int newX, int newY){
+        Filtro.PROGRESO = .25;
         Image icono = this.getImage();
         BufferedImage mosaico = SwingFXUtils.fromFXImage(icono, null);
         //Llamo al metodo que saca mosaicos o iconos.
         java.awt.Image imagen2 = mosaico.getScaledInstance(newX, newY, java.awt.Image.SCALE_SMOOTH);
         BufferedImage bi = new BufferedImage(newX, newY, BufferedImage.TYPE_INT_RGB);
         bi.getGraphics().drawImage(imagen2, 0, 0, null);
+        Filtro.PROGRESO = .75;
         return SwingFXUtils.toFXImage(bi, null);
     }
 } //Fin de AmpliacionReduccion.java    

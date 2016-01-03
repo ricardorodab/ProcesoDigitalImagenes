@@ -61,6 +61,7 @@ public class FiltroATT extends Filtro{
    * @return La imagen con el efecto FiltroATT, lineas en blanco y negro.
    */
     public Image filtra() {
+        Filtro.PROGRESO = 0;
         AltoContrasteFiltroInverso altoContraste = new AltoContrasteFiltroInverso((Image)this.getImage());
         BufferedImage ac = SwingFXUtils.fromFXImage(altoContraste.altoContraste(),null);
         int w = ac.getWidth();
@@ -87,6 +88,10 @@ public class FiltroATT extends Filtro{
                         wrn.setSample(i, y, 1, 0xff);
                         wrn.setSample(i, y, 2, 0xff);
                     }
+                }
+                Filtro.PROGRESO = (this.avanzar()/this.getTotal());
+                for (int k = 0; k < N; k++) {
+                    this.avanzar();
                 }
             }
         }

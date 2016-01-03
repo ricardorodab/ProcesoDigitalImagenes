@@ -41,12 +41,17 @@ import javafx.scene.image.Image;
  */
 public class Filtro {
     
+    public static double PROGRESO = 0;
     /** Imagen del filtro. */
     private final Image imagen;
     /** La altitud de la imagen. */
     private final int x;
     /** La longitud de la imagen. */
     private final int y;
+    /** Total de los pixeles por recorrer. */
+    private double totalAvance;
+    /** Total de los pixeles recocridos. */
+    private double contadorAvance;
     
     /**
      * Metodo construccion de un filtro.
@@ -56,6 +61,25 @@ public class Filtro {
         this.imagen = imagen;
         this.x = (int)imagen.getWidth();
         this.y = (int)imagen.getHeight();
+        this.totalAvance = y*x;
+        this.contadorAvance = 0;
+    }
+    
+    public double avanzar(){
+        return this.contadorAvance++;
+    }
+    
+    public double getContador(){
+        return this.contadorAvance;
+    }
+    public void setContador(double avance){
+        this.contadorAvance = avance;
+    }
+    public double getTotal(){
+        return this.totalAvance;
+    }
+    public void setTotal(double total){
+        this.totalAvance = total;
     }
     
     /**

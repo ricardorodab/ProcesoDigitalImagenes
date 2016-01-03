@@ -60,6 +60,7 @@ public class FiltroMosaico extends Filtro{
      * @return
      */
     public Image sacaMosaico(int anchoX, int largoY){
+        Filtro.PROGRESO = 0;
         int terminoX,terminoY;
         double rojoRGB ,verdeRGB,azulRGB,red,green,blue;
         int promedio = 0;
@@ -104,6 +105,7 @@ public class FiltroMosaico extends Filtro{
                         if(l >= this.getY())
                             break;
                         pixelD.setColor(k, l, Color.color(red, green, blue));
+                        Filtro.PROGRESO = this.avanzar()/this.getTotal();
                     }
                 }
             }

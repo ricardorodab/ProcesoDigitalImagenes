@@ -59,6 +59,7 @@ public class AltoContrasteFiltroInverso extends Filtro{
      * @return un filtro en blanco y negro donde los colores n > 127 son negro.
      */
     public Image inverso() {
+        Filtro.PROGRESO = 0;
         int rojoRGB,verdeRGB,azulRGB;
         WritableImage imagenD = new WritableImage(this.getX(), this.getY());
         PixelWriter pixelD = imagenD.getPixelWriter();
@@ -75,6 +76,7 @@ public class AltoContrasteFiltroInverso extends Filtro{
                 }else{
                     pixelD.setColor(i, j, Color.rgb(0, 0, 0));
                 }
+                Filtro.PROGRESO =  Filtro.PROGRESO = (this.avanzar()/this.getTotal());
             }
         }
         return imagenD;
@@ -85,6 +87,7 @@ public class AltoContrasteFiltroInverso extends Filtro{
      * @return un filtro en blanco y negro donde los colores n > 127 son blancos.
      */
     public Image altoContraste() {
+        Filtro.PROGRESO = 0;
         int rojoRGB,verdeRGB,azulRGB;
         WritableImage imagenD = new WritableImage(this.getX(), this.getY());
         PixelWriter pixelD = imagenD.getPixelWriter();
@@ -101,6 +104,7 @@ public class AltoContrasteFiltroInverso extends Filtro{
                 }else{
                     pixelD.setColor(i, j, Color.rgb(0, 0, 0));
                 }
+                Filtro.PROGRESO = (this.avanzar()/this.getTotal());
             }
         }
         return imagenD;

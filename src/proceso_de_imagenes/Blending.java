@@ -60,6 +60,7 @@ public class Blending extends Filtro{
      * @return una imagen compuesta de dos: La del filtro y la segunda.
      */
     public Image licua(Filtro segunda, double porcentaje){
+        Filtro.PROGRESO = 0;
         int red,green,blue;
         int w,h;
         w = Math.min(this.getX(), segunda.getX());
@@ -80,6 +81,7 @@ public class Blending extends Filtro{
                 blue = (int)(Math.min(Math.max((255*((colorOriginal.getBlue()*porcentaje)
                         + (colorOriginal2.getBlue()* (1 - porcentaje)))), 0), 255));
                 pixelD.setColor(i, j, Color.rgb(red, green, blue));
+                Filtro.PROGRESO = (this.avanzar()/this.getTotal());
             }
         }
         return imagenD;

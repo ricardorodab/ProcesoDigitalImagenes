@@ -134,6 +134,9 @@ public class FiltroOleo extends Filtro{
      * @return - una imagen que parece fue pintada con oleo.
      */
     public Image oleo(){
+        Filtro.PROGRESO = 0;
+        double totalAvance = this.getX()*this.getY();
+        double contadorAvance = 0;
         int anchoX,largoY;
         //Cantidad de vecindades que se visitan.
         //YO RECOMIENDO un número entre 5 y 10.
@@ -209,8 +212,7 @@ public class FiltroOleo extends Filtro{
                 frecuenciaB.clear();         
                 pixelD.setColor(i, j, Color.color(red, green, blue));
                 //Progreso
-                //pb.setProgress((i*j)/total);
-                //pi.setProgress((i*j)/total);
+                Filtro.PROGRESO = (++contadorAvance/totalAvance);
             }           
         }
         //third.close();

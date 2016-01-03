@@ -58,6 +58,7 @@ public class Esteganografia extends Filtro{
      * @return Una imagen practicamente identica.
      */
     public Image esconde(String mensaje){
+        Filtro.PROGRESO = 0;
         int marca = 0;
         int grisImagenR,grisImagenG,grisImagenB,grisImagenR2,grisImagenG2,grisImagenB2,grisImagenR3,grisImagenG3,grisImagenB3,
                 newR,newG,newB,newR2,newG2,newB2,newR3,newG3;
@@ -94,11 +95,14 @@ public class Esteganografia extends Filtro{
                     imagenF.getPixelWriter().setColor(i, j+1, Color.rgb(newR2, newG2, newB2));
                     imagenF.getPixelWriter().setColor(i, j+2, Color.rgb(newR3, newG3, grisImagenB3));
                     j += 2;
+                    Filtro.PROGRESO = (this.avanzar()/this.getTotal());
+                    this.avanzar();
                 }else{
                     grisImagenR &= ~1;
                     grisImagenG &= ~1;
                     grisImagenB &= ~1;
                     imagenF.getPixelWriter().setColor(i, j, Color.rgb(grisImagenR, grisImagenG, grisImagenB));
+                    Filtro.PROGRESO = (this.avanzar()/this.getTotal());
                 }
             }
         }
@@ -110,6 +114,7 @@ public class Esteganografia extends Filtro{
      * @return La cadena (el mensaje si hay) que estaba dentro de la imagen.
      */
     public String descifra(){
+        Filtro.PROGRESO = 0;
         String texto = "";
         int letra = 0;
         for (int i = 0; i < this.getX(); i++) {
@@ -128,6 +133,9 @@ public class Esteganografia extends Filtro{
                 if(j % 3 == 0)
                     texto = texto.trim();
             }
+            Filtro.PROGRESO = (this.avanzar()/this.getTotal());
+            this.avanzar();
+            this.avanzar();
             texto = texto.trim();
         }
         return texto.replace(""+(char)0,"").trim();

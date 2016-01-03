@@ -61,6 +61,7 @@ public class Brillo extends Filtro{
     }
     
     public Image filtroBrillo(){
+        Filtro.PROGRESO = 0;
         int red,green,blue,rojoRGB,verdeRGB,azulRGB;
         WritableImage imagenD = new WritableImage(this.getX(), this.getY());
         PixelWriter pixelD = imagenD.getPixelWriter();
@@ -79,6 +80,7 @@ public class Brillo extends Filtro{
                 green = Math.min(Math.max(green, 0), 255);
                 blue = Math.min(Math.max(blue, 0), 255);    
                 pixelD.setColor(i, j, Color.rgb(red, green, blue));
+                Filtro.PROGRESO = (this.avanzar()/this.getTotal());
             }
         }
         return imagenD;
