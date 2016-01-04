@@ -44,7 +44,7 @@ import javax.imageio.ImageIO;
 /**                                                                                                         
  * @author Jose Ricardo Rodriguez Abreu                                                                     
  * @version 1.0                                                                                             
- * @since Dic 31 2015.                                                                                      
+ * @since Dic 28 2015.                                                                                      
  * <p>                                                                                                      
  * Clase que da una imagen dada con semitonos.</p>                                                 
  *                                                                                                          

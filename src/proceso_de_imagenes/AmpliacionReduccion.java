@@ -34,7 +34,7 @@ import javafx.scene.image.Image;
 /**
  * @author Jose Ricardo Rodriguez Abreu
  * @version 1.0
- * @since Dic 31 2015.
+ * @since Dic 28 2015.
  * <p>
  * Clase que da el comportamiento de apliacion y reduccion de imagenes.</p>
  *

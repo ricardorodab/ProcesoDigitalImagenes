@@ -100,7 +100,7 @@ public class InterfazGraficaController implements Initializable {
     @FXML
     private MenuItem guardarComoI,cargaOriginal,cambiarBrillo, rotarItem,
             rotarMatrizItem, colorRealItem,webPalleteItem,
-            lossy,ampliarReducirItem,semitonosItem, fotomosaicoItem,
+            lossy,ampliarReducirItem,semitonosItem, fotomosaicoItem,fotomosaicoItem1,
             ocultarMensajeItem,descifrarMensajeItem,filtroMosaico;
     @FXML
     private Menu aplicarFiltros,comprimirMenu;
@@ -113,11 +113,16 @@ public class InterfazGraficaController implements Initializable {
     @FXML
     private AnchorPane principal,unamPane,progresoAnchor;
     @FXML
-    private Button boton;
+    private Button boton,detenerThread;
     @FXML
     private ProgressBar pb;
     @FXML
     private ProgressIndicator pi;
+    @FXML
+    private Text antesText;
+    @FXML
+    private HBox botonesBox;
+    
     
     /**
      * Metodo que aplica los filtros a la imagen actual.
@@ -372,7 +377,7 @@ public class InterfazGraficaController implements Initializable {
     }
     
     private void fotomosaico() throws IOException{
-        fotomosaicoItem.setOnAction((ActionEvent) -> {
+        EventHandler<ActionEvent> proyecto = (ActionEvent eventMaster) -> {           
             principal.setDisable(true);
             Stage second = new Stage();
             BorderPane border = new BorderPane();
@@ -416,9 +421,19 @@ public class InterfazGraficaController implements Initializable {
                 second.close();
             });
             aceptar.setOnMouseClicked((MouseEvent event) -> {
-                DirectoryChooser ventana = new DirectoryChooser();
-                ventana.setTitle("Abrir");
-                final File archivo = ventana.showDialog(stage);
+                second.close();
+                MenuItem fuente = (MenuItem)eventMaster.getSource();
+                final File archivo;
+                if(fuente.getId().equals(fotomosaicoItem.getId())){
+                    DirectoryChooser ventana = new DirectoryChooser();
+                    ventana.setTitle("Abrir");
+                    archivo = ventana.showDialog(stage);
+                }else{
+                    FileChooser fileChooser = new FileChooser();
+                    FileChooser.ExtensionFilter extFilter0 = new FileChooser.ExtensionFilter("DataLogIm files (*.dataLogIm)", "*.dataLogIm");
+                    fileChooser.getExtensionFilters().add(extFilter0);
+                    archivo = fileChooser.showOpenDialog(stage);
+                }                
                 muestraProceso(true);
                 Task prev = new Task(){
                     @Override
@@ -438,7 +453,11 @@ public class InterfazGraficaController implements Initializable {
                             protected Object call() throws Exception{
                                 Filtro filtro = new Filtro(imagen.getImage());
                                 try {
-                                    Fotomosaico.sacaFotomosaico(filtro,mosaicoS,archivo, input2,recursa);
+                                    if(fuente.getId().equals(fotomosaicoItem.getId())){
+                                        Fotomosaico.sacaFotomosaico(filtro,mosaicoS,archivo, input2,recursa);
+                                    }else{
+                                        Fotomosaico.sacaFotomosaico(archivo, filtro, mosaicoS, input2, recursa);
+                                    }
                                 } catch (IOException ex) {
                                     //Error
                                 }
@@ -452,16 +471,16 @@ public class InterfazGraficaController implements Initializable {
                         return null;
                     }
                 };
-                second.close();
                 Thread preHilo = new Thread(prev);
                 preHilo.setDaemon(true);
                 preHilo.start();
                 modificadores(true);
                 principal.setDisable(false);
             });
-        });
+        };
+        fotomosaicoItem.setOnAction(proyecto);
+        fotomosaicoItem1.setOnAction(proyecto);
     }
-    
     
     private void semitonos() throws IOException{
         semitonosItem.setOnAction((EventHandler) -> {
@@ -627,6 +646,9 @@ public class InterfazGraficaController implements Initializable {
             
             @Override
             protected Object call() throws Exception {
+                antesText.setVisible(true);
+                botonesBox.setDisable(false);
+                botonesBox.setVisible(true);
                 unamPane.setDisable(true);
                 unamPane.setVisible(false);
                 splitPane.setDisable(false);
@@ -2109,8 +2131,11 @@ public class InterfazGraficaController implements Initializable {
                 
                 @Override
                 protected Object call() throws Exception {
+                    botonesBox.setDisable(true);
+                    botonesBox.setVisible(false);
                     unamPane.setVisible(true);
                     splitPane.setDisable(true);
+                    antesText.setVisible(false);
                     splitPane.setVisible(false);
                     imagen.setImage(null);
                     originalPermanente.setImage(null);
@@ -2156,8 +2181,11 @@ public class InterfazGraficaController implements Initializable {
                         
                         @Override
                         protected Object call() throws Exception {
+                            botonesBox.setDisable(false);
+                            botonesBox.setVisible(true);
                             unamPane.setVisible(false);
                             unamPane.setDisable(true);
+                            antesText.setVisible(true);
                             splitPane.setDisable(false);
                             splitPane.setVisible(true);
                             
@@ -2191,6 +2219,7 @@ public class InterfazGraficaController implements Initializable {
             ampliarReducirItem.setDisable(!valor);
             semitonosItem.setDisable(!valor);
             fotomosaicoItem.setDisable(!valor);
+            fotomosaicoItem1.setDisable(!valor);
             ocultarMensajeItem.setDisable(!valor);
             descifrarMensajeItem.setDisable(!valor);
             filtroMosaico.setDisable(!valor);
@@ -2206,6 +2235,7 @@ public class InterfazGraficaController implements Initializable {
             lossy.setDisable(!valor);
             ampliarReducirItem.setDisable(!valor);
             semitonosItem.setDisable(!valor);
+            fotomosaicoItem1.setDisable(!valor);
             fotomosaicoItem.setDisable(!valor);
             ocultarMensajeItem.setDisable(!valor);
             descifrarMensajeItem.setDisable(!valor);
@@ -2255,6 +2285,8 @@ public class InterfazGraficaController implements Initializable {
     
     private void muestraProceso(boolean inicio){
         FutureTask<Void> updateUITask = new FutureTask(() -> {
+            botonesBox.setDisable(inicio);
+            botonesBox.setVisible(!inicio);
             splitPane.setVisible(!inicio);
             splitPane.setDisable(inicio);
             progresoAnchor.setDisable(!inicio);
@@ -2270,11 +2302,12 @@ public class InterfazGraficaController implements Initializable {
         },null);
         Platform.runLater(updateUITask);
     }
-    
+       
     private void killProceso(Thread hilo){
         while(hilo.isAlive()){
-            setProceso(Filtro.PROGRESO);
-            try {
+            if(!hilo.isInterrupted())
+                setProceso(Filtro.PROGRESO);            
+            try {               
                 Thread.sleep(200);
             } catch (InterruptedException ex) {
                 //ERROR
@@ -2283,11 +2316,17 @@ public class InterfazGraficaController implements Initializable {
         muestraProceso(false);
     }
     
+    @FXML
+    private void correrBackground(ActionEvent event){            
+            muestraProceso(false);
+    }
+    
     
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+            antesText.setVisible(false);
             pintaMosaico();
             rotarImagen();
             colorReal();

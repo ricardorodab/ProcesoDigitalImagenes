@@ -15,11 +15,11 @@
    <children>
       <AnchorPane prefHeight="800.0" prefWidth="840.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <SplitPane dividerPositions="0.06294964028776978" orientation="VERTICAL" prefHeight="800.0" prefWidth="825.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <SplitPane dividerPositions="0.06294964028776978" orientation="VERTICAL" prefHeight="800.0" prefWidth="825.0" stylesheets="@../resources/split.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <items>
                 <AnchorPane maxHeight="50.0" minHeight="40.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                      <children>
-                        <MenuBar prefHeight="40.0" prefWidth="823.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                        <MenuBar blendMode="DIFFERENCE" prefHeight="40.0" prefWidth="823.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                           <menus>
                             <Menu mnemonicParsing="false" text="Archivo">
                               <items>
@@ -108,6 +108,7 @@
                               <Menu mnemonicParsing="false" text="Proyecto">
                                  <items>
                                     <MenuItem fx:id="fotomosaicoItem" disable="true" mnemonicParsing="false" text="Fotomosaico" />
+                                    <MenuItem fx:id="fotomosaicoItem1" disable="true" mnemonicParsing="false" text="Fotomosaico (Desde un archivo de datos de bibliotecas de imagenes .dataLogIm)" />
                                  </items>
                               </Menu>
                             <Menu mnemonicParsing="false" text="Ayuda">
@@ -137,19 +138,19 @@
                                  <children>
                                     <VBox alignment="CENTER" prefHeight="638.0" prefWidth="838.0">
                                        <children>
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="ANTES                                                  IMAGEN DIGITAL                                                DESPUÉS" textAlignment="CENTER" wrappingWidth="570.3170928955078" />
+                                          <Text fx:id="antesText" strokeType="OUTSIDE" strokeWidth="0.0" text="ANTES                                                  IMAGEN DIGITAL                                           DESPUÉS" textAlignment="CENTER" wrappingWidth="570.3170928955078" />
                                           <AnchorPane prefHeight="627.0" prefWidth="838.0">
                                              <children>
                                                 <SplitPane fx:id="splitPane" disable="true" dividerPositions="0.5" prefHeight="429.0" prefWidth="838.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="2.0">
                                                   <items>
                                                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                                                          <children>
-                                                            <ImageView fx:id="originalPermanente" fitHeight="428.0" fitWidth="469.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="128.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                            <ImageView fx:id="originalPermanente" fitHeight="428.0" fitWidth="417.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                                          </children>
                                                       </AnchorPane>
                                                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                                                          <children>
-                                                            <ImageView fx:id="imagen" fitHeight="428.0" fitWidth="469.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="128.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                            <ImageView fx:id="imagen" fitHeight="428.0" fitWidth="417.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                                          </children>
                                                       </AnchorPane>
                                                   </items>
@@ -181,16 +182,16 @@
                                                          <center>
                                                             <HBox alignment="CENTER" prefHeight="498.0" prefWidth="636.0" BorderPane.alignment="CENTER">
                                                                <children>
-                                                                  <VBox alignment="CENTER" prefHeight="498.0" prefWidth="459.0" spacing="60.0">
+                                                                  <VBox alignment="CENTER" prefHeight="301.0" prefWidth="366.0" spacing="60.0">
                                                                      <children>
                                                                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Progreso actual">
                                                                            <font>
                                                                               <Font name="Andale Mono" size="24.0" />
                                                                            </font>
                                                                         </Text>
-                                                                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="274.0" spacing="30.0">
+                                                                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="394.0" spacing="30.0">
                                                                            <children>
-                                                                              <ProgressBar fx:id="pb" prefWidth="200.0" progress="0.0" />
+                                                                              <ProgressBar fx:id="pb" prefHeight="20.0" prefWidth="304.0" progress="0.0" />
                                                                               <ProgressIndicator fx:id="pi" progress="0.0">
                                                                                  <HBox.margin>
                                                                                     <Insets top="33.0" />
@@ -210,6 +211,13 @@
                                                                </padding>
                                                             </ProgressIndicator>
                                                          </bottom>
+                                                         <right>
+                                                            <Button fx:id="detenerThread" mnemonicParsing="false" onAction="#correrBackground" text="Correr proceso&#10;de fondo" textAlignment="CENTER" BorderPane.alignment="CENTER">
+                                                               <BorderPane.margin>
+                                                                  <Insets right="50.0" top="80.0" />
+                                                               </BorderPane.margin>
+                                                            </Button>
+                                                         </right>
                                                       </BorderPane>
                                                    </children>
                                                 </AnchorPane>
@@ -233,10 +241,10 @@
                                     </VBox>
                                  </children>
                               </HBox>
-                              <HBox alignment="CENTER" layoutX="10.0" layoutY="92.0" prefHeight="187.0" prefWidth="838.0" spacing="50.0">
+                              <HBox fx:id="botonesBox" alignment="CENTER" layoutX="10.0" layoutY="92.0" prefHeight="187.0" prefWidth="838.0" spacing="50.0" visible="false">
                                  <children>
-                                    <Button fx:id="original" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#verOriginal" prefHeight="27.0" prefWidth="300.0" text="Deshacer Cambios" textAlignment="CENTER" />
-                                    <Button fx:id="boton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#aplicaFiltro" prefHeight="27.0" prefWidth="300.0" text="Aplicar Filtro" textAlignment="CENTER" />
+                                    <Button fx:id="original" alignment="CENTER" blendMode="DIFFERENCE" contentDisplay="CENTER" mnemonicParsing="false" onAction="#verOriginal" prefHeight="27.0" prefWidth="300.0" text="Deshacer Cambios" textAlignment="CENTER" />
+                                    <Button fx:id="boton" alignment="CENTER" blendMode="DIFFERENCE" contentDisplay="CENTER" mnemonicParsing="false" onAction="#aplicaFiltro" prefHeight="27.0" prefWidth="300.0" text="Aplicar Filtro" textAlignment="CENTER" />
                                  </children>
                                  <VBox.margin>
                                     <Insets bottom="10.0" />

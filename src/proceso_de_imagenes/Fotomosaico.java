@@ -46,7 +46,7 @@ import org.apache.commons.io.FileUtils;
 /**
  * @author Jose Ricardo Rodriguez Abreu
  * @version 1.0
- * @since Dic 31 2015.
+ * @since Dic 29 2015.
  * <p>
  * Clase para otener una imagen hecho de fotomosaicos.</p>
  *
@@ -67,10 +67,47 @@ public class Fotomosaico {
      * @param recursiva - Selecciona si desea buscar dentro de los directorios recursivos.
      * @throws IOException - En caso de tener problemas de escritura.
      */
-    public static void sacaFotomosaico(Filtro filtro,int mosaico, File ruta, String salida,boolean recursiva) throws IOException{
+    public static void sacaFotomosaico(Filtro filtro,int mosaico,
+            File ruta, String salida,boolean recursiva) throws IOException{ 
+        Fotomosaico.sacaFotomosaico(null,filtro, mosaico, ruta, salida, recursiva);
+    }
+    
+    /**
+     * Metodo estatico que genera un archivo html para observar la imagen original
+     * de manera que esté formada de imagenes.
+     * @param infoLogEntrada - Es el archivo con los datos de la biblioteca
+     * @param filtro - Es el lugar donde se encuentra la imagen a transformar.
+     * @param mosaico - Es el tamano que ocupara cada imagen por mosaico.
+     * @param salida - Es el nombre del archivo de salida.
+     * @param recursiva - Selecciona si desea buscar dentro de los directorios recursivos.
+     * @throws IOException - En caso de tener problemas de escritura.
+     */
+    public static void sacaFotomosaico(File infoLogEntrada,Filtro filtro,int mosaico,
+            String salida,boolean recursiva) throws IOException{ 
+        Fotomosaico.sacaFotomosaico(infoLogEntrada,filtro, mosaico, null, salida, recursiva);
+    }
+    
+    /**
+     * Metodo estatico que genera un archivo html para observar la imagen original
+     * de manera que esté formada de imagenes.
+     * @param infoLogEntrada - Es el archivo con los datos de la biblioteca
+     * @param filtro - Es el lugar donde se encuentra la imagen a transformar.
+     * @param mosaico - Es el tamano que ocupara cada imagen por mosaico.
+     * @param ruta - Es la ruta del directorio donde se desea sacar las imagenes.
+     * @param salida - Es el nombre del archivo de salida.
+     * @param recursiva - Selecciona si desea buscar dentro de los directorios recursivos.
+     * @throws IOException - En caso de tener problemas de escritura.
+     */
+    private static void sacaFotomosaico(File infoLogEntrada,Filtro filtro,
+            int mosaico, File ruta, String salida,boolean recursiva) throws IOException{
         Filtro.PROGRESO = 0;
+        File infoLog;
         //Crea un archivo con la informacion de las fotos en el archivo.
-        File infoLog = sacaArchivos(ruta,recursiva);
+        if(infoLogEntrada == null){
+         infoLog = sacaArchivos(ruta,recursiva);
+        }else{
+            infoLog = infoLogEntrada;
+        }
         //Toma un archivo ya creado con la informacion de las fotos.
         //File infoLog = FileUtils.getFile("valoresImagenes.txt");
         Filtro.PROGRESO = 0;
@@ -154,7 +191,7 @@ public class Fotomosaico {
     private static File sacaArchivos(File dir,boolean recursivo) throws IOException{
         String[] ext = {"png","jpg","jpeg","PNG","JPG","JPEG"};
         Collection<File> files = FileUtils.listFiles(dir,ext, recursivo);
-        File salida = new File("valoresImagenes.txt");
+        File salida = new File("valoresImagenes.dataLogIm");
         salida.createNewFile();
         FileWriter txt = new FileWriter(salida);
         try (BufferedWriter escritor = new BufferedWriter(txt)) {
@@ -183,7 +220,8 @@ public class Fotomosaico {
      * @throws FileNotFoundException Si el archivo que se le pasa no existe.
      * @throws IOException Si al leer una linea del archivo el archivo esta corrupto o no existe.
      */
-    private static String buscaImagen(File archivo, double red, double green, double blue) throws FileNotFoundException, IOException{
+    private static String buscaImagen(File archivo, double red, double green,
+            double blue) throws FileNotFoundException, IOException{
         String ruta = null;
         String linea;
         FileReader reader = new FileReader(archivo);

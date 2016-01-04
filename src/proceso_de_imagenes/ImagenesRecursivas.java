@@ -38,12 +38,14 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import javax.imageio.ImageIO;
+import jfx.messagebox.MessageBox;
 
 /**
  * @author Jose Ricardo Rodriguez Abreu
  * @version 1.0
- * @since Dic 31 2015.
+ * @since Dic 22 2015.
  * <p>
  * Clase que crea imagenes hechas de una misma imagen.</p>
  *
@@ -311,7 +313,13 @@ public class ImagenesRecursivas extends Filtro{
             //Cambio
             ImageIO.write(buffe, "png", imagenFinal);
         } catch (IOException ex) {
-            
+            MessageBox.show(new Stage(), "¡ERROR FATAL! \n\n Ocurrió un error al"
+                    + " querer crear su imagen. Disculpe las inconveniencias. \n"
+                    + "Algunos consejos para evitar errores son: \n"
+                    + "Iniciar como administrador el programa o tener los permisos necesarios.\n"
+                    + "Tener una versión de java actualizada (1.8.0_51 o superior)."
+                    + "ricardo_rodab@ciencias.unam.mx",
+                    "Error crítico", MessageBox.ICON_ERROR | MessageBox.OK);
         }
         return imagenFinal.getPath();
     }

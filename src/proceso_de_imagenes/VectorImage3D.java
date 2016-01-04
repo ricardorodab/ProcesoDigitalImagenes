@@ -30,7 +30,7 @@ package proceso_de_imagenes;
 /**
  * @author Jose Ricardo Rodriguez Abreu
  * @version 1.0
- * @since Dic 31 2015.
+ * @since Dic 24 2015.
  * <p>
  * Clase que nos ayuda a emular imagenes y puntos 3D.</p>
  *

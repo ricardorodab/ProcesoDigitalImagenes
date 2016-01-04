@@ -32,6 +32,7 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import jfx.messagebox.MessageBox;
 
 /**
@@ -208,7 +209,10 @@ public class FiltroGris extends Filtro{
      */
     public Image grisCuantos(int cantidad){
         if (cantidad > 256 || cantidad < 0) {
-            //ERROR
+            MessageBox.show(new Stage(), "¡Error! \n\n Ocurrió un error al"
+                    +"crear su imagen. La cantidad de grises es incorrecta.",
+                    "Error colores grises", MessageBox.ICON_WARNING | MessageBox.OK);
+            return this.getImage();
         }
         double conversionFactor = 255 / (cantidad - 1);
         int r,g,b;
@@ -239,7 +243,10 @@ public class FiltroGris extends Filtro{
      */
     public Image grisCuantosDithering(int cantidad){
         if (cantidad > 256 || cantidad < 0) {
-            //ERROR
+            MessageBox.show(new Stage(), "¡Error! \n\n Ocurrió un error al"
+                    +"crear su imagen. La cantidad de grises es incorrecta.",
+                    "Error colores grises", MessageBox.ICON_WARNING | MessageBox.OK);
+            return this.getImage();
         }
         double conversionFactor = 255 / (cantidad - 1);
         int r,g,b;

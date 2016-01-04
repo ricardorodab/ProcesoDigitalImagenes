@@ -32,11 +32,13 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import jfx.messagebox.MessageBox;
 
 /**
  * @author Jose Ricardo Rodriguez Abreu
  * @version 1.0
- * @since Dic 31 2015.
+ * @since Dic 16 2015.
  * <p>
  * Clase que da el comportamiento de la tabla carreras.</p>
  *
@@ -78,7 +80,8 @@ public class Rotacion extends Filtro{
         }else if (grados == CERO){
             return this.getImage();
         }else{
-            //ERROR
+            MessageBox.show(new Stage(), "Los grados sólo pueden ser 0º,90º,180º y 270º",
+                    "Error crítico", MessageBox.ICON_ERROR | MessageBox.OK);
         }
         double cos,sin;
         if(grados == NOVENTA || grados == DOSCIENTOS_SETENTA){
@@ -139,7 +142,8 @@ public class Rotacion extends Filtro{
         }else if (grados == CERO){
             return this.getImage();
         }else{
-            //ERROR
+             MessageBox.show(new Stage(), "Los grados sólo pueden ser 0º,90º,180º y 270º",
+                    "Error crítico", MessageBox.ICON_ERROR | MessageBox.OK);
         }
         PixelWriter pixelD = imagenD.getPixelWriter();
         PixelReader pixelI = this.getImage().getPixelReader();

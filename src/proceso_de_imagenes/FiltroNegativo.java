@@ -36,7 +36,7 @@ import javafx.scene.paint.Color;
 /**
  * @author Jose Ricardo Rodriguez Abreu
  * @version 1.0
- * @since Dic 31 2015.
+ * @since Nov 11 2015.
  * <p>
  * Clase que da el filtro negativo.</p>
  *

@@ -34,7 +34,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
+import javafx.stage.Stage;
 import javax.imageio.ImageIO;
+import jfx.messagebox.MessageBox;
 
 
 /**
@@ -82,7 +84,13 @@ public final class FiltroEstereograma {
             File output = new File(salida+".jpg");
             ImageIO.write(img,"jpg",output);
         } catch (IOException e) {
-            //ERROR
+            MessageBox.show(new Stage(), "¡ERROR FATAL! \n\n Ocurrió un error al"
+                    + " querer crear su imagen. Disculpe las inconveniencias. \n"
+                    + "Algunos consejos para evitar errores son: \n"
+                    + "Iniciar como administrador el programa o tener los permisos necesarios.\n"
+                    + "Tener una versión de java actualizada (1.8.0_51 o superior)."
+                    + "ricardo_rodab@ciencias.unam.mx",
+                    "Error crítico", MessageBox.ICON_ERROR | MessageBox.OK);
         }
     }
     

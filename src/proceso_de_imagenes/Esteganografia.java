@@ -34,7 +34,7 @@ import javafx.scene.paint.Color;
 /**                                                                                                         
  * @author Jose Ricardo Rodriguez Abreu                                                                     
  * @version 1.0                                                                                             
- * @since Dic 31 2015.                                                                                      
+ * @since Dic 30 2015.                                                                                      
  * <p>                                                                                                      
  * Clase que da el comportamiento de encriptar texto en una imagen.</p>                                                 
  *                                                                                                          

@@ -50,10 +50,10 @@ public class ProcesoDeImagenes extends Application {
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("InterfazGrafica.fxml"));
         
-        Scene scene = new Scene(root);
-        
+        Scene scene = new Scene(root);       
         stage.setScene(scene);
         InterfazGraficaController.stage = stage;
+        scene.getStylesheets().add(ProcesoDeImagenes.class.getResource("/resources/split.css").toExternalForm());
         stage.show();
         stage.setOnCloseRequest((WindowEvent event) -> {
             System.exit(0);

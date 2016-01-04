@@ -43,7 +43,7 @@ import static proceso_de_imagenes.InterfazGraficaController.stage;
 /**
  * @author Jose Ricardo Rodriguez Abreu
  * @version 1.0
- * @since Dic 31 2015.
+ * @since Dic 25 2015.
  * <p>
  * Clase que da el comportamiento de la tabla carreras.</p>
  *
@@ -65,45 +65,47 @@ public class Compresion {
         File file = fileChooser.showSaveDialog(stage);
         file.createNewFile();
         FileWriter salida = new FileWriter(file);
-        BufferedWriter escritor = new BufferedWriter(salida);
         //Tamaño de la imagen. nxm
-        String texto = filtro.getX()+" "+filtro.getY()+"\n";
-        escritor.write(texto);
-        escritor.flush();
-        Color color;
-        int contador;
-        double siguiente, promedio;
-        for (int i = 0; i < filtro.getX(); i++) {
-            for (int j = 0; j < filtro.getY()-1; j++) {
-                color = filtro.getImage().getPixelReader().getColor(i, j);
-                promedio = (int)(promedio(color)*255);
-                contador = j+1;
-                while(contador < filtro.getY()){
-                    //Vemos el promedio del tono siguiente.
-                    siguiente = (int)(promedio(filtro.getImage().getPixelReader().getColor(i, contador))*255);
-                    //Si el tono siguiente es igual al actual aumento el contador y repito.
-                    if(promedio != siguiente)
-                        break;
-                    contador++;
-                }
-                Integer primedioFin = (int)(promedio);
-                //Imprimo el promedio de tomo de grtis con la cantidad de veces que se repite en hexadecimal.
-                texto = Integer.toHexString(primedioFin)+" "+(contador-j)+" ";
-                escritor.write(texto);
-                escritor.flush();
-                j = contador-1;
-            }
-            texto = "\n";
+        try (BufferedWriter escritor = new BufferedWriter(salida)) {
+            //Tamaño de la imagen. nxm
+            String texto = filtro.getX()+" "+filtro.getY()+"\n";
             escritor.write(texto);
             escritor.flush();
+            Color color;
+            int contador;
+            double siguiente, promedio;
+            for (int i = 0; i < filtro.getX(); i++) {
+                for (int j = 0; j < filtro.getY()-1; j++) {
+                    color = filtro.getImage().getPixelReader().getColor(i, j);
+                    promedio = (int)(promedio(color)*255);
+                    contador = j+1;
+                    while(contador < filtro.getY()){
+                        //Vemos el promedio del tono siguiente.
+                        siguiente = (int)(promedio(filtro.getImage().getPixelReader().getColor(i, contador))*255);
+                        //Si el tono siguiente es igual al actual aumento el contador y repito.
+                        if(promedio != siguiente)
+                            break;
+                        contador++;
+                    }
+                    Integer primedioFin = (int)(promedio);
+                    //Imprimo el promedio de tomo de grtis con la cantidad de veces que se repite en hexadecimal.
+                    texto = Integer.toHexString(primedioFin)+" "+(contador-j)+" ";
+                    escritor.write(texto);
+                    escritor.flush();
+                    j = contador-1;
+                }
+                texto = "\n";
+                escritor.write(texto);
+                escritor.flush();
+            }
         }
-        escritor.close();
     }
     
     /**
      * Metodo que descomprime un procImg
      * @param archivo - es el archivo procImg
      * @return Una imagen en escala de grises de la original.
+     * @throws java.io.FileNotFoundException - En caso de no encontrar el archivo seleccionado.
      */
     public static Image descomprimeLossy(File archivo) throws FileNotFoundException, IOException{
         WritableImage imagen = null;
