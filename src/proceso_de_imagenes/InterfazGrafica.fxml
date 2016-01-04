@@ -113,7 +113,6 @@
                               </Menu>
                             <Menu mnemonicParsing="false" text="Ayuda">
                               <items>
-                                <MenuItem disable="true" mnemonicParsing="false" text="Ayuda" />
                                     <MenuItem fx:id="acercaDe" mnemonicParsing="false" onAction="#acercaDe" text="Acerca de..." />
                               </items>
                             </Menu>
