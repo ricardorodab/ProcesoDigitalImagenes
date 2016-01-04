@@ -90,7 +90,7 @@ public class Esteganografia extends Filtro{
                     newG2 = (grisImagenG2 & ~1) | (1 & (letra >> 3));
                     newB2 = (grisImagenB2 & ~1) | (1 & (letra >> 2));
                     newR3 = (grisImagenR3 & ~1) | (1 & (letra >> 1));
-                    newG3 = (grisImagenG3 & ~1) | (1 & (letra >> 0));
+                    newG3 = (grisImagenG3 & ~1) | (1 & (letra));
                     imagenF.getPixelWriter().setColor(i, j, Color.rgb(newR, newG, newB));
                     imagenF.getPixelWriter().setColor(i, j+1, Color.rgb(newR2, newG2, newB2));
                     imagenF.getPixelWriter().setColor(i, j+2, Color.rgb(newR3, newG3, grisImagenB3));
@@ -116,7 +116,7 @@ public class Esteganografia extends Filtro{
     public String descifra(){
         Filtro.PROGRESO = 0;
         String texto = "";
-        int letra = 0;
+        int letra;
         for (int i = 0; i < this.getX(); i++) {
             for (int j = 0; j < this.getY()-2; j += 3) {
                 int letra1 = (int)(this.getImage().getPixelReader().getColor(i, j).getRed()*255);
@@ -130,8 +130,6 @@ public class Esteganografia extends Filtro{
                 letra = ((letra1 << 7) & 128) + ((letra2 << 6) & 64) + ((letra3 << 5) & 32) +
                         ((letra4 << 4) & 16) + ((letra5 << 3) & 8) + ((letra6 << 2) & 4)+((letra7 << 1) & 2) + (letra8 & 1);
                 texto = texto.concat(""+(char)letra); 
-                if(j % 3 == 0)
-                    texto = texto.trim();
             }
             Filtro.PROGRESO = (this.avanzar()/this.getTotal());
             this.avanzar();

@@ -28,8 +28,8 @@
                                     <MenuItem fx:id="guardarComoI" disable="true" mnemonicParsing="false" onAction="#guardarComo" text="Guardar" />
                                     <Menu mnemonicParsing="false" text="Esteganografía">
                                        <items>
-                                          <MenuItem fx:id="ocultarMensajeItem" disable="true" mnemonicParsing="false" onAction="#pintaEsteganografia" text="Ocultar mensaje" />
-                                          <MenuItem fx:id="descifrarMensajeItem" disable="true" mnemonicParsing="false" onAction="#pintaEsteganografia" text="Ocultar mensaje" />
+                                          <MenuItem fx:id="ocultarMensajeItem" disable="true" mnemonicParsing="false" text="Ocultar mensaje" />
+                                          <MenuItem fx:id="descifrarMensajeItem" disable="true" mnemonicParsing="false" text="Descifrar mensaje" />
                                        </items>
                                     </Menu>
                                     <Menu fx:id="comprimirMenu" mnemonicParsing="false" text="Compresión">
@@ -96,16 +96,20 @@
                                       </items>
                                     </Menu>
                                     <MenuItem fx:id="cambiarBrillo" disable="true" mnemonicParsing="false" onAction="#cambiaBrillo" text="Cambiar brillo" />
-                                    <MenuItem fx:id="rotarItem" disable="true" mnemonicParsing="false" onAction="#rotarImagen" text="Rotar Imagen" />
-                                    <MenuItem fx:id="rotarMatrizItem" disable="true" mnemonicParsing="false" onAction="#rotarImagen" text="Rotar Imagen (Matriz Rotación)" />
+                                    <MenuItem fx:id="rotarItem" disable="true" mnemonicParsing="false" text="Rotar Imagen" />
+                                    <MenuItem fx:id="rotarMatrizItem" disable="true" mnemonicParsing="false" text="Rotar Imagen (Matriz Rotación)" />
                                     <MenuItem fx:id="filtroMosaico" disable="true" mnemonicParsing="false" text="Imagen Mosaico" />
-                                    <MenuItem fx:id="colorRealItem" disable="true" mnemonicParsing="false" onAction="#colorReal" text="Imagen Recursiva (Color Real)" />
-                                    <MenuItem fx:id="webPalleteItem" disable="true" mnemonicParsing="false" onAction="#webPallete" text="Imagen Recursiva (Web Pallete)" />
+                                    <MenuItem fx:id="colorRealItem" disable="true" mnemonicParsing="false" text="Imagen Recursiva (Color Real)" />
+                                    <MenuItem fx:id="webPalleteItem" disable="true" mnemonicParsing="false" text="Imagen Recursiva (Web Pallete)" />
                                     <MenuItem fx:id="ampliarReducirItem" disable="true" mnemonicParsing="false" onAction="#ampliarReducir" text="Ampliar/Reducir" />
-                                    <MenuItem fx:id="semitonosItem" disable="true" mnemonicParsing="false" onAction="#semitonos" text="Semitonos" />
-                                    <MenuItem fx:id="fotomosaicoItem" disable="true" mnemonicParsing="false" onAction="#fotomosaico" text="Fotomosaico" />
+                                    <MenuItem fx:id="semitonosItem" disable="true" mnemonicParsing="false" text="Semitonos" />
                               </items>
                             </Menu>
+                              <Menu mnemonicParsing="false" text="Proyecto">
+                                 <items>
+                                    <MenuItem fx:id="fotomosaicoItem" disable="true" mnemonicParsing="false" text="Fotomosaico" />
+                                 </items>
+                              </Menu>
                             <Menu mnemonicParsing="false" text="Ayuda">
                               <items>
                                 <MenuItem disable="true" mnemonicParsing="false" text="Ayuda" />

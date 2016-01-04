@@ -47,7 +47,7 @@ import javax.imageio.ImageIO;
  * <p>
  * Desde esta clase podemos crear imagenes estereogramas.</p>
  */
-public class FiltroEstereograma {
+public final class FiltroEstereograma {
     
     /** Imagen final */
     private BufferedImage img;
@@ -82,7 +82,7 @@ public class FiltroEstereograma {
             File output = new File(salida+".jpg");
             ImageIO.write(img,"jpg",output);
         } catch (IOException e) {
-            e.printStackTrace();
+            //ERROR
         }
     }
     

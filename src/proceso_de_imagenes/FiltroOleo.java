@@ -30,20 +30,11 @@ package proceso_de_imagenes;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 /**
  * @author Jose Ricardo Rodriguez Abreu
@@ -75,6 +66,7 @@ public class FiltroOleo extends Filtro{
      * @return - una imagen sin ruido que es producto de optener medianas.
      */
     public Image mediana(){
+        Filtro.PROGRESO = 0;
         int anchoX,largoY;
         anchoX = largoY = 3;
         //Listas para almacenar los promedios de cierta vecindad.
@@ -86,11 +78,7 @@ public class FiltroOleo extends Filtro{
         WritableImage imagenD = new WritableImage(this.getX(), this.getY());
         PixelWriter pixelD = imagenD.getPixelWriter();
         PixelReader pixelI = this.getImage().getPixelReader();
-        red = green = blue = 0;
-        terminoX = anchoX;
-        terminoY = largoY;
         for (int i = 0; i < this.getX(); i++) {
-            terminoY = largoY;
             terminoX = i+anchoX;
             for (int j = 0; j < this.getY(); j++) {
                 terminoY = j+largoY;
@@ -124,6 +112,7 @@ public class FiltroOleo extends Filtro{
                 medianaG.clear();
                 medianaB.clear();                
                 pixelD.setColor(i, j, Color.color(red, green, blue));
+                Filtro.PROGRESO = (this.avanzar()/this.getTotal());
             }            
         }
         return imagenD;
@@ -144,19 +133,15 @@ public class FiltroOleo extends Filtro{
         //Tengo 3 mapas (3 colores) para ver repeticiones: 
         //K = PromedioColorRGB
         //V = Cantidad de veces vistos en vecindad.
-        Map<Double,Integer> frecuenciaR = new HashMap<Double,Integer>();
-        Map<Double,Integer> frecuenciaG = new HashMap<Double,Integer>();
-        Map<Double,Integer> frecuenciaB = new HashMap<Double,Integer>();
+        Map<Double,Integer> frecuenciaR = new HashMap<>();
+        Map<Double,Integer> frecuenciaG = new HashMap<>();
+        Map<Double,Integer> frecuenciaB = new HashMap<>();
         int terminoX,terminoY;
         double red,green,blue;
         WritableImage imagenD = new WritableImage(this.getX(), this.getY());
         PixelWriter pixelD = imagenD.getPixelWriter();
         PixelReader pixelI = this.getImage().getPixelReader();
-        red = green = blue = 0;
-        terminoX = anchoX;
-        terminoY = largoY;
         for (int i = 0; i < this.getX(); i++) {
-            terminoY = largoY;
             terminoX = i+anchoX;
             for (int j = 0; j < this.getY(); j++) {
                 terminoY = j+largoY;

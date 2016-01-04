@@ -68,10 +68,12 @@ public class Fotomosaico {
      * @throws IOException - En caso de tener problemas de escritura.
      */
     public static void sacaFotomosaico(Filtro filtro,int mosaico, File ruta, String salida,boolean recursiva) throws IOException{
+        Filtro.PROGRESO = 0;
         //Crea un archivo con la informacion de las fotos en el archivo.
         File infoLog = sacaArchivos(ruta,recursiva);
         //Toma un archivo ya creado con la informacion de las fotos.
         //File infoLog = FileUtils.getFile("valoresImagenes.txt");
+        Filtro.PROGRESO = 0;
         int anchoX,largoY;
         anchoX = largoY = mosaico;
         LinkedList<LinkedList<String>> imagenes = new LinkedList<>();
@@ -79,67 +81,66 @@ public class Fotomosaico {
         double rojoRGB ,verdeRGB,azulRGB,red,green,blue;
         int promedio = 0;
         PixelReader pixelI = filtro.getImage().getPixelReader();
-        red = green = blue = rojoRGB = verdeRGB = azulRGB = 0;
-        terminoX = anchoX;
-        terminoY = largoY;
+        rojoRGB = verdeRGB = azulRGB = 0;
         
         File archivoSalida = new File(salida);
         archivoSalida.createNewFile();
         FileWriter html = new FileWriter(archivoSalida);
-        BufferedWriter escritor = new BufferedWriter(html);
-        String texto = "<table border = \"0\" cellspacing=\"0\" cellpadding=\"0\" \n"
-                +"<tr>";
-        String imagenTemp = "";
-        escritor.write(texto);
-        escritor.flush();
-        
-        for (int i = 0; i < filtro.getX(); i += anchoX) {
-            terminoY = largoY;
-            terminoX = i+anchoX;
-            LinkedList<String> lTemp = new LinkedList<>();
-            for (int j = 0; j < filtro.getY(); j += largoY) {
-                terminoY = j+largoY;
-                
-                for (int k = i; k < terminoX; k++) {
-                    if(k >= filtro.getX())
-                        break;
-                    for (int l = j; l < terminoY; l++) {
-                        if(l >= filtro.getY())
+        try (BufferedWriter escritor = new BufferedWriter(html)) {
+            String texto = "<table border = \"0\" cellspacing=\"0\" cellpadding=\"0\" \n"
+                    +"<tr>";
+            String imagenTemp;
+            escritor.write(texto);
+            escritor.flush();
+            
+            for (int i = 0; i < filtro.getX(); i += anchoX) {
+                terminoX = i+anchoX;
+                LinkedList<String> lTemp = new LinkedList<>();
+                for (int j = 0; j < filtro.getY(); j += largoY) {
+                    terminoY = j+largoY;
+                    
+                    for (int k = i; k < terminoX; k++) {
+                        if(k >= filtro.getX())
                             break;
-                        Color colorOriginal = pixelI.getColor(k, l);
-                        rojoRGB += colorOriginal.getRed();
-                        verdeRGB += colorOriginal.getGreen();
-                        azulRGB += colorOriginal.getBlue();
-                        promedio++;
+                        for (int l = j; l < terminoY; l++) {
+                            if(l >= filtro.getY())
+                                break;
+                            Filtro.PROGRESO = (filtro.avanzar()/filtro.getTotal());
+                            Color colorOriginal = pixelI.getColor(k, l);
+                            rojoRGB += colorOriginal.getRed();
+                            verdeRGB += colorOriginal.getGreen();
+                            azulRGB += colorOriginal.getBlue();
+                            promedio++;
+                        }
                     }
+                    
+                    red = (rojoRGB/promedio);
+                    green = (verdeRGB/promedio);
+                    blue = (azulRGB/promedio);
+                    rojoRGB = verdeRGB = azulRGB = promedio = 0;
+                    imagenTemp = buscaImagen(infoLog,red,green, blue);
+                    texto = "<td><img src=\""+imagenTemp+"\" width=\"10\", height=\"10\"></td> \n";
+                    lTemp.add(texto);
                 }
-                
-                red = (rojoRGB/promedio);
-                green = (verdeRGB/promedio);
-                blue = (azulRGB/promedio);
-                rojoRGB = verdeRGB = azulRGB = promedio = 0;
-                imagenTemp = buscaImagen(infoLog,red,green, blue);
-                texto = "<td><img src=\""+imagenTemp+"\" width=\"10\", height=\"10\"></td> \n";
-                lTemp.add(texto);
+                imagenes.add(lTemp);
             }
-            imagenes.add(lTemp);
-        }
-        for (int i = 0; i < imagenes.getFirst().size(); i++) {
-            for (LinkedList<String> lTemp : imagenes) {
-                if(i >= lTemp.size())
-                    break;
-                escritor.write(lTemp.get(i));
+            Filtro.PROGRESO = -1;
+            for (int i = 0; i < imagenes.getFirst().size(); i++) {
+                for (LinkedList<String> lTemp : imagenes) {
+                    if(i >= lTemp.size())
+                        break;
+                    escritor.write(lTemp.get(i));
+                    escritor.flush();
+                }
+                texto = "</tr><tr> \n";
+                escritor.write(texto);
                 escritor.flush();
             }
-            texto = "</tr><tr> \n";
+            texto = "</tr> \n"
+                    +"</table></center>";
             escritor.write(texto);
             escritor.flush();
         }
-        texto = "</tr> \n"
-                +"</table></center>";
-        escritor.write(texto);
-        escritor.flush();
-        escritor.close();
         Desktop.getDesktop().browse(archivoSalida.toURI());
     }
     
@@ -151,20 +152,23 @@ public class Fotomosaico {
      * @throws IOException Lo lanza cuando hay problemas al leer el archivo o crearlo.
      */
     private static File sacaArchivos(File dir,boolean recursivo) throws IOException{
-        String[] ext = {"png","jpg","jpeg"};
+        String[] ext = {"png","jpg","jpeg","PNG","JPG","JPEG"};
         Collection<File> files = FileUtils.listFiles(dir,ext, recursivo);
         File salida = new File("valoresImagenes.txt");
         salida.createNewFile();
         FileWriter txt = new FileWriter(salida);
-        BufferedWriter escritor = new BufferedWriter(txt);
-        String texto = "";
-        for (File img : files) {
-            double[] prom = promedio(img);
-            texto = prom[0]+"#-"+prom[1]+"#-"+prom[2]+"#-"+img.getAbsolutePath()+"\n";
-            escritor.write(texto);
-            escritor.flush();
+        try (BufferedWriter escritor = new BufferedWriter(txt)) {
+            String texto;
+            double total = files.size();
+            double cuenta = 0;
+            for (File img : files) {
+                Filtro.PROGRESO = (cuenta++/total);
+                double[] prom = promedio(img);
+                texto = prom[0]+"#-"+prom[1]+"#-"+prom[2]+"#-"+img.getAbsolutePath()+"\n";
+                escritor.write(texto);
+                escritor.flush();
+            }
         }
-        escritor.close();
         return salida;
     }
     
@@ -181,11 +185,11 @@ public class Fotomosaico {
      */
     private static String buscaImagen(File archivo, double red, double green, double blue) throws FileNotFoundException, IOException{
         String ruta = null;
-        String linea = "";
+        String linea;
         FileReader reader = new FileReader(archivo);
         BufferedReader buf = new BufferedReader(reader);
         double dif = Double.POSITIVE_INFINITY;
-        String[] parString = null;
+        String[] parString;
         String mejorOpcion = "";
         while(ruta == null){
             linea = buf.readLine();

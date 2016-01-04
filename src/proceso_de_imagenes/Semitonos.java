@@ -58,6 +58,13 @@ public class Semitonos {
      */
     private static final int NUM_TONO = 10;
     
+    /**
+     * Metodo para crear una imagen hecha de semitonos.
+     * @param img - Es la imagen original.
+     * @param cuadranteFoto - Es lo grueso del cuadrante a tomar.
+     * @param salida - Es el nombre de salida del archivo.
+     * @throws IOException - Regresa exception si tiene problemas al crear algun archivo.
+     */
     public static void semitono(Image img,int cuadranteFoto, String salida) throws IOException{
         creaSemitonos(20);
         File archivoSalida = new File(salida);
@@ -68,17 +75,14 @@ public class Semitonos {
                 +"<tr>";
         escritor.write(texto);
         escritor.flush();
-        String imagenTemp = "";       
+        String imagenTemp;       
         LinkedList<LinkedList<String>> imagenes = new LinkedList<>();
         int terminoX,terminoY;
         double rojoRGB ,verdeRGB,azulRGB,red,green,blue;
         int promedio = 0;
         PixelReader pixelI = img.getPixelReader();
-        red = green = blue = rojoRGB = verdeRGB = azulRGB = 0;
-        terminoX = cuadranteFoto;
-        terminoY = cuadranteFoto;
+        rojoRGB = verdeRGB = azulRGB = 0;
         for (int i = 0; i < img.getWidth(); i += cuadranteFoto) {
-            terminoY = cuadranteFoto;
             terminoX = i+cuadranteFoto;
             LinkedList<String> lTemp = new LinkedList<>();
             for (int j = 0; j < img.getHeight(); j += cuadranteFoto) {
@@ -156,7 +160,7 @@ public class Semitonos {
     private static void creaSemitonos(int TamanoPuntos) throws IOException{
         int y,x;
         y = x = TamanoPuntos;
-        WritableImage imagen = null;
+        WritableImage imagen;
         for(int i = 0; i < NUM_TONO; i++){
             imagen = new WritableImage(x,y);
             double radio = (((double)i)/(double)NUM_TONO)*(x/2);

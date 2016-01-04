@@ -55,24 +55,33 @@ public class FiltroMosaico extends Filtro{
     
     /**
      * Metodo que nos genera una imagen en mosaicos.
-     * @param anchoX - es el ancho de cada mosaico.
-     * @param largoY - es el largo de cada mosaico.
-     * @return
+     * @param anchoX - Es el ancho de cada mosaico.
+     * @param largoY - Es el largo de cada mosaico. 
+     * @return - Una imagen pixeleada con mosaicos promedios.
      */
     public Image sacaMosaico(int anchoX, int largoY){
-        Filtro.PROGRESO = 0;
+        return sacaMosaico(anchoX,largoY,true);
+    }
+    
+    /**
+     * Metodo que nos genera una imagen en mosaicos.
+     * @param anchoX - Es el ancho de cada mosaico.
+     * @param largoY - Es el largo de cada mosaico.
+     * @param progreso - Es true si se quiere llevar un progreso. 
+     * @return - Una imagen pixeleada con mosaicos promedios.
+     */
+    public Image sacaMosaico(int anchoX, int largoY, boolean progreso){
+        if(progreso)
+            Filtro.PROGRESO = 0;
         int terminoX,terminoY;
         double rojoRGB ,verdeRGB,azulRGB,red,green,blue;
         int promedio = 0;
         WritableImage imagenD = new WritableImage(this.getX(), this.getY());
         PixelWriter pixelD = imagenD.getPixelWriter();
         PixelReader pixelI = this.getImage().getPixelReader();
-        red = green = blue = rojoRGB = verdeRGB = azulRGB = 0;
-        terminoX = anchoX;
-        terminoY = largoY;
+       rojoRGB = verdeRGB = azulRGB = 0;
         //Aumentamos i,j cada ancho y largo de los mosaicos.
         for (int i = 0; i < this.getX(); i += anchoX) {
-            terminoY = largoY;
             terminoX = i+anchoX;
             for (int j = 0; j < this.getY(); j += largoY) {
                 terminoY = j+largoY;
@@ -105,7 +114,8 @@ public class FiltroMosaico extends Filtro{
                         if(l >= this.getY())
                             break;
                         pixelD.setColor(k, l, Color.color(red, green, blue));
-                        Filtro.PROGRESO = this.avanzar()/this.getTotal();
+                        if(progreso)
+                            Filtro.PROGRESO = this.avanzar()/this.getTotal();
                     }
                 }
             }

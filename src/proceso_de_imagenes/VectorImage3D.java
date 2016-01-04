@@ -43,15 +43,15 @@ public class VectorImage3D {
     /**
      * Es el valor del punto rojo.
      */
-    private int rojo;
+    private final int rojo;
     /**
      * Es el valor del punto verde.
      */
-    private int verde;
+    private final int verde;
     /**
      * Es el valor del punto azul.
      */
-    private int azul;
+    private final int azul;
     /**
      * Es un URL a la imagen.
      */
@@ -117,10 +117,8 @@ public class VectorImage3D {
      * @return - True si el elemento es igual.
      */
     public boolean equals(VectorImage3D vector){
-        if(vector.getRojo() == this.rojo &&
+        return vector.getRojo() == this.rojo &&
                 vector.getVerde() == this.verde &&
-                vector.getAzul() == this.azul)
-            return true;
-        return false;
+                vector.getAzul() == this.azul;
     }
 }//Fin de VectorImage3D

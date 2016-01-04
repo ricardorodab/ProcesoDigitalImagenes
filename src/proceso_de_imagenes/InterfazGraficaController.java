@@ -36,19 +36,20 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.FutureTask;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Control;
 import javafx.scene.control.DialogEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -57,8 +58,11 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -183,9 +187,6 @@ public class InterfazGraficaController implements Initializable {
                     case 18:
                         pintaMarcaDeAgua();
                         break;
-                    case 19:
-                        //pintaMosaico();
-                        break;
                     case 20:
                         pintaIcono();
                         break;
@@ -232,8 +233,6 @@ public class InterfazGraficaController implements Initializable {
                 return null;
             }
         };
-        //pi.progressProperty().bind(aplicaFiltro.progressProperty());
-        //pb.progressProperty().bind(aplicaFiltro.progressProperty());
         new Thread(aplicaFiltro).start();
     }
     
@@ -317,11 +316,6 @@ public class InterfazGraficaController implements Initializable {
                 boton.setText("Aplicar filtro Marca de Agua");
                 noFiltro = 18;
                 break;
-            case "filtroMosaico":
-                //boton.setText("Aplicar filtro Mosaico");
-                //noFiltro = 19;
-                //pintaMosaico();
-                break;
             case "filtroIcono":
                 boton.setText("Aplicar filtro Icono");
                 noFiltro = 20;
@@ -374,23 +368,183 @@ public class InterfazGraficaController implements Initializable {
                 boton.setText("Aplicar filtro RGB");
                 noFiltro = 32;
                 break;
-                
-                
         }
     }
     
-    @FXML
-    private void fotomosaico(ActionEvent event) throws IOException{
-        DirectoryChooser ventana = new DirectoryChooser();
-        ventana.setTitle("Abrir");
-        File archivo = ventana.showDialog(stage);
-        Filtro filtro = new Filtro(imagen.getImage());
-        Fotomosaico.sacaFotomosaico(filtro,10,archivo, "salida.html",false);
+    private void fotomosaico() throws IOException{
+        fotomosaicoItem.setOnAction((ActionEvent) -> {
+            principal.setDisable(true);
+            Stage second = new Stage();
+            BorderPane border = new BorderPane();
+            VBox todos = new VBox(30);
+            Text encabezado = new Text("Favor introducir los siguientes datos:");           
+            final CheckBox recursivo = new CheckBox("Buscar en carpetas de forma recursiva");
+            Text salidaText = new Text("Nombre del archivo de salida");
+            final TextField salida = new TextField("");
+            Text mosaico = new Text("Ingrese el tamaño de mosaico que representará cada imagen");
+            final Spinner mosaicoSpinner = new Spinner(1, 99999, 20);
+            HBox caja1 = new HBox(20);
+            caja1.getChildren().addAll(salidaText,salida);
+            HBox caja2 = new HBox(20);
+            caja2.getChildren().addAll(recursivo);
+            HBox caja3 = new HBox(20);
+            caja3.getChildren().addAll(mosaico,mosaicoSpinner);
+            
+            Button aceptar = new Button("Aceptar");
+            Button cancelar = new Button("Cancelar");
+            HBox botones1 = new HBox(aceptar, cancelar);            
+            botones1.setSpacing(20);
+            todos.getChildren().addAll(encabezado,caja1,caja2,caja3,botones1);
+            border.setCenter(todos);
+            todos.alignmentProperty().setValue(Pos.CENTER);
+            BorderPane.setAlignment(todos, Pos.CENTER);
+            caja1.setAlignment(Pos.CENTER);
+            caja2.setAlignment(Pos.CENTER);
+            caja3.setAlignment(Pos.CENTER);
+            todos.setAlignment(Pos.CENTER);
+            botones1.setAlignment(Pos.CENTER);
+            Scene scene2 = new Scene(border);
+            second.setScene(scene2);
+            second.setMinHeight(100);
+            second.setMinWidth(200);
+            second.show();
+            second.setOnCloseRequest((WindowEvent event2) -> {
+                principal.setDisable(false);
+            });
+            cancelar.setOnMouseClicked((MouseEvent event) -> {
+                principal.setDisable(false);
+                second.close();
+            });
+            aceptar.setOnMouseClicked((MouseEvent event) -> {
+                DirectoryChooser ventana = new DirectoryChooser();
+                ventana.setTitle("Abrir");
+                final File archivo = ventana.showDialog(stage);
+                muestraProceso(true);
+                Task prev = new Task(){
+                    @Override
+                    protected Object call() throws Exception{
+                        final int mosaicoS = (int)mosaicoSpinner.getValue();
+                        String input = salida.getText().trim();
+                        final boolean recursa = recursivo.isSelected();
+                        if (input.equals("")){
+                            input = "fotomosaico.html";
+                        }
+                        if(!input.endsWith(".html")){
+                            input = input.concat(".html");
+                        }
+                        final String input2 = input;
+                        Task tarea = new Task(){
+                            @Override
+                            protected Object call() throws Exception{
+                                Filtro filtro = new Filtro(imagen.getImage());
+                                try {
+                                    Fotomosaico.sacaFotomosaico(filtro,mosaicoS,archivo, input2,recursa);
+                                } catch (IOException ex) {
+                                    //Error
+                                }
+                                return null;
+                            }
+                        };
+                        Thread hilo = new Thread(tarea);
+                        hilo.setDaemon(true);
+                        hilo.start();
+                        killProceso(hilo);
+                        return null;
+                    }
+                };
+                second.close();
+                Thread preHilo = new Thread(prev);
+                preHilo.setDaemon(true);
+                preHilo.start();
+                modificadores(true);
+                principal.setDisable(false);
+            });
+        });
     }
     
-    @FXML
-    private void semitonos(ActionEvent event) throws IOException{
-        Semitonos.semitono(imagen.getImage(), 3, "ejemplo.html");
+    
+    private void semitonos() throws IOException{
+        semitonosItem.setOnAction((EventHandler) -> {
+            principal.setDisable(true);
+            Stage second2 = new Stage();
+            BorderPane border1 = new BorderPane();
+            Text encabezado1 = new Text("Ingrese el tamaño de los mosaicos \n"
+                    + "Los valores pueden ir entre 1 a 999 (Se recomiendan numeros "
+                    + "bajos para mejor calidad)");
+            final Spinner numero = new Spinner(1, 999, 5);
+            numero.setEditable(true);
+            Button aceptar = new Button("Aceptar");
+            Button cancelar1 = new Button("Cancelar");
+            HBox botones1 = new HBox(aceptar, cancelar1);
+            botones1.setSpacing(20);
+            border1.setTop(encabezado1);
+            border1.setCenter(numero);
+            border1.setBottom(botones1);
+            Scene sscene1 = new Scene(border1);
+            second2.setScene(sscene1);
+            second2.setMinHeight(100);
+            second2.setMinWidth(200);
+            second2.show();
+            second2.setOnCloseRequest((WindowEvent event2) -> {
+                principal.setDisable(false);
+            });
+            cancelar1.setOnAction((ActionEvent event3) -> {
+                second2.close();
+                principal.setDisable(false);
+            });
+            aceptar.setOnAction((ActionEvent event4) -> {
+                second2.close();
+                String input;
+                TextInputDialog dialog = new TextInputDialog("ejemplo.html");
+                dialog.setOnCloseRequest((DialogEvent event5) -> {
+                    principal.setDisable(false);
+                });
+                dialog.setTitle("Archivo de salida");
+                dialog.setHeaderText("Ingrese el nombre de archivo de salida:");
+                dialog.setContentText("Ingrese aqui el nombre de salida desea que tenga su archivo .html");
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()){
+                    input = result.get();
+                }else{
+                    input = "imagen_recursiva.html";
+                }
+                if(!input.endsWith(".html")){
+                    input = input.concat(".html");
+                }
+                final String input2 = input;
+                muestraProceso(true);
+                Task prev = new Task(){
+                    
+                    @Override
+                    protected Object call() throws Exception {
+                        final int cuadricula = (int)numero.getValue();
+                        Task tarea = new Task() {
+                            @Override
+                            protected Object call() throws Exception{
+                                
+                                try {
+                                    Semitonos.semitono(imagen.getImage(), cuadricula, input2);
+                                } catch (IOException ex) {
+                                    //ERROR
+                                }
+                                return null;
+                            }
+                        };
+                        Thread hilo = new Thread(tarea);
+                        hilo.setDaemon(true);
+                        hilo.start();
+                        killProceso(hilo);
+                        return null;
+                    }
+                };
+                second2.close();
+                Thread preHilo = new Thread(prev);
+                preHilo.setDaemon(true);
+                preHilo.start();
+                principal.setDisable(false);
+            });
+        });
+        
     }
     
     @FXML
@@ -473,6 +627,10 @@ public class InterfazGraficaController implements Initializable {
             
             @Override
             protected Object call() throws Exception {
+                unamPane.setDisable(true);
+                unamPane.setVisible(false);
+                splitPane.setDisable(false);
+                splitPane.setVisible(true);
                 original = Compresion.descomprimeLossy(archivo);
                 imagen.setImage(original);
                 originalPermanente.setImage(original);
@@ -485,14 +643,86 @@ public class InterfazGraficaController implements Initializable {
         modificadores(true);
     }
     
-    @FXML
-    private void webPallete(ActionEvent event) throws IOException{
-        ImagenesRecursivas recursiva = new ImagenesRecursivas(imagen.getImage());
-        try {
-            recursiva.escribeWebPallete("salida.html", 20, 20);
-        } catch (IOException ex) {
-            //ERROR
-        }
+    private void webPallete() throws IOException{
+        webPalleteItem.setOnAction((EventHandler) -> {
+            principal.setDisable(true);
+            Stage second2 = new Stage();
+            BorderPane border1 = new BorderPane();
+            Text encabezado1 = new Text("Ingrese el tamaño de los mosaicos \n"
+                    + "Los valores pueden ir entre 1 a 9999");
+            final Spinner numero = new Spinner(1, 9999, 30);
+            numero.setEditable(true);
+            Button aceptar = new Button("Aceptar");
+            Button cancelar1 = new Button("Cancelar");
+            HBox botones1 = new HBox(aceptar, cancelar1);
+            botones1.setSpacing(20);
+            border1.setTop(encabezado1);
+            border1.setCenter(numero);
+            border1.setBottom(botones1);
+            Scene sscene1 = new Scene(border1);
+            second2.setScene(sscene1);
+            second2.setMinHeight(100);
+            second2.setMinWidth(200);
+            second2.show();
+            second2.setOnCloseRequest((WindowEvent event2) -> {
+                principal.setDisable(false);
+            });
+            cancelar1.setOnAction((ActionEvent event3) -> {
+                second2.close();
+                principal.setDisable(false);
+            });
+            aceptar.setOnAction((ActionEvent event4) -> {
+                second2.close();
+                String input;
+                TextInputDialog dialog = new TextInputDialog("ejemplo.html");
+                dialog.setOnCloseRequest((DialogEvent event5) -> {
+                    principal.setDisable(false);
+                });
+                dialog.setTitle("Archivo de salida");
+                dialog.setHeaderText("Ingrese el nombre de archivo de salida:");
+                dialog.setContentText("Ingrese aqui el nombre de salida desea que tenga su archivo .html");
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()){
+                    input = result.get();
+                }else{
+                    input = "imagen_recursiva.html";
+                }
+                if(!input.endsWith(".html")){
+                    input = input.concat(".html");
+                }
+                final String input2 = input;
+                muestraProceso(true);
+                Task prev = new Task(){
+                    
+                    @Override
+                    protected Object call() throws Exception {
+                        final int cuadricula = (int)numero.getValue();
+                        Task tarea = new Task() {
+                            @Override
+                            protected Object call() throws Exception{
+                                ImagenesRecursivas recursiva = new ImagenesRecursivas(imagen.getImage());
+                                try {
+                                    recursiva.escribeWebPallete(input2, cuadricula, cuadricula);
+                                } catch (IOException ex) {
+                                    //ERROR
+                                }
+                                return null;
+                            }
+                        };
+                        Thread hilo = new Thread(tarea);
+                        hilo.setDaemon(true);
+                        hilo.start();
+                        killProceso(hilo);
+                        return null;
+                    }
+                };
+                second2.close();
+                Thread preHilo = new Thread(prev);
+                preHilo.setDaemon(true);
+                preHilo.start();
+                principal.setDisable(false);
+            });
+        });
     }
     
     @FXML
@@ -501,162 +731,211 @@ public class InterfazGraficaController implements Initializable {
     }
     
     @FXML
-    private void colorReal(ActionEvent event) throws IOException{
-        principal.setDisable(true);
-        Stage second = new Stage();
-        
-        BorderPane border = new BorderPane();
-        Text encabezado = new Text("Para este filtro implemento dos métodos: "
-                + "\n a) Normal. Usando imágenes de resolución igual a la original lo que la hace más lento."
-                + "\n b) Rápido. Usando íconos, reduciendo el tamaño de la imagen realizando el proceso en segundos."
-                + "\n\n Por favor seleccione el método de su preferencia.");
-        
-        Button normal = new Button("Método normal");
-        Button rapido = new Button("Método rápido");
-        Button cancelar = new Button("Cancelar");
-        
-        HBox botones = new HBox(normal,rapido, cancelar);
-        botones.setSpacing(20);
-        
-        border.setTop(encabezado);
-        border.setBottom(botones);
-        
-        
-        Scene sscene = new Scene(border);
-        second.setScene(sscene);
-        second.setMinHeight(100);
-        second.setMinWidth(200);
-        
-        second.show();
-        
-        cancelar.setOnAction((ActionEvent event1) -> {
-            second.close();
-            principal.setDisable(false);
-        });
-        
-        normal.setOnAction((ActionEvent event1) -> {
-            second.close();
-            int resp = MessageBox.show(stage, "Considere que este método puede tardar muchos minutos. \n"
-                    + "¿Desea continuar?", "¿Está seguro?", MessageBox.YES | MessageBox.NO);
-            if (resp == MessageBox.YES) {
-                Stage second2 = new Stage();
-                BorderPane border1 = new BorderPane();
-                Text encabezado1 = new Text("Ingrese el tamaño de los mosaicos \n"
-                        + "Los valores pueden ir entre 1 a 9999");
-                final Spinner numero = new Spinner(1, 9999, 10);
-                numero.setEditable(true);
-                Button aceptar = new Button("Aceptar");
-                Button cancelar1 = new Button("Cancelar");
-                HBox botones1 = new HBox(aceptar, cancelar1);
-                botones1.setSpacing(20);
-                border1.setTop(encabezado1);
-                border1.setCenter(numero);
-                border1.setBottom(botones1);
-                Scene sscene1 = new Scene(border1);
-                second2.setScene(sscene1);
-                second2.setMinHeight(100);
-                second2.setMinWidth(200);
-                second2.show();
-                second2.setOnCloseRequest((WindowEvent event2) -> {
-                    principal.setDisable(false);
-                });
-                cancelar1.setOnAction((ActionEvent event3) -> {
-                    second2.close();
-                    principal.setDisable(false);
-                });
-                aceptar.setOnAction((ActionEvent event4) -> {
-                    second2.close();
-                    String input = "";
-                    TextInputDialog dialog = new TextInputDialog("ejemplo.html");
-                    dialog.setOnCloseRequest((DialogEvent event5) -> {
+    private void colorReal() throws IOException{
+        colorRealItem.setOnAction((EventHandler) -> {
+            principal.setDisable(true);
+            Stage second = new Stage();
+            
+            BorderPane border = new BorderPane();
+            Text encabezado = new Text("Para este filtro implemento dos métodos: "
+                    + "\n a) Normal. Usando imágenes de resolución igual a la original lo que la hace más lento."
+                    + "\n b) Rápido. Usando íconos, reduciendo el tamaño de la imagen"
+                    + " realizando el proceso en segundos. (ALTAMENTE RECOMENDADO para imagenes pesadas)"
+                    + "\n\n Por favor seleccione el método de su preferencia.");
+            
+            Button normal = new Button("Método normal");
+            Button rapido = new Button("Método rápido");
+            Button cancelar = new Button("Cancelar");
+            
+            HBox botones = new HBox(normal,rapido, cancelar);
+            botones.setSpacing(20);
+            
+            border.setTop(encabezado);
+            border.setBottom(botones);
+            
+            
+            Scene sscene = new Scene(border);
+            second.setScene(sscene);
+            second.setMinHeight(100);
+            second.setMinWidth(200);
+            
+            second.show();
+            
+            cancelar.setOnAction((ActionEvent event1) -> {
+                second.close();
+                principal.setDisable(false);
+            });
+            
+            normal.setOnAction((ActionEvent event1) -> {
+                second.close();
+                int resp = MessageBox.show(stage, "Considere que este método puede tardar muchos minutos. \n"
+                        + "¿Desea continuar?", "¿Está seguro?", MessageBox.YES | MessageBox.NO);
+                if (resp == MessageBox.YES) {
+                    Stage second2 = new Stage();
+                    BorderPane border1 = new BorderPane();
+                    Text encabezado1 = new Text("Ingrese el tamaño de los mosaicos \n"
+                            + "Los valores pueden ir entre 10 a 9999");
+                    final Spinner numero = new Spinner(10, 9999, 30);
+                    numero.setEditable(true);
+                    Button aceptar = new Button("Aceptar");
+                    Button cancelar1 = new Button("Cancelar");
+                    HBox botones1 = new HBox(aceptar, cancelar1);
+                    botones1.setSpacing(20);
+                    border1.setTop(encabezado1);
+                    border1.setCenter(numero);
+                    border1.setBottom(botones1);
+                    Scene sscene1 = new Scene(border1);
+                    second2.setScene(sscene1);
+                    second2.setMinHeight(100);
+                    second2.setMinWidth(200);
+                    second2.show();
+                    second2.setOnCloseRequest((WindowEvent event2) -> {
                         principal.setDisable(false);
                     });
-                    dialog.setTitle("Archivo de salida");
-                    dialog.setHeaderText("Ingrese el nombre de archivo de salida:");
-                    dialog.setContentText("Ingrese aqui el nombre de salida desea que tenga su archivo .html");
-                    Optional<String> result = dialog.showAndWait();
-                    if (result.isPresent()){
-                        input = result.get();
-                    }else{
-                        input = "imagen_recursiva.html";
-                    }
-                    if(!input.endsWith(".html")){
-                        input = input.concat(".html");
-                    }
-                    final int cuadricula = (int)numero.getValue();
-                    ImagenesRecursivas recursiva = new ImagenesRecursivas(imagen.getImage());
-                    try {
-                        recursiva.colorReal(input, cuadricula, cuadricula,false);
-                    } catch (IOException ex) {
-                        //ERROR
-                    }
-                    second2.close();
+                    cancelar1.setOnAction((ActionEvent event3) -> {
+                        second2.close();
+                        principal.setDisable(false);
+                    });
+                    aceptar.setOnAction((ActionEvent event4) -> {
+                        second2.close();
+                        String input;
+                        TextInputDialog dialog = new TextInputDialog("ejemplo.html");
+                        dialog.setOnCloseRequest((DialogEvent event5) -> {
+                            principal.setDisable(false);
+                        });
+                        dialog.setTitle("Archivo de salida");
+                        dialog.setHeaderText("Ingrese el nombre de archivo de salida:");
+                        dialog.setContentText("Ingrese aqui el nombre de salida desea que tenga su archivo .html");
+                        Optional<String> result = dialog.showAndWait();
+                        if (result.isPresent()){
+                            input = result.get();
+                        }else{
+                            input = "imagen_recursiva.html";
+                        }
+                        if(!input.endsWith(".html")){
+                            input = input.concat(".html");
+                        }
+                        final String input2 = input;
+                        muestraProceso(true);
+                        Task prev = new Task(){
+                            
+                            @Override
+                            protected Object call() throws Exception {
+                                final int cuadricula = (int)numero.getValue();
+                                Task tarea = new Task() {
+                                    @Override
+                                    protected Object call() throws Exception{
+                                        ImagenesRecursivas recursiva = new ImagenesRecursivas(imagen.getImage());
+                                        try {
+                                            recursiva.colorReal(input2, cuadricula, cuadricula,false);
+                                        } catch (IOException ex) {
+                                            //ERROR
+                                        }
+                                        return null;
+                                    }
+                                };
+                                Thread hilo = new Thread(tarea);
+                                hilo.setDaemon(true);
+                                hilo.start();
+                                killProceso(hilo);
+                                return null;
+                            }
+                        };
+                        second.close();
+                        second2.close();
+                        Thread preHilo = new Thread(prev);
+                        preHilo.setDaemon(true);
+                        preHilo.start();
+                        principal.setDisable(false);
+                    });
+                } else {
                     principal.setDisable(false);
-                });
-            } else {
+                }
+            });
+            
+            rapido.setOnAction((ActionEvent event1) -> {
+                second.close();
+                int resp = MessageBox.show(stage, "Considere que este método puede hacer que pierda calidad. \n"
+                        + "¿Desea continuar?", "¿Está seguro?", MessageBox.YES | MessageBox.NO);
+                if (resp == MessageBox.YES) {
+                    Stage second2 = new Stage();
+                    BorderPane border1 = new BorderPane();
+                    Text encabezado1 = new Text("Ingrese el tamaño de los mosaicos \n"
+                            + "Los valores pueden ir entre 1 a 9999");
+                    final Spinner numero = new Spinner(1, 9999, 30);
+                    numero.setEditable(true);
+                    Button aceptar = new Button("Aceptar");
+                    Button cancelar1 = new Button("Cancelar");
+                    HBox botones1 = new HBox(aceptar, cancelar1);
+                    botones1.setSpacing(20);
+                    border1.setTop(encabezado1);
+                    border1.setCenter(numero);
+                    border1.setBottom(botones1);
+                    Scene sscene1 = new Scene(border1);
+                    second2.setScene(sscene1);
+                    second2.setMinHeight(100);
+                    second2.setMinWidth(200);
+                    second2.show();
+                    cancelar1.setOnAction((ActionEvent event2) -> {
+                        second2.close();
+                        principal.setDisable(false);
+                    });
+                    aceptar.setOnAction((ActionEvent event3) -> {
+                        second2.close();
+                        String input;
+                        TextInputDialog dialog = new TextInputDialog("ejemplo.html");
+                        dialog.setTitle("Archivo de salida");
+                        dialog.setHeaderText("Ingrese el nombre de archivo de salida:");
+                        dialog.setContentText("Ingrese aqui el nombre de salida desea que tenga su archivo .html");
+                        Optional<String> result = dialog.showAndWait();
+                        if (result.isPresent()){
+                            input = result.get();
+                        }else{
+                            input = "imagen_recursiva.html";
+                        }
+                        if(!input.endsWith(".html")){
+                            input = input.concat(".html");
+                        }
+                        final String input2 = input;
+                        muestraProceso(true);
+                        Task prev = new Task(){
+                            
+                            @Override
+                            protected Object call() throws Exception {
+                                final int cuadricula = (int)numero.getValue();
+                                Task tarea = new Task() {
+                                    @Override
+                                    protected Object call() throws Exception{
+                                        ImagenesRecursivas recursiva = new ImagenesRecursivas(imagen.getImage());
+                                        try {
+                                            recursiva.colorReal(input2, cuadricula, cuadricula,true);
+                                        } catch (IOException ex) {
+                                            //ERROR
+                                        }
+                                        return null;
+                                    }
+                                };
+                                Thread hilo = new Thread(tarea);
+                                hilo.setDaemon(true);
+                                hilo.start();
+                                killProceso(hilo);
+                                return null;
+                            }
+                        };
+                        second2.close();
+                        second.close();
+                        Thread preHilo = new Thread(prev);
+                        preHilo.setDaemon(true);
+                        preHilo.start();
+                        principal.setDisable(false);
+                    });
+                } else {
+                    principal.setDisable(false);
+                }
+            });
+            second.setOnCloseRequest((WindowEvent event1) -> {
                 principal.setDisable(false);
-            }
-        });
-        
-        rapido.setOnAction((ActionEvent event1) -> {
-            second.close();
-            int resp = MessageBox.show(stage, "Considere que este método puede hacer que pierda calidad. \n"
-                    + "¿Desea continuar?", "¿Está seguro?", MessageBox.YES | MessageBox.NO);
-            if (resp == MessageBox.YES) {
-                Stage second2 = new Stage();
-                BorderPane border1 = new BorderPane();
-                Text encabezado1 = new Text("Ingrese el tamaño de los mosaicos \n"
-                        + "Los valores pueden ir entre 1 a 9999");
-                final Spinner numero = new Spinner(1, 9999, 10);
-                numero.setEditable(true);
-                Button aceptar = new Button("Aceptar");
-                Button cancelar1 = new Button("Cancelar");
-                HBox botones1 = new HBox(aceptar, cancelar1);
-                botones1.setSpacing(20);
-                border1.setTop(encabezado1);
-                border1.setCenter(numero);
-                border1.setBottom(botones1);
-                Scene sscene1 = new Scene(border1);
-                second2.setScene(sscene1);
-                second2.setMinHeight(100);
-                second2.setMinWidth(200);
-                second2.show();
-                cancelar1.setOnAction((ActionEvent event2) -> {
-                    second2.close();
-                    principal.setDisable(false);
-                });
-                aceptar.setOnAction((ActionEvent event3) -> {
-                    second2.close();
-                    String input = "";
-                    TextInputDialog dialog = new TextInputDialog("ejemplo.html");
-                    dialog.setTitle("Archivo de salida");
-                    dialog.setHeaderText("Ingrese el nombre de archivo de salida:");
-                    dialog.setContentText("Ingrese aqui el nombre de salida desea que tenga su archivo .html");
-                    Optional<String> result = dialog.showAndWait();
-                    if (result.isPresent()){
-                        input = result.get();
-                    }else{
-                        input = "imagen_recursiva.html";
-                    }
-                    if(!input.endsWith(".html")){
-                        input = input.concat(".html");
-                    }
-                    final int cuadricula = (int)numero.getValue();
-                    ImagenesRecursivas recursiva = new ImagenesRecursivas(imagen.getImage());
-                    try {
-                        recursiva.colorReal(input, cuadricula, cuadricula,true);
-                    } catch (IOException ex) {
-                        //ERROR
-                    }
-                    
-                    principal.setDisable(false);
-                });
-            } else {
-                principal.setDisable(false);
-            }
-        });
-        second.setOnCloseRequest((WindowEvent event1) -> {
-            principal.setDisable(false);
+            });
         });
     }
     
@@ -733,79 +1012,93 @@ public class InterfazGraficaController implements Initializable {
         });
     }
     
-    @FXML
-    private void rotarImagen(ActionEvent evento){
-        principal.setDisable(true);
-        Stage second = new Stage();
-        
-        BorderPane border = new BorderPane();
-        Text encabezado = new Text("Seleccione cuantos grados desea girar la imagen \n");
-        
-        final ChoiceBox grados = new ChoiceBox(FXCollections.observableArrayList("0º","90º","180º","270º"));
-        grados.getSelectionModel().selectFirst();
-        
-        
-        Button aceptar = new Button("Aceptar");
-        Button cancelar = new Button("Cancelar");
-        
-        HBox botones = new HBox(aceptar, cancelar);
-        botones.setSpacing(20);
-        
-        border.setTop(encabezado);
-        border.setCenter(grados);
-        border.setBottom(botones);
-        
-        
-        Scene sscene = new Scene(border);
-        second.setScene(sscene);
-        second.setMinHeight(100);
-        second.setMinWidth(200);
-        
-        second.show();
-        
-        cancelar.setOnAction((ActionEvent event) -> {
-            second.close();
-            principal.setDisable(false);
-        });
-        
-        aceptar.setOnAction((ActionEvent event) -> {
-            final int numGrados;
-            if(grados.getValue().equals("90º")){
-                numGrados = 90;
-            }else if(grados.getValue().equals("180º")){
-                numGrados = 180;
-            }else if(grados.getValue().equals("270º")){
-                numGrados = 270;
-            }else{
-                numGrados = 0;
-            }
+    private void rotarImagen(){
+        EventHandler rotacion = (EventHandler) (Event event) -> {
+            principal.setDisable(true);
+            Stage second = new Stage();
             
-            Thread hilo = new Thread(new Task() {
-                
-                @Override
-                protected Object call() throws Exception {
-                    Rotacion rotada = new Rotacion(imagen.getImage());
-                    MenuItem fuente = (MenuItem)evento.getSource();
-                    if(fuente.getId().equals("rotarItem")){
-                        actual = rotada.rotar(numGrados);
-                    }else{
-                        actual = rotada.rotarMatriz(numGrados);
-                        
-                    }
-                    imagen.setImage(actual);
-                    stage.getScene().setRoot(principal);
-                    return null;
-                }
+            BorderPane border = new BorderPane();
+            Text encabezado = new Text("Seleccione cuantos grados desea girar la imagen \n");
+            
+            final ChoiceBox grados = new ChoiceBox(FXCollections.observableArrayList("0º","90º","180º","270º"));
+            grados.getSelectionModel().selectFirst();
+            
+            
+            Button aceptar = new Button("Aceptar");
+            Button cancelar = new Button("Cancelar");
+            
+            HBox botones = new HBox(aceptar, cancelar);
+            botones.setSpacing(20);
+            
+            border.setTop(encabezado);
+            border.setCenter(grados);
+            border.setBottom(botones);
+            
+            
+            Scene sscene = new Scene(border);
+            second.setScene(sscene);
+            second.setMinHeight(100);
+            second.setMinWidth(200);
+            
+            second.show();
+            
+            cancelar.setOnAction((ActionEvent) -> {
+                second.close();
+                principal.setDisable(false);
             });
-            hilo.start();
-            modificadores(true);
-            second.close();
-            principal.setDisable(false);
-        });
-        second.setOnCloseRequest((WindowEvent event) -> {
-            principal.setDisable(false);
-        });
-        
+            
+            aceptar.setOnAction((ActionEvent) -> {
+                muestraProceso(true);
+                final int numGrados;
+                if(grados.getValue().equals("90º")){
+                    numGrados = 90;
+                }else if(grados.getValue().equals("180º")){
+                    numGrados = 180;
+                }else if(grados.getValue().equals("270º")){
+                    numGrados = 270;
+                }else{
+                    numGrados = 0;
+                }
+                
+                Task prev = new Task() {
+                    
+                    @Override
+                    protected Object call() throws Exception {
+                        Task tarea = new Task() {
+                            @Override
+                            protected Object call() throws Exception{
+                                Rotacion rotada = new Rotacion(imagen.getImage());
+                                MenuItem fuente = (MenuItem)event.getSource();
+                                if(fuente.getId().equals("rotarItem")){
+                                    actual = rotada.rotar(numGrados);
+                                }else{
+                                    actual = rotada.rotarMatriz(numGrados);
+                                }
+                                imagen.setImage(actual);
+                                stage.getScene().setRoot(principal);
+                                return null;
+                            }
+                        };
+                        Thread hilo = new Thread(tarea);
+                        hilo.setDaemon(true);
+                        hilo.start();
+                        killProceso(hilo);
+                        return null;
+                    }
+                };
+                second.close();
+                Thread preHilo = new Thread(prev);
+                preHilo.setDaemon(true);
+                preHilo.start();
+                modificadores(true);
+                principal.setDisable(false);
+            });
+            second.setOnCloseRequest((WindowEvent) -> {
+                principal.setDisable(false);
+            });
+        };
+        rotarItem.setOnAction(rotacion);
+        rotarMatrizItem.setOnAction(rotacion);
     }
     
     @FXML
@@ -912,68 +1205,142 @@ public class InterfazGraficaController implements Initializable {
                     
                     second.show();
                     
-                    cancelar.setOnAction(new EventHandler<ActionEvent>() {
-                        
-                        @Override
-                        public void handle(ActionEvent event) {
-                            second.close();
-                            principal.setDisable(false);
-                        }
+                    cancelar.setOnAction((ActionEvent event) -> {
+                        second.close();
+                        principal.setDisable(false);
                     });
                     
-                    aceptar.setOnAction(new EventHandler<ActionEvent>() {
-                        
-                        @Override
-                        public void handle(ActionEvent event) {
-                            final double alpha = (double)((int)numero.getValue())/100;
-                            muestraProceso(true);
-                            Task tarea = new Task<Object>() {
-                                
-                                @Override
-                                protected Object call() throws Exception {
-                                    Filtro externa = new Filtro(imagenEntrada);
-                                    Blending interna = new Blending(imagen.getImage());
-                                    actual = interna.licua(externa, 1-alpha);
-                                    imagen.setImage(actual);
-                                    stage.getScene().setRoot(principal);
-                                    return null;
-                                }
-                            };
-                            Thread hilo = new Thread(tarea);
-                            second.close();
-                            hilo.setDaemon(true);
-                            hilo.start();
-                            killProceso(hilo);
-                            modificadores(true);
-                            principal.setDisable(false);
-                        }
+                    aceptar.setOnAction((ActionEvent event) -> {
+                        final double alpha = (double)((int)numero.getValue())/100;
+                        muestraProceso(true);
+                        Task tarea = new Task<Object>() {
+                            
+                            @Override
+                            protected Object call() throws Exception {
+                                Filtro externa = new Filtro(imagenEntrada);
+                                Blending interna = new Blending(imagen.getImage());
+                                actual = interna.licua(externa, 1-alpha);
+                                imagen.setImage(actual);
+                                stage.getScene().setRoot(principal);
+                                return null;
+                            }
+                        };
+                        Thread hilo = new Thread(tarea);
+                        second.close();
+                        hilo.setDaemon(true);
+                        hilo.start();
+                        killProceso(hilo);
+                        modificadores(true);
+                        principal.setDisable(false);
                     });
                     
                 }catch(IOException e){
-                    System.out.println("9876543");
                     //Error
                 }
             }
         });
     }
     
-    @FXML
-    private void pintaEsteganografia(ActionEvent event){
-        Thread hilo = new Thread(new Task() {
-            @Override
-            protected Object call() throws Exception {
-                Esteganografia estegano = new Esteganografia(imagen.getImage());
-                actual = estegano.esconde("MHola Mundo");
-                imagen.setImage(actual);
-                stage.getScene().setRoot(principal);
-                estegano = new Esteganografia(imagen.getImage());
-                System.out.println(estegano.descifra());
-                return null;
-            }
+    private void pintaEsteganografia(){
+        ocultarMensajeItem.setOnAction((ActionEvent) -> {
+            principal.setDisable(true);
+            Stage second2 = new Stage();
+            BorderPane border1 = new BorderPane();
+            Text encabezado1 = new Text("Ingrese el texto a ocultar. El largo máximo es de: "
+                    + (new Filtro(imagen.getImage()).getTotal()/3));
+            final TextArea mensaje = new TextArea("");
+            mensaje.setEditable(true);
+            Button aceptar = new Button("Aceptar");
+            Button cancelar1 = new Button("Cancelar");
+            HBox botones1 = new HBox(aceptar, cancelar1);
+            botones1.setSpacing(20);
+            border1.setTop(encabezado1);
+            border1.setCenter(mensaje);
+            border1.setBottom(botones1);
+            Scene sscene1 = new Scene(border1);
+            second2.setScene(sscene1);
+            second2.setMinHeight(100);
+            second2.setMinWidth(200);
+            second2.show();
+            second2.setOnCloseRequest((WindowEvent event2) -> {
+                principal.setDisable(false);
+            });
+            cancelar1.setOnAction((ActionEvent event3) -> {
+                second2.close();
+                principal.setDisable(false);
+            });
+            aceptar.setOnAction((ActionEvent event4) -> {
+                second2.close();
+                muestraProceso(true);
+                Task prev = new Task(){
+                    
+                    @Override
+                    protected Object call() throws Exception {
+                        final String mensajeSecreto = mensaje.getText();
+                        Task tarea = new Task() {
+                            @Override
+                            protected Object call() throws Exception{
+                                Esteganografia estegano = new Esteganografia(imagen.getImage());
+                                if(mensajeSecreto.length() >=
+                                        estegano.getTotal()/3){
+                                    return new IndexOutOfBoundsException();
+                                }else{
+                                    actual = estegano.esconde(mensajeSecreto);
+                                    imagen.setImage(actual);
+                                    stage.getScene().setRoot(principal);
+                                }
+                                return null;
+                            }
+                        };
+                        Thread hilo = new Thread(tarea);
+                        hilo.setDaemon(true);
+                        hilo.start();
+                        killProceso(hilo);
+                        return null;
+                    }
+                };
+                second2.close();
+                Thread preHilo = new Thread(prev);
+                preHilo.setDaemon(true);
+                preHilo.start();
+                principal.setDisable(false);
+            });
         });
-        hilo.start();
-        modificadores(true);
     }
+    
+    private void muestraEsteganografia(){
+        descifrarMensajeItem.setOnAction((ActionEvent) -> {
+            principal.setDisable(true);
+            Esteganografia estegano = new Esteganografia(imagen.getImage());
+            String encontrado = estegano.descifra();
+            Stage second2 = new Stage();
+            BorderPane border1 = new BorderPane();
+            Text encabezado1 = new Text("Texto encontrado en la imagen: ");
+            final TextArea mensaje = new TextArea("");
+            mensaje.setText(encontrado);
+            mensaje.setEditable(false);
+            Button aceptar = new Button("Aceptar");
+            HBox botones1 = new HBox(aceptar);
+            botones1.setSpacing(20);
+            border1.setTop(encabezado1);
+            border1.setCenter(mensaje);
+            border1.setBottom(botones1);
+            BorderPane.setAlignment(botones1, Pos.CENTER);
+            Scene sscene1 = new Scene(border1);
+            second2.setScene(sscene1);
+            second2.setMinHeight(100);
+            second2.setMinWidth(200);
+            second2.show();
+            second2.setOnCloseRequest((WindowEvent event2) -> {
+                principal.setDisable(false);
+            });
+            aceptar.setOnAction((ActionEvent event4) -> {
+                second2.close();
+                principal.setDisable(false);
+            });
+        });
+    }
+    
     
     private void pintaPromedio(){
         Thread hilo = new Thread(new Task() {
@@ -991,7 +1358,7 @@ public class InterfazGraficaController implements Initializable {
     }
     
     private void pintaMediana(){
-        Thread hilo = new Thread(new Task() {
+        Task tarea = new Task() {
             @Override
             protected Object call() throws Exception {
                 FiltroOleo oleo = new FiltroOleo(imagen.getImage());
@@ -1000,8 +1367,11 @@ public class InterfazGraficaController implements Initializable {
                 stage.getScene().setRoot(principal);
                 return null;
             }
-        });
+        };
+        Thread hilo = new Thread(tarea);
+        hilo.setDaemon(true);
         hilo.start();
+        killProceso(hilo);
         modificadores(true);
     }
     
@@ -1100,135 +1470,134 @@ public class InterfazGraficaController implements Initializable {
     }
     
     private void pintaIcono(){
-        principal.setDisable(true);
-        Stage second = new Stage();
-        
-        BorderPane border = new BorderPane();
-        Text encabezado = new Text("Ingrese el tamaño final del icono \n"
-                + "Los valores pueden ir entre 1 a 9999");
-        
-        final Spinner numero = new Spinner(1, 9999, 50);
-        numero.setEditable(true);
-        
-        Button aceptar = new Button("Aceptar");
-        Button cancelar = new Button("Cancelar");
-        
-        HBox botones = new HBox(aceptar, cancelar);
-        botones.setSpacing(20);
-        
-        border.setTop(encabezado);
-        border.setCenter(numero);
-        border.setBottom(botones);
-        
-        
-        Scene sscene = new Scene(border);
-        second.setScene(sscene);
-        second.setMinHeight(100);
-        second.setMinWidth(200);
-        
-        second.show();
-        
-        cancelar.setOnAction((ActionEvent event) -> {
-            second.close();
-            principal.setDisable(false);
-        });
-        
-        aceptar.setOnAction((ActionEvent event) -> {
-            final int cuadricula = (int)numero.getValue();
-            Thread hilo = new Thread(new Task() {
-                
-                @Override
-                protected Object call() throws Exception {
-                    FiltroIcono icono = new FiltroIcono(imagen.getImage());
-                    actual = icono.filtroIcono(cuadricula, cuadricula);
-                    imagen.setImage(actual);
-                    stage.getScene().setRoot(principal);
-                    return null;
+        Platform.runLater(() -> {
+            principal.setDisable(true);
+            Stage second = new Stage();
+            
+            BorderPane border = new BorderPane();
+            Text encabezado = new Text("Ingrese el tamaño final del icono \n"
+                    + "Los valores pueden ir entre 1 a 9999");
+            
+            final Spinner numero = new Spinner(1, 9999, 50);
+            numero.setEditable(true);
+            
+            Button aceptar = new Button("Aceptar");
+            Button cancelar = new Button("Cancelar");
+            
+            HBox botones = new HBox(aceptar, cancelar);
+            botones.setSpacing(20);
+            
+            border.setTop(encabezado);
+            border.setCenter(numero);
+            border.setBottom(botones);
+            
+            
+            Scene sscene = new Scene(border);
+            second.setScene(sscene);
+            second.setMinHeight(100);
+            second.setMinWidth(200);
+            
+            second.show();
+            
+            cancelar.setOnAction((ActionEvent event) -> {
+                second.close();
+                principal.setDisable(false);
+            });
+            
+            aceptar.setOnAction((ActionEvent event) -> {
+                final int cuadricula = (int)numero.getValue();
+                Thread hilo = new Thread(new Task() {
+                    
+                    @Override
+                    protected Object call() throws Exception {
+                        FiltroIcono icono = new FiltroIcono(imagen.getImage());
+                        actual = icono.filtroIcono(cuadricula, cuadricula);
+                        imagen.setImage(actual);
+                        stage.getScene().setRoot(principal);
+                        return null;
+                    }
+                });
+                hilo.start();
+                modificadores(true);
+                second.close();
+                principal.setDisable(false);
+                int resp = MessageBox.show(stage, "El icono se verá reflejado en su tamaño final después de guardar. \n"
+                        + "¿Desea guardar su icono?", "Guarde su icono", MessageBox.YES | MessageBox.NO);
+                if(resp == MessageBox.YES){
+                    guardarComo(event);
                 }
             });
-            hilo.start();
-            modificadores(true);
-            second.close();
-            principal.setDisable(false);
-            int resp = MessageBox.show(stage, "El icono se verá reflejado en su tamaño final después de guardar. \n"
-                    + "¿Desea guardar su icono?", "Guarde su icono", MessageBox.YES | MessageBox.NO);
-            if(resp == MessageBox.YES){
-                guardarComo(event);
-            }
-        });
-        second.setOnCloseRequest((WindowEvent event) -> {
-            principal.setDisable(false);
+            second.setOnCloseRequest((WindowEvent event) -> {
+                principal.setDisable(false);
+            });
         });
     }
     
     private void pintaMosaico(){
-        filtroMosaico.setOnAction(new EventHandler<ActionEvent>() {
+        filtroMosaico.setOnAction((ActionEvent event) -> {
+            principal.setDisable(true);
+            Stage second = new Stage();
             
-            @Override
-            public void handle(ActionEvent event) {
-                principal.setDisable(true);
-                Stage second = new Stage();
-                
-                BorderPane border = new BorderPane();
-                Text encabezado = new Text("Ingrese el tamaño de los mosaicos \n"
-                        + "Los valores pueden ir entre 1 a 9999");
-                
-                final Spinner numero = new Spinner(1, 9999, 10);
-                numero.setEditable(true);
-                
-                Button aceptar = new Button("Aceptar");
-                Button cancelar = new Button("Cancelar");
-                
-                HBox botones = new HBox(aceptar, cancelar);
-                botones.setSpacing(20);
-                
-                border.setTop(encabezado);
-                border.setCenter(numero);
-                border.setBottom(botones);
-                
-                
-                Scene sscene = new Scene(border);
-                second.setScene(sscene);
-                second.setMinHeight(100);
-                second.setMinWidth(200);
-                second.show();
-                cancelar.setOnAction((ActionEvent) -> {
-                    second.close();
-                    principal.setDisable(false);
-                });
-                aceptar.setOnAction((ActionEvent) -> {
-                    muestraProceso(true);
-                    Task prev = new Task() {
-                        protected Object call() throws Exception {
-                            final int cuadricula = (int)numero.getValue();
-                            Task tarea = new Task() {
-                                @Override
-                                protected Object call() throws Exception {
-                                    FiltroMosaico mosaico = new FiltroMosaico(imagen.getImage());
-                                    actual = mosaico.sacaMosaico(cuadricula, cuadricula);
-                                    imagen.setImage(actual);
-                                    stage.getScene().setRoot(principal);
-                                    return null;
-                                }
-                            };
-                            Thread hilo = new Thread(tarea);
-                            hilo.setDaemon(true);
-                            hilo.start();
-                            killProceso(hilo);
-                            return null;
-                        }
-                    };
-                    second.close();
-                    Thread preHilo = new Thread(prev);
-                    preHilo.setDaemon(true);
-                    preHilo.start();
-                    modificadores(true);
-                    principal.setDisable(false);
-                });
-                second.setOnCloseRequest((WindowEvent) -> {
-                    principal.setDisable(false);
-                });
-            }
+            BorderPane border = new BorderPane();
+            Text encabezado = new Text("Ingrese el tamaño de los mosaicos \n"
+                    + "Los valores pueden ir entre 1 a 9999");
+            
+            final Spinner numero = new Spinner(1, 9999, 10);
+            numero.setEditable(true);
+            
+            Button aceptar = new Button("Aceptar");
+            Button cancelar = new Button("Cancelar");
+            
+            HBox botones = new HBox(aceptar, cancelar);
+            botones.setSpacing(20);
+            
+            border.setTop(encabezado);
+            border.setCenter(numero);
+            border.setBottom(botones);
+            
+            
+            Scene sscene = new Scene(border);
+            second.setScene(sscene);
+            second.setMinHeight(100);
+            second.setMinWidth(200);
+            second.show();
+            cancelar.setOnAction((ActionEvent) -> {
+                second.close();
+                principal.setDisable(false);
+            });
+            aceptar.setOnAction((ActionEvent) -> {
+                muestraProceso(true);
+                Task prev = new Task() {
+                    @Override
+                    protected Object call() throws Exception {
+                        final int cuadricula = (int)numero.getValue();
+                        Task tarea = new Task() {
+                            @Override
+                            protected Object call() throws Exception {
+                                FiltroMosaico mosaico = new FiltroMosaico(imagen.getImage());
+                                actual = mosaico.sacaMosaico(cuadricula, cuadricula);
+                                imagen.setImage(actual);
+                                stage.getScene().setRoot(principal);
+                                return null;
+                            }
+                        };
+                        Thread hilo = new Thread(tarea);
+                        hilo.setDaemon(true);
+                        hilo.start();
+                        killProceso(hilo);
+                        return null;
+                    }
+                };
+                second.close();
+                Thread preHilo = new Thread(prev);
+                preHilo.setDaemon(true);
+                preHilo.start();
+                modificadores(true);
+                principal.setDisable(false);
+            });
+            second.setOnCloseRequest((WindowEvent) -> {
+                principal.setDisable(false);
+            });
         });
     }
     
@@ -1303,116 +1672,120 @@ public class InterfazGraficaController implements Initializable {
     }
     
     private void pintaGris7(){
-        principal.setDisable(true);
-        Stage second = new Stage();
-        
-        BorderPane border = new BorderPane();
-        Text encabezado = new Text("Ingrese la cantidad de grises que desea \n"
-                + "Los valores pueden ir entre 2 a 256");
-        
-        final Spinner numero = new Spinner(2, 256, 100);
-        numero.setEditable(true);
-        
-        Button aceptar = new Button("Aceptar");
-        Button cancelar = new Button("Cancelar");
-        
-        HBox botones = new HBox(aceptar, cancelar);
-        botones.setSpacing(20);
-        
-        border.setTop(encabezado);
-        border.setCenter(numero);
-        border.setBottom(botones);
-        
-        
-        Scene sscene = new Scene(border);
-        second.setScene(sscene);
-        second.setMinHeight(100);
-        second.setMinWidth(200);
-        
-        second.show();
-        
-        cancelar.setOnAction((ActionEvent event) -> {
-            second.close();
-            principal.setDisable(false);
-        });
-        
-        aceptar.setOnAction((ActionEvent event) -> {
-            final int cuadricula = (int)numero.getValue();
-            Thread hilo = new Thread(new Task<Object>() {
-                
-                @Override
-                protected Object call() throws Exception {
-                    FiltroGris gris = new FiltroGris(imagen.getImage());
-                    actual = gris.grisCuantosDithering(cuadricula);
-                    imagen.setImage(actual);
-                    stage.getScene().setRoot(principal);
-                    return null;
-                }
+        Platform.runLater(() -> {
+            principal.setDisable(true);
+            Stage second = new Stage();
+            
+            BorderPane border = new BorderPane();
+            Text encabezado = new Text("Ingrese la cantidad de grises que desea \n"
+                    + "Los valores pueden ir entre 2 a 256");
+            
+            final Spinner numero = new Spinner(2, 256, 100);
+            numero.setEditable(true);
+            
+            Button aceptar = new Button("Aceptar");
+            Button cancelar = new Button("Cancelar");
+            
+            HBox botones = new HBox(aceptar, cancelar);
+            botones.setSpacing(20);
+            
+            border.setTop(encabezado);
+            border.setCenter(numero);
+            border.setBottom(botones);
+            
+            
+            Scene sscene = new Scene(border);
+            second.setScene(sscene);
+            second.setMinHeight(100);
+            second.setMinWidth(200);
+            
+            second.show();
+            
+            cancelar.setOnAction((ActionEvent event) -> {
+                second.close();
+                principal.setDisable(false);
             });
-            hilo.start();
-            modificadores(true);
-            second.close();
-            principal.setDisable(false);
-        });
-        second.setOnCloseRequest((WindowEvent event) -> {
-            principal.setDisable(false);
+            
+            aceptar.setOnAction((ActionEvent event) -> {
+                final int cuadricula = (int)numero.getValue();
+                Thread hilo = new Thread(new Task<Object>() {
+                    
+                    @Override
+                    protected Object call() throws Exception {
+                        FiltroGris gris = new FiltroGris(imagen.getImage());
+                        actual = gris.grisCuantosDithering(cuadricula);
+                        imagen.setImage(actual);
+                        stage.getScene().setRoot(principal);
+                        return null;
+                    }
+                });
+                hilo.start();
+                modificadores(true);
+                second.close();
+                principal.setDisable(false);
+            });
+            second.setOnCloseRequest((WindowEvent event) -> {
+                principal.setDisable(false);
+            });
         });
     }
     
     private void pintaGris6(){
-        principal.setDisable(true);
-        Stage second = new Stage();
-        
-        BorderPane border = new BorderPane();
-        Text encabezado = new Text("Ingrese la cantidad de grises que desea \n"
-                + "Los valores pueden ir entre 2 a 256");
-        
-        final Spinner numero = new Spinner(2, 256, 100);
-        numero.setEditable(true);
-        
-        Button aceptar = new Button("Aceptar");
-        Button cancelar = new Button("Cancelar");
-        
-        HBox botones = new HBox(aceptar, cancelar);
-        botones.setSpacing(20);
-        
-        border.setTop(encabezado);
-        border.setCenter(numero);
-        border.setBottom(botones);
-        
-        
-        Scene sscene = new Scene(border);
-        second.setScene(sscene);
-        second.setMinHeight(100);
-        second.setMinWidth(200);
-        
-        second.show();
-        
-        cancelar.setOnAction((ActionEvent event) -> {
-            second.close();
-            principal.setDisable(false);
-        });
-        
-        aceptar.setOnAction((ActionEvent event) -> {
-            final int cuadricula = (int)numero.getValue();
-            Thread hilo = new Thread(new Task<Object>() {
-                
-                @Override
-                protected Object call() throws Exception {
-                    FiltroGris gris = new FiltroGris(imagen.getImage());
-                    actual = gris.grisCuantos(cuadricula);
-                    imagen.setImage(actual);
-                    stage.getScene().setRoot(principal);
-                    return null;
-                }
+        Platform.runLater(() -> {
+            principal.setDisable(true);
+            Stage second = new Stage();
+            
+            BorderPane border = new BorderPane();
+            Text encabezado = new Text("Ingrese la cantidad de grises que desea \n"
+                    + "Los valores pueden ir entre 2 a 256");
+            
+            final Spinner numero = new Spinner(2, 256, 100);
+            numero.setEditable(true);
+            
+            Button aceptar = new Button("Aceptar");
+            Button cancelar = new Button("Cancelar");
+            
+            HBox botones = new HBox(aceptar, cancelar);
+            botones.setSpacing(20);
+            
+            border.setTop(encabezado);
+            border.setCenter(numero);
+            border.setBottom(botones);
+            
+            
+            Scene sscene = new Scene(border);
+            second.setScene(sscene);
+            second.setMinHeight(100);
+            second.setMinWidth(200);
+            
+            second.show();
+            
+            cancelar.setOnAction((ActionEvent event) -> {
+                second.close();
+                principal.setDisable(false);
             });
-            hilo.start();
-            modificadores(true);
-            second.close();
-            principal.setDisable(false);
-        });
-        second.setOnCloseRequest((WindowEvent event) -> {
-            principal.setDisable(false);
+            
+            aceptar.setOnAction((ActionEvent event) -> {
+                final int cuadricula = (int)numero.getValue();
+                Thread hilo = new Thread(new Task<Object>() {
+                    
+                    @Override
+                    protected Object call() throws Exception {
+                        FiltroGris gris = new FiltroGris(imagen.getImage());
+                        actual = gris.grisCuantos(cuadricula);
+                        imagen.setImage(actual);
+                        stage.getScene().setRoot(principal);
+                        return null;
+                    }
+                });
+                hilo.start();
+                modificadores(true);
+                second.close();
+                principal.setDisable(false);
+            });
+            second.setOnCloseRequest((WindowEvent event) -> {
+                principal.setDisable(false);
+            });
         });
     }
     
@@ -1715,7 +2088,7 @@ public class InterfazGraficaController implements Initializable {
                 ImageIO.write(SwingFXUtils.fromFXImage(actual, null),
                         "png", file);
             } catch (IOException ex) {
-                System.out.println("Metodo guardarComo");
+                //Error
                 
             }
         }
@@ -1815,7 +2188,6 @@ public class InterfazGraficaController implements Initializable {
             colorRealItem.setDisable(!valor);
             webPalleteItem.setDisable(!valor);
             lossy.setDisable(!valor);
-            comprimirMenu.setDisable(!valor);
             ampliarReducirItem.setDisable(!valor);
             semitonosItem.setDisable(!valor);
             fotomosaicoItem.setDisable(!valor);
@@ -1832,14 +2204,12 @@ public class InterfazGraficaController implements Initializable {
             colorRealItem.setDisable(!valor);
             webPalleteItem.setDisable(!valor);
             lossy.setDisable(!valor);
-            comprimirMenu.setDisable(!valor);
             ampliarReducirItem.setDisable(!valor);
             semitonosItem.setDisable(!valor);
             fotomosaicoItem.setDisable(!valor);
             ocultarMensajeItem.setDisable(!valor);
             descifrarMensajeItem.setDisable(!valor);
             filtroMosaico.setDisable(!valor);
-                        
         }
     }
     
@@ -1917,8 +2287,17 @@ public class InterfazGraficaController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        pintaMosaico();
+        try {
+            pintaMosaico();
+            rotarImagen();
+            colorReal();
+            webPallete();
+            semitonos();
+            pintaEsteganografia();
+            muestraEsteganografia();
+            fotomosaico();
+        } catch (IOException ex) {
+         //ERROR
+        }
     }
-    
-    
 } //Fin de InterfazGraficaController.java

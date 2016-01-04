@@ -63,7 +63,7 @@ class FiltroIcono extends Filtro{
         int newX = this.getX() / ancho;
         int newY = this.getY() / alto;
         FiltroMosaico mos = new FiltroMosaico(this.getImage());
-        Image icono = mos.sacaMosaico(newX, newY);
+        Image icono = mos.sacaMosaico(newX, newY,false);
         BufferedImage mosaico = SwingFXUtils.fromFXImage(icono, null);
         java.awt.Image imagen2 = mosaico.getScaledInstance(ancho, alto, java.awt.Image.SCALE_SMOOTH);       
         BufferedImage bi = new BufferedImage(ancho, alto, BufferedImage.TYPE_INT_RGB);

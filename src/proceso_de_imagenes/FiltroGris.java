@@ -258,7 +258,6 @@ public class FiltroGris extends Filtro{
                 double grisTemp = averageValue+error;
                 grisTemp = (int)((grisTemp / conversionFactor) + 0.5) * conversionFactor;
                 error = averageValue + error - grisTemp;
-                averageValue = grisTemp;
                 grisTemp = grisTemp/256;
                 grisTemp = Math.min(Math.max((grisTemp), 0), 255);
                 pixelD.setColor(i, j, Color.color(grisTemp,grisTemp,grisTemp));

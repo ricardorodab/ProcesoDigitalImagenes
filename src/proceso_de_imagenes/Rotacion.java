@@ -68,6 +68,7 @@ public class Rotacion extends Filtro{
      * @return Una imagen rotada.
      */
     public Image rotarMatriz(int grados){
+        Filtro.PROGRESO = 0;
         int red,green,blue;
         WritableImage imagenD = null;
         if(grados == NOVENTA || grados == DOSCIENTOS_SETENTA){
@@ -116,6 +117,7 @@ public class Rotacion extends Filtro{
                     continue;
                 }
                 pixelD.setColor(newX,newY, Color.rgb(red, green, blue));
+                Filtro.PROGRESO = (this.avanzar()/this.getTotal());
             }
         }
         return imagenD;
@@ -127,6 +129,7 @@ public class Rotacion extends Filtro{
      * @return Una imagen rotada.
      */
     public Image rotar(int grados){
+        Filtro.PROGRESO = 0;
         int red,green,blue;
         WritableImage imagenD = null;
         if(grados == NOVENTA || grados == DOSCIENTOS_SETENTA){
@@ -153,6 +156,7 @@ public class Rotacion extends Filtro{
                 }else{
                     pixelD.setColor(this.getY()-j-1, i, Color.rgb(red, green, blue));
                 }
+                Filtro.PROGRESO = (this.avanzar()/this.getTotal());
             }
         }
         return imagenD;

@@ -28,7 +28,6 @@
 package proceso_de_imagenes;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -56,12 +55,8 @@ public class ProcesoDeImagenes extends Application {
         stage.setScene(scene);
         InterfazGraficaController.stage = stage;
         stage.show();
-        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-
-            @Override
-            public void handle(WindowEvent event) {
-           System.exit(0);
-            }
+        stage.setOnCloseRequest((WindowEvent event) -> {
+            System.exit(0);
         });
     }
 
