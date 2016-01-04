@@ -96,7 +96,7 @@ public class InterfazGraficaController implements Initializable {
     /** El numero de filtros actuales. */
     private static int noFiltro = 0;
     
-    //Definimos los utencilios de nuestra intefaz grafica:
+    //Definimos los elementos de nuestra intefaz grafica:
     @FXML
     private MenuItem guardarComoI,cargaOriginal,cambiarBrillo, rotarItem,
             rotarMatrizItem, colorRealItem,webPalleteItem,
@@ -459,8 +459,14 @@ public class InterfazGraficaController implements Initializable {
                                         Fotomosaico.sacaFotomosaico(archivo, filtro, mosaicoS, input2, recursa);
                                     }
                                 } catch (IOException ex) {
-                                    //Error
-                                }
+                                    MessageBox.show(new Stage(), "¡ERROR FATAL! \n\n Ocurrió un error al"
+                                            + " querer crear su imagen. Disculpe las inconveniencias. \n"
+                                            + "Algunos consejos para evitar errores son: \n"
+                                            + "Iniciar como administrador el programa o tener los permisos necesarios.\n"
+                                            + "Tener una versión de java actualizada (1.8.0_51 o superior)."
+                                            + "ricardo_rodab@ciencias.unam.mx",
+                                            "Error crítico", MessageBox.ICON_ERROR | MessageBox.OK);
+        }
                                 return null;
                             }
                         };
@@ -544,7 +550,13 @@ public class InterfazGraficaController implements Initializable {
                                 try {
                                     Semitonos.semitono(imagen.getImage(), cuadricula, input2);
                                 } catch (IOException ex) {
-                                    //ERROR
+                                   MessageBox.show(new Stage(), "¡ERROR FATAL! \n\n Ocurrió un error al"
+                                            + " querer crear su imagen. Disculpe las inconveniencias. \n"
+                                            + "Algunos consejos para evitar errores son: \n"
+                                            + "Iniciar como administrador el programa o tener los permisos necesarios.\n"
+                                            + "Tener una versión de java actualizada (1.8.0_51 o superior)."
+                                            + "ricardo_rodab@ciencias.unam.mx",
+                                            "Error crítico", MessageBox.ICON_ERROR | MessageBox.OK);
                                 }
                                 return null;
                             }
@@ -726,7 +738,13 @@ public class InterfazGraficaController implements Initializable {
                                 try {
                                     recursiva.escribeWebPallete(input2, cuadricula, cuadricula);
                                 } catch (IOException ex) {
-                                    //ERROR
+                                     MessageBox.show(new Stage(), "¡ERROR FATAL! \n\n Ocurrió un error al"
+                                            + " querer crear su imagen. Disculpe las inconveniencias. \n"
+                                            + "Algunos consejos para evitar errores son: \n"
+                                            + "Iniciar como administrador el programa o tener los permisos necesarios.\n"
+                                            + "Tener una versión de java actualizada (1.8.0_51 o superior)."
+                                            + "ricardo_rodab@ciencias.unam.mx",
+                                            "Error crítico", MessageBox.ICON_ERROR | MessageBox.OK);
                                 }
                                 return null;
                             }
@@ -748,12 +766,22 @@ public class InterfazGraficaController implements Initializable {
     }
     
     @FXML
-    private void comprimirLossy(ActionEvent event) throws IOException{
-        Compresion.comprimeLossy(new Filtro(imagen.getImage()));
+    private void comprimirLossy(ActionEvent event){
+        try {
+            Compresion.comprimeLossy(new Filtro(imagen.getImage()));
+        } catch (IOException ex) {
+             MessageBox.show(new Stage(), "¡ERROR FATAL! \n\n Ocurrió un error al"
+                                            + " querer crear su imagen. Disculpe las inconveniencias. \n"
+                                            + "Algunos consejos para evitar errores son: \n"
+                                            + "Iniciar como administrador el programa o tener los permisos necesarios.\n"
+                                            + "Tener una versión de java actualizada (1.8.0_51 o superior)."
+                                            + "ricardo_rodab@ciencias.unam.mx",
+                                            "Error crítico", MessageBox.ICON_ERROR | MessageBox.OK);
+        }
     }
     
     @FXML
-    private void colorReal() throws IOException{
+    private void colorReal() {
         colorRealItem.setOnAction((EventHandler) -> {
             principal.setDisable(true);
             Stage second = new Stage();
@@ -851,7 +879,13 @@ public class InterfazGraficaController implements Initializable {
                                         try {
                                             recursiva.colorReal(input2, cuadricula, cuadricula,false);
                                         } catch (IOException ex) {
-                                            //ERROR
+                                            MessageBox.show(new Stage(), "¡ERROR FATAL! \n\n Ocurrió un error al"
+                                            + " querer crear su imagen. Disculpe las inconveniencias. \n"
+                                            + "Algunos consejos para evitar errores son: \n"
+                                            + "Iniciar como administrador el programa o tener los permisos necesarios.\n"
+                                            + "Tener una versión de java actualizada (1.8.0_51 o superior)."
+                                            + "ricardo_rodab@ciencias.unam.mx",
+                                            "Error crítico", MessageBox.ICON_ERROR | MessageBox.OK);
                                         }
                                         return null;
                                     }
@@ -932,7 +966,13 @@ public class InterfazGraficaController implements Initializable {
                                         try {
                                             recursiva.colorReal(input2, cuadricula, cuadricula,true);
                                         } catch (IOException ex) {
-                                            //ERROR
+                                             MessageBox.show(new Stage(), "¡ERROR FATAL! \n\n Ocurrió un error al"
+                                            + " querer crear su imagen. Disculpe las inconveniencias. \n"
+                                            + "Algunos consejos para evitar errores son: \n"
+                                            + "Iniciar como administrador el programa o tener los permisos necesarios.\n"
+                                            + "Tener una versión de java actualizada (1.8.0_51 o superior)."
+                                            + "ricardo_rodab@ciencias.unam.mx",
+                                            "Error crítico", MessageBox.ICON_ERROR | MessageBox.OK);
                                         }
                                         return null;
                                     }
@@ -1257,7 +1297,13 @@ public class InterfazGraficaController implements Initializable {
                     });
                     
                 }catch(IOException e){
-                    //Error
+                    MessageBox.show(new Stage(), "¡ERROR FATAL! \n\n Ocurrió un error al"
+                                            + " querer crear su imagen. Disculpe las inconveniencias. \n"
+                                            + "Algunos consejos para evitar errores son: \n"
+                                            + "Iniciar como administrador el programa o tener los permisos necesarios.\n"
+                                            + "Tener una versión de java actualizada (1.8.0_51 o superior)."
+                                            + "ricardo_rodab@ciencias.unam.mx",
+                                            "Error crítico", MessageBox.ICON_ERROR | MessageBox.OK);
                 }
             }
         });
@@ -2110,7 +2156,13 @@ public class InterfazGraficaController implements Initializable {
                 ImageIO.write(SwingFXUtils.fromFXImage(actual, null),
                         "png", file);
             } catch (IOException ex) {
-                //Error
+                 MessageBox.show(new Stage(), "¡ERROR FATAL! \n\n Ocurrió un error al"
+                                            + " querer guardar su imagen. Disculpe las inconveniencias. \n"
+                                            + "Algunos consejos para evitar errores son: \n"
+                                            + "Iniciar como administrador el programa o tener los permisos necesarios.\n"
+                                            + "Tener una versión de java actualizada (1.8.0_51 o superior)."
+                                            + "ricardo_rodab@ciencias.unam.mx",
+                                            "Error crítico", MessageBox.ICON_ERROR | MessageBox.OK);
                 
             }
         }
@@ -2199,6 +2251,13 @@ public class InterfazGraficaController implements Initializable {
                     hilo.start();
                     modificadores(true);
                 }catch(IOException e){
+                     MessageBox.show(new Stage(), "¡ERROR FATAL! \n\n Ocurrió un error al"
+                                            + " querer abrir su imagen. Disculpe las inconveniencias. \n"
+                                            + "Algunos consejos para evitar errores son: \n"
+                                            + "Iniciar como administrador el programa o tener los permisos necesarios.\n"
+                                            + "Tener una versión de java actualizada (1.8.0_51 o superior)."
+                                            + "ricardo_rodab@ciencias.unam.mx",
+                                            "Error crítico", MessageBox.ICON_ERROR | MessageBox.OK);
                 }
             }
         }
@@ -2310,7 +2369,12 @@ public class InterfazGraficaController implements Initializable {
             try {               
                 Thread.sleep(200);
             } catch (InterruptedException ex) {
-                //ERROR
+                 MessageBox.show(new Stage(), "¡ERROR FATAL! \n\n Ocurrió un error interno del programa (threads principal). \n"
+                                            + "Algunos consejos para evitar errores son: \n"
+                                            + "Iniciar como administrador el programa o tener los permisos necesarios.\n"
+                                            + "Tener una versión de java actualizada (1.8.0_51 o superior)."
+                                            + "ricardo_rodab@ciencias.unam.mx",
+                                            "Error crítico", MessageBox.ICON_ERROR | MessageBox.OK);
             }
         }
         muestraProceso(false);
@@ -2336,7 +2400,13 @@ public class InterfazGraficaController implements Initializable {
             muestraEsteganografia();
             fotomosaico();
         } catch (IOException ex) {
-         //ERROR
+             MessageBox.show(new Stage(), "¡ERROR FATAL! \n\n Ocurrió un error al"
+                                            + " querer crear su imagen. Disculpe las inconveniencias. \n"
+                                            + "Algunos consejos para evitar errores son: \n"
+                                            + "Iniciar como administrador el programa o tener los permisos necesarios.\n"
+                                            + "Tener una versión de java actualizada (1.8.0_51 o superior)."
+                                            + "ricardo_rodab@ciencias.unam.mx",
+                                            "Error crítico", MessageBox.ICON_ERROR | MessageBox.OK);
         }
     }
 } //Fin de InterfazGraficaController.java
