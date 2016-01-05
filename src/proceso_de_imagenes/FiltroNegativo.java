@@ -47,7 +47,7 @@ public class FiltroNegativo extends Filtro{
     
     /**
      * Metodo constructor del filtro negativo
-     * @param img
+     * @param img - Es la imagen del filtro.
      */
     public FiltroNegativo(Image img){
         super(img);

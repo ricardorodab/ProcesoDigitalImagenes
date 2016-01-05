@@ -56,7 +56,7 @@ public class AltoContrasteFiltroInverso extends Filtro{
     
     /**
      * Metodo que nos da el filtro inverso.
-     * @return un filtro en blanco y negro donde los colores n > 127 son negro.
+     * @return un filtro en blanco y negro donde los colores n que es mayor a 127 son negro.
      */
     public Image inverso() {
         Filtro.PROGRESO = 0;
@@ -84,7 +84,7 @@ public class AltoContrasteFiltroInverso extends Filtro{
     
     /**
      * Metodo que nos da el filtro de un alto contraste.
-     * @return un filtro en blanco y negro donde los colores n > 127 son blancos.
+     * @return un filtro en blanco y negro donde los colores n que es mayor a 127 son blancos.
      */
     public Image altoContraste() {
         Filtro.PROGRESO = 0;

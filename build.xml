@@ -1,53 +1,102 @@
-<?xml version="1.0" encoding="UTF-8"?><!-- You may freely edit this file. See commented blocks below for --><!-- some examples of how to customize the build. --><!-- (If you delete it and reopen the project it will be recreated.) --><!-- By default, only the Clean and Build commands use this build script. --><project name="Proceso_de_Imagenes" default="default" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
-    <description>Builds, tests, and runs the project Proceso_de_Imagenes.</description>
-    <import file="nbproject/build-impl.xml"/>
-    <!--
+<project name="Proyecto Proces digital de imagenes" default="all" basedir=".">
+  <description>
+    Se usa para optimizar el manejo del programa proceso digital de imagenes.
+  </description>
+  
+  <property name="nombreProyecto" value="ProcesoDigitalImagenes"/>
+ 
+  <target name="compile" description="Compila el código fuente.">
+    <mkdir dir="build"/>
+    <javac srcdir="src/proceso_de_imagenes" 
+	   destdir="build"
+	   debug="true"
+           debuglevel="lines,vars,source"
+           includeantruntime="false"
+           deprecation="true"
+           nowarn="off">
+      <classpath> 
+        <fileset dir="lib">
+          <include name="*.jar"/>
+	  <include name="*.fxml"/>
+	  <include name="*.css"/>
+        </fileset>
+      </classpath>
+      <compilerarg value="-Xlint:unchecked"/>
+    </javac>
+    <copy todir="build/proceso_de_imagenes">
+      <fileset dir="src/proceso_de_imagenes"
+	       includes="**/*.fxml" />      
+    </copy>
+    <mkdir dir="build/resources"/>
+    <copy todir="build/resources">
+      <fileset dir="src/resources"
+	       includes="**/*.*" />
+    </copy>
+    <copy todir="build/lib">
+      <fileset dir="lib"
+	       includes="**/*.*" />
+    </copy>
 
-    There exist several targets which are by default empty and which can be 
-    used for execution of your tasks. These targets are usually executed 
-    before and after some main targets. Those of them relevant for JavaFX project are: 
+  </target>
+  
+  <target name="doc"  description="Crea la documentación del código.">
+    <mkdir dir="doc"/>
+    <javadoc destdir="doc" author="true" version="true" charset="UTF-8">
+      <classpath>
+        <fileset dir="lib">
+	  <include name="*.jar"/>
+        </fileset>
+      </classpath>
+      <link href="http://docs.oracle.com/javase/8/docs/api/" />
+      <fileset file="src/proceso_de_imagenes/*.java"/>
+    </javadoc>
+  </target>
+  
+  <target name="clean" description="Elimina los archivos temporales y los directorios build y doc.">
+    <delete>
+      <fileset file="src/proceso_de_imagenes/*" defaultexcludes="no">
+	<exclude name="*.java"/>
+	<exclude name="*.xml"/>
+	<exclude name="*.fxml"/>
+	<exclude name="*.txt" />
+	<exclude name="*.css" />
+      </fileset>
+    <fileset file="./*" defaultexcludes="no">
+	<exclude name="*.css"/>
+	<exclude name="*.java"/>
+	<exclude name="*.xml"/>
+	<exclude name="*.fxml"/>
+	<exclude name="*.txt" />
+      </fileset>
+    </delete>
+    <delete dir="build" />
+    <delete dir="doc" />
+    <delete dir="dist" />
+    <delete file="${nombreProyecto}.tar" />
+  </target>
+  
+  <target name="dist" depends="clean" description="Crea un archivo tar para enviar el código.">
+    <tar destfile="${nombreProyecto}.tar" basedir="./"/>
+  </target>
+  
+  <target name="all" depends="clean,compile,doc,jar" description="Compila y genera la documentación."/>
 
-      -pre-init:                 called before initialization of project properties
-      -post-init:                called after initialization of project properties
-      -pre-compile:              called before javac compilation
-      -post-compile:             called after javac compilation
-      -pre-compile-test:         called before javac compilation of JUnit tests
-      -post-compile-test:        called after javac compilation of JUnit tests
-      -pre-jfx-jar:              called before FX SDK specific <fx:jar> task
-      -post-jfx-jar:             called after FX SDK specific <fx:jar> task
-      -pre-jfx-deploy:           called before FX SDK specific <fx:deploy> task
-      -post-jfx-deploy:          called after FX SDK specific <fx:deploy> task
-      -pre-jfx-native:           called just after -pre-jfx-deploy if <fx:deploy> runs in native packaging mode
-      -post-jfx-native:          called just after -post-jfx-deploy if <fx:deploy> runs in native packaging mode
-      -post-clean:               called after cleaning build products
+  <target name="jar" depends="clean,compile" description="Crea el jar.">
+    <mkdir dir="dist/jar"/>
+    <jar destfile="dist/jar/${nombreProyecto}.jar" basedir="build/">
+	<manifest>
+	  <attribute name="Class-Path" value="lib/jfxmessagebox-1.1.0.jar lib/controlsfx-8.40.10.jar lib/commons-io-2.4.jar lib/commons-io-2.4-javadoc.jar lib/commons-io-2.4-sources.jar"/>
+		<attribute name="Main-Class" value="proceso_de_imagenes.ProcesoDeImagenes"/>
+	</manifest>
+	</jar>
+	<mkdir dir="dist/jar/lib"/>
+	<copy todir="dist/jar/lib">
+	  <fileset dir="lib"
+		   includes="**/*.*" />
+	</copy>
+  </target>
 
-    (Targets beginning with '-' are not intended to be called on their own.)
-
-    Example of inserting a HTML postprocessor after javaFX SDK deployment:
-
-        <target name="-post-jfx-deploy">
-            <basename property="jfx.deployment.base" file="${jfx.deployment.jar}" suffix=".jar"/>
-            <property name="jfx.deployment.html" location="${jfx.deployment.dir}${file.separator}${jfx.deployment.base}.html"/>
-            <custompostprocess>
-                <fileset dir="${jfx.deployment.html}"/>
-            </custompostprocess>
-        </target>
-
-    Example of calling an Ant task from JavaFX SDK. Note that access to JavaFX SDK Ant tasks must be
-    initialized; to ensure this is done add the dependence on -check-jfx-sdk-version target:
-
-        <target name="-post-jfx-jar" depends="-check-jfx-sdk-version">
-            <echo message="Calling jar task from JavaFX SDK"/>
-            <fx:jar ...>
-                ...
-            </fx:jar>
-        </target>
-
-    For more details about JavaFX SDK Ant tasks go to
-    http://docs.oracle.com/javafx/2/deployment/jfxpub-deployment.htm
-
-    For list of available properties check the files
-    nbproject/build-impl.xml and nbproject/jfx-impl.xml.
-
-    -->
+  <target name="run" depends="clean,compile,jar" description="Corre el programa.">
+	<java jar="dist/jar/${nombreProyecto}.jar" fork="true" />
+  </target>
 </project>

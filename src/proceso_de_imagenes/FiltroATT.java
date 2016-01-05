@@ -36,10 +36,10 @@ import javafx.scene.image.Image;
  * @version 1.0                                                                                             
  * @since Dic 31 2015.                                                                                      
  * <p>                                                                                                      
- * Clase que define al filtro AT&T.</p>                                                 
+ * Clase que define al filtro ATT.</p>                                                 
  *                                                                                                          
  * <p>                                                                                                      
- * Desde esta clase podemos obtener el filtro de tipo AT&T.</p>                              
+ * Desde esta clase podemos obtener el filtro de tipo AT and T.</p>                              
  */
 public class FiltroATT extends Filtro{
     

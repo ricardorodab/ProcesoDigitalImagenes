@@ -120,7 +120,7 @@ public final class FiltroEstereograma {
     
     /**
      * Metodo que genera el fondo del archivo.
-     * @param img2
+     * @param img2 es la segunda imagen para el fondo.
      */
     public void gen_foreground(BufferedImage img2){
         for(int i = 0;i<depth.getWidth();i++){

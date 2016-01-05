@@ -1075,14 +1075,14 @@ public class InterfazGraficaController implements Initializable {
     }
     
     private void rotarImagen(){
-        EventHandler rotacion = (EventHandler) (Event event) -> {
+        EventHandler<ActionEvent> rotacion = (EventHandler<ActionEvent>) (ActionEvent event) -> {
             principal.setDisable(true);
             Stage second = new Stage();
             
             BorderPane border = new BorderPane();
             Text encabezado = new Text("Seleccione cuantos grados desea girar la imagen \n");
             
-            final ChoiceBox grados = new ChoiceBox(FXCollections.observableArrayList("0º","90º","180º","270º"));
+            final ChoiceBox<String> grados = new ChoiceBox<String>(FXCollections.observableArrayList("0º","90º","180º","270º"));
             grados.getSelectionModel().selectFirst();
             
             
@@ -1677,7 +1677,7 @@ public class InterfazGraficaController implements Initializable {
             BorderPane border = new BorderPane();
             Text encabezado = new Text("Seleccione la posición de su marca de agua \n");
             
-            final ChoiceBox grados = new ChoiceBox(FXCollections.observableArrayList("Superior Izquierda","Superior Derecha",
+            final ChoiceBox<String> grados = new ChoiceBox<String>(FXCollections.observableArrayList("Superior Izquierda","Superior Derecha",
                     "Inferior Izquierda","Inferior Derecha"));
             grados.getSelectionModel().selectFirst();
             
@@ -2343,7 +2343,7 @@ public class InterfazGraficaController implements Initializable {
     
     
     private void muestraProceso(boolean inicio){
-        FutureTask<Void> updateUITask = new FutureTask(() -> {
+        FutureTask<Void> updateUITask = new FutureTask<Void>(() -> {
             botonesBox.setDisable(inicio);
             botonesBox.setVisible(!inicio);
             splitPane.setVisible(!inicio);
@@ -2355,7 +2355,7 @@ public class InterfazGraficaController implements Initializable {
     }
     
     private void setProceso(double proceso){
-        FutureTask<Void> updateUITask = new FutureTask(() -> {
+        FutureTask<Void> updateUITask = new FutureTask<Void>(() -> {
             pi.setProgress(proceso);
             pb.setProgress(proceso);
         },null);
