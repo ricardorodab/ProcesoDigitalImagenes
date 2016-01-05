@@ -94,6 +94,10 @@
 	  <fileset dir="lib"
 		   includes="**/*.*" />
 	</copy>
+	<copy todir="./" >
+	  <fileset dir="dist/jar/"
+		   includes= "**/*.jar" />
+	</copy>
   </target>
 
   <target name="run" depends="clean,compile,jar" description="Corre el programa.">
